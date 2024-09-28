@@ -9,6 +9,7 @@ type propsType = {
   members: string[];
   lastMessage: string;
   lastMessageDate: string;
+  lastMessageVisibleTo: string[];
   setShowMessagesContainer: (
     chatRoomId: string,
     userName: string,
@@ -49,6 +50,9 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
     props.members[0] === userId ? props.members[1] : props.members[0];
 
   let dateToDisplay = "";
+
+  console.log(props.lastMessageVisibleTo);
+
   if (lastMessageDate.toString() === "Invalid Date") {
     dateToDisplay = "";
   } else if (
@@ -121,7 +125,11 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
           {userData?.name}
           <span className="text-sm"> {dateToDisplay}</span>
         </p>
-        <p className="w-60 truncate">{userData?.lastMessage}</p>
+        <p className="w-60 truncate">
+          {props.lastMessageVisibleTo.includes(props.userId)
+            ? userData?.lastMessage
+            : ""}
+        </p>
       </div>
     </div>
   );

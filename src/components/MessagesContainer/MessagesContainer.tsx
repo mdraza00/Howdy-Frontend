@@ -19,6 +19,7 @@ import SenderMessage from "../SenderMessage/SenderMessage";
 import ReceiverMessage from "../ReceiverMessage/ReceiverMessage";
 import threeDotsIcon from "/three-dots-icon.png";
 import searchIcon from "/search-icon.png";
+import NoMessagesP from "../NoMessagesP/NoMessagesP";
 interface getMessagesRes {
   status: boolean;
   data: {
@@ -174,7 +175,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         updatedAt: new Date(Date.now()).toString(),
         senderId: data.senderId,
         text: data.message,
-        visibleTo: [props.userId, props.recipientId],
+        visibleTo: data.visibleTo,
         _id: data.roomId + data.senderId + Date.now().toLocaleString(),
       };
       setMessages((msgsArray) => [...msgsArray, newMessage]);
@@ -210,7 +211,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
       const chatroomId = props.chatRoomId;
       const userId = props.userId;
       axios
-        .patch(
+        .patch<getMessagesRes>(
           `${baseURL.baseUrl}/message/clear-messages`,
           {
             chatroomId,
@@ -221,10 +222,11 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           }
         )
         .then((res) => {
-          console.log(res.data);
-          // props.setUpdateChatRoomsData(
-          //   props.updateChatRoomsData ? false : true
-          // );
+          setIsChatRoomMessagesCleared(false);
+          setMessages(res.data.data);
+          props.setUpdateChatRoomsData(
+            props.updateChatRoomsData ? false : true
+          );
         })
         .catch((err) => {
           console.log("error in deleting user chatroom. Error = ", err);
@@ -301,6 +303,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         message: messageInput,
         lastMessageDate: Date.now(),
         senderId: props.userId,
+        visibleTo: [props.userId, props.recipientId],
       });
       const senderId = props.userId;
       if (senderId) storeMessagesInDB(messageInput, props.chatRoomId, senderId);
@@ -366,65 +369,60 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               className={`mb-4 text-center text-xs px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
             ></p>
           </div>
-          {messages.length === 0 && (
-            <div className="flex justify-center w-full">
-              <p
-                className={`mb-4 text-center text-xs px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
-              >
-                No Messags
-              </p>
-            </div>
-          )}
-          {messages?.map((message) => {
-            const msg =
-              message.senderId === props.userId ? (
-                <SenderMessage
-                  key={message._id}
-                  time={message.createdAt}
-                  createdAt={message.createdAt}
-                  messageId={message._id}
-                  isSelectMessages={isSelectMessages}
-                  setSelectedMessagesData={setSelectedMessagesDataFunc}
-                >
-                  {message.text}
-                </SenderMessage>
-              ) : (
-                <ReceiverMessage
-                  key={message._id}
-                  time={message.createdAt}
-                  createdAt={message.createdAt}
-                  messageId={message._id}
-                  isSelectMessages={isSelectMessages}
-                  setSelectedMessagesData={setSelectedMessagesDataFunc}
-                >
-                  {message.text}
-                </ReceiverMessage>
-              );
-            let dateJSX = <></>;
-            if (
-              new Date(message.createdAt).toLocaleDateString() !=
-              date.toLocaleDateString()
-            ) {
-              date = new Date(message.createdAt);
-              dateJSX = (
-                <div className="flex justify-center w-full">
-                  <p
-                    className={`date-p text-xs mb-4 text-center px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
+          {(messages.length === 0 ||
+            messages.filter((message) =>
+              message.visibleTo.includes(props.userId)
+            ).length < 1) && <NoMessagesP />}
+          {messages
+            .filter((message) => message.visibleTo.includes(props.userId))
+            .map((message) => {
+              const msg =
+                message.senderId === props.userId ? (
+                  <SenderMessage
+                    key={message._id}
+                    time={message.createdAt}
+                    createdAt={message.createdAt}
+                    messageId={message._id}
+                    isSelectMessages={isSelectMessages}
+                    setSelectedMessagesData={setSelectedMessagesDataFunc}
                   >
-                    {date.toLocaleDateString()}
-                  </p>
+                    {message.text}
+                  </SenderMessage>
+                ) : (
+                  <ReceiverMessage
+                    key={message._id}
+                    time={message.createdAt}
+                    createdAt={message.createdAt}
+                    messageId={message._id}
+                    isSelectMessages={isSelectMessages}
+                    setSelectedMessagesData={setSelectedMessagesDataFunc}
+                  >
+                    {message.text}
+                  </ReceiverMessage>
+                );
+              let dateJSX = <></>;
+              if (
+                new Date(message.createdAt).toLocaleDateString() !=
+                date.toLocaleDateString()
+              ) {
+                date = new Date(message.createdAt);
+                dateJSX = (
+                  <div className="flex justify-center w-full">
+                    <p
+                      className={`date-p text-xs mb-4 text-center px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
+                    >
+                      {date.toLocaleDateString()}
+                    </p>
+                  </div>
+                );
+              }
+              return (
+                <div key={message._id}>
+                  {dateJSX}
+                  {msg}
                 </div>
               );
-            }
-            return message.visibleTo.includes(props.userId) ? (
-              <div key={message._id}>
-                {dateJSX}
-                {msg}
-              </div>
-            ) : (
-              ""
-            );
-          })}
+            })}
         </div>
         {/* send-messages-container */}
         <div>

@@ -32,6 +32,7 @@ interface getChatRoomsRes {
     members: string[];
     lastMessage: string;
     lastMessageDate: string;
+    lastMessageVisibleTo: string[];
     createdAt: string;
     updatedAt: string;
   }[];
@@ -50,6 +51,7 @@ type chatRoomData = {
   members: string[];
   lastMessage: string;
   lastMessageDate: string;
+  lastMessageVisibleTo: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -96,6 +98,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
       // console.log(userNameInput);
     } else {
       socket.on("last message", (data) => {
+        console.log(data);
         setChatRoomsData((chatRoomsData) => {
           const updatedData = chatRoomsData.map((chatRoom) => {
             return {
@@ -108,6 +111,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
                 chatRoom._id === data.roomId
                   ? data.lastMessageDate
                   : chatRoom.lastMessageDate,
+              lastMessageVisibleTo: data.visibleTo,
             };
           });
           return [...updatedData];
@@ -175,6 +179,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
                 id={chatRoom._id}
                 lastMessage={chatRoom.lastMessage}
                 lastMessageDate={chatRoom.lastMessageDate}
+                lastMessageVisibleTo={chatRoom.lastMessageVisibleTo}
                 members={chatRoom.members}
                 activeChatRoomId={props.activeChatRoomId}
                 setShowMessagesContainer={props.setShowMessagesContainer}
