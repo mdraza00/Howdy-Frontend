@@ -1,0 +1,14 @@
+.new-chat-button,
+.send-message-btn {
+  background-color: #f2dcde;
+  transition: 0.1s ease-in-out;
+}
+.new-chat-button:active,
+.send-message-btn:active {
+  background-color: #f3cccf;
+}
+.newChatUser {
+}
+.newChatUser:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}

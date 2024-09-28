@@ -1,0 +1,6 @@
+.signup-form--submit-button {
+  background-color: #f2dcde;
+}
+.signup-form--submit-button:active {
+  background-color: #f3cccf;
+}

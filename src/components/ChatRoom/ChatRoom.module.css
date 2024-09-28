@@ -1,0 +1,12 @@
+.chatroom-contanier {
+  transition: 0.1s ease-in-out;
+}
+.chatroom-contanier:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+.chatroom-contanier:active {
+  background-color: #b6dbf2;
+}
+.active-chat {
+  background-color: rgba(0, 0, 0, 0.09);
+}

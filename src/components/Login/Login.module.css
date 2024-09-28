@@ -1,0 +1,6 @@
+.login-form--submit-button {
+  background-color: #f2c2d8;
+}
+.login-form--submit-button:active {
+  background-color: #e7b6cd;
+}

@@ -1,0 +1,11 @@
+.display-message-container {
+  background: url("chat-background.png");
+  height: 93% !important;
+}
+
+.send-message-container {
+  height: 7% !important;
+}
+.send-message-btn {
+  transition: 0.1s ease-in-out;
+}

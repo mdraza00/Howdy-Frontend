@@ -1,0 +1,11 @@
+.newChatUser {
+  cursor: pointer;
+  transition: all ease-in-out;
+  transition-duration: 100ms;
+}
+.newChatUser:hover {
+  background-color: rgba(0, 0, 0, 0.09);
+}
+.newChatUser:active {
+  background-color: white;
+}
