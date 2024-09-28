@@ -51,8 +51,6 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
 
   let dateToDisplay = "";
 
-  console.log(props.lastMessageVisibleTo);
-
   if (lastMessageDate.toString() === "Invalid Date") {
     dateToDisplay = "";
   } else if (
