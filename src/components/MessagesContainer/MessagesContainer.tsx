@@ -113,6 +113,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
   const token = localStorage.getItem("token");
 
+  console.log(messages);
   if (messages.length > 0) {
     const lastMessage = document.getElementById(
       `${messages[messages.length - 1]._id}--${new Date(
@@ -206,6 +207,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           headers: { authorization: `Bearer ${token}` },
         })
         .then((res) => {
+          console.log(res.data.data);
           setLoadMessages(false);
           setMessages(res.data.data);
           props.setUpdateChatRoomsData(
@@ -282,7 +284,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         .delete(
           `${baseURL.baseUrl}/message/delete-for-everyone/${props.userId}/${
             props.chatRoomId
-          }/${selectedMessagesData.join("__")}`,
+          }/${selectedMessagesData
+            .map((messageData) => messageData.messageId)
+            .join("__")}`,
           {
             headers: { authorization: `Bearer ${token}` },
           }
@@ -307,17 +311,20 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         .delete<getMessagesRes>(
           `${baseURL.baseUrl}/message/delete-for-me/${props.userId}/${
             props.chatRoomId
-          }/${selectedMessagesData.join("__")}`,
+          }/${selectedMessagesData
+            .map((messageData) => messageData.messageId)
+            .join("__")}`,
           {
             headers: { authorization: `Bearer ${token}` },
           }
         )
         .then((res) => {
+          console.log(res.data.data);
           setSelectedMessagesData([]);
           setShowDeletePopupMenu(false);
           setIsSelectMessages(false);
           setDeleteForMe(false);
-          setMessages(res.data.data);
+          setLoadMessages(true);
         })
         .catch((err) => {
           console.log("error in deleting message for me. error => ", err);
@@ -735,7 +742,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 <Button
                   className="rounded-full bg-white text-blue-500 border-2 w-fit"
                   onClick={() => {
-                    setSelectedMessagesData([]);
                     setDeleteForEveryOne(false);
                     setDeleteForMe(false);
                     setShowDeletePopupMenu(false);
