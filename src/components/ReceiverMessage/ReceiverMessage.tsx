@@ -4,7 +4,11 @@ type propsType = {
   createdAt: string;
   messageId: string;
   isSelectMessages: boolean;
-  setSelectedMessagesData: (messageId: string, isSelected: boolean) => void;
+  setSelectedMessagesData: (
+    messageId: string,
+    isSelected: boolean,
+    createdAt: string
+  ) => void;
 };
 function ReceiverMessage(props: PropsWithChildren<propsType>) {
   return (
@@ -18,7 +22,8 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
             onChange={(e) => {
               props.setSelectedMessagesData(
                 `${props.messageId}--receive`,
-                e.target.checked
+                e.target.checked,
+                props.createdAt
               );
             }}
           />
@@ -43,7 +48,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
             "--" +
             new Date(props.createdAt).toLocaleDateString()
           }
-          className={`message-p inline-block p-1 ${
+          className={`message-p flex items-center w-fit p-1 ${
             props.isSelectMessages ? "ml-11" : "ml-3"
           }  rounded-md rounded-tl-none my-1 bg-white shadow-lg border-2 select-none`}
         >

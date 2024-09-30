@@ -4,7 +4,11 @@ type propsType = {
   createdAt: string;
   messageId: string;
   isSelectMessages: boolean;
-  setSelectedMessagesData: (messageId: string, isSelected: boolean) => void;
+  setSelectedMessagesData: (
+    messageId: string,
+    isSelected: boolean,
+    createdAt: string
+  ) => void;
 };
 
 function SenderMessage(props: PropsWithChildren<propsType>) {
@@ -19,14 +23,17 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
             onChange={(e) => {
               props.setSelectedMessagesData(
                 `${props.messageId}--send`,
-                e.target.checked
+                e.target.checked,
+                props.createdAt
               );
             }}
           />
         </div>
       )}
       <div
-        className={`w-full flex justify-end hover:bg-black/10`}
+        className={`w-full flex justify-end ${
+          props.isSelectMessages ? "hover:bg-black/10" : ""
+        } `}
         onClick={() => {
           if (props.isSelectMessages) {
             const checkbox = document.getElementById(props.messageId);
@@ -40,7 +47,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
             "--" +
             new Date(props.createdAt).toLocaleDateString()
           }
-          className={`message-p inline-block  p-2 mr-3 rounded-md rounded-tr-none my-1 bg-blue-200 shadow-lg select-none`}
+          className={`message-p flex items-center p-2 mr-3 rounded-md rounded-tr-none my-1 bg-blue-200 shadow-lg select-none`}
         >
           {props.children}{" "}
           <span className="text-slate-500 text-sm ml-1">

@@ -14,6 +14,7 @@ import starIcon from "/icons/star.png";
 import dustbinIcon from "/icons/dustbin-black.png";
 import forwardIcon from "/icons/forward.png";
 import downloadIcon from "/icons/download.png";
+import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
 import styles from "./MessagesContainer.module.css";
 import SenderMessage from "../SenderMessage/SenderMessage";
 import ReceiverMessage from "../ReceiverMessage/ReceiverMessage";
@@ -28,6 +29,7 @@ interface getMessagesRes {
     createdAt: string;
     senderId: string;
     text: string;
+    deleteForEveryOne: number;
     deletedFor: string[];
     visibleTo: string[];
     updatedAt: string;
@@ -41,6 +43,7 @@ interface messagesData {
   visibleTo: string[];
   deletedFor: string[];
   text: string;
+  deleteForEveryOne: number;
   updatedAt: string;
   _id: string;
 }
@@ -53,6 +56,7 @@ interface storeMessageRes {
     visibleTo: string[];
     deletedFor: string[];
     _id: string;
+    deleteForEveryOne: number;
     createdAt: string;
     updatedAt: string;
   };
@@ -81,7 +85,14 @@ type propsType = {
   chatRoomProfilePhoto: string;
 };
 
+interface selectedMessageData {
+  messageId: string;
+  createdAtDate: string;
+  createdAtTime: string;
+}
+
 function MessagesContainer(props: PropsWithChildren<propsType>) {
+  const [loadMessages, setLoadMessages] = useState(true);
   const [messages, setMessages] = useState<messagesData[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -94,9 +105,10 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const [deleteForMe, setDeleteForMe] = useState(false);
   const [showDeletePopupMenu, setShowDeletePopupMenu] = useState(false);
 
-  const [selectedMessagesData, setSelectedMessagesData] = useState<string[]>(
-    []
-  );
+  const [selectedMessagesData, setSelectedMessagesData] = useState<
+    selectedMessageData[]
+  >([]);
+
   const baseURL = useContext(BaseURLContext);
 
   const token = localStorage.getItem("token");
@@ -116,16 +128,28 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     "messages-container-div"
   );
 
-  function setSelectedMessagesDataFunc(messageId: string, isSelected: boolean) {
-    console.log("message id = ", messageId, "is selected = ", isSelected);
-    if (isSelected)
+  function setSelectedMessagesDataFunc(
+    messageId: string,
+    isSelected: boolean,
+    createdAt: string
+  ) {
+    const selectedMessageData = {
+      messageId,
+      createdAtDate: new Date(createdAt).toLocaleDateString(),
+      createdAtTime: new Date(createdAt).toLocaleTimeString(),
+    };
+
+    if (isSelected) {
       setSelectedMessagesData((prevSelectedMessages) => {
-        return [...prevSelectedMessages, messageId];
+        return [...prevSelectedMessages, selectedMessageData];
       });
-    else
+    } else {
       setSelectedMessagesData((prevSelectedMessages) =>
-        prevSelectedMessages.filter((el) => el !== messageId)
+        prevSelectedMessages.filter(
+          (messageData) => messageData.messageId !== messageId
+        )
       );
+    }
   }
 
   function getPositionAtCenter(element: Element) {
@@ -175,14 +199,20 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   }
 
   useEffect(() => {
-    const url = `${baseURL.baseUrl}/message/get/${props.chatRoomId}`;
-    axios
-      .get<getMessagesRes>(url, {
-        headers: { authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        setMessages(res.data.data);
-      });
+    if (loadMessages) {
+      const url = `${baseURL.baseUrl}/message/get/${props.chatRoomId}`;
+      axios
+        .get<getMessagesRes>(url, {
+          headers: { authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+          setLoadMessages(false);
+          setMessages(res.data.data);
+          props.setUpdateChatRoomsData(
+            props.updateChatRoomsData ? false : true
+          );
+        });
+    }
 
     socket.on("receieve message", (data) => {
       console.log(data);
@@ -192,6 +222,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         updatedAt: data.updatedAt,
         senderId: data.senderId,
         text: data.message,
+        deleteForEveryOne: data.deleteForEveryOne,
         visibleTo: data.visibleTo,
         deletedFor: data.deletedFor,
         _id: data._id,
@@ -199,13 +230,8 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
       setMessages((msgsArray) => [...msgsArray, newMessage]);
     });
 
-    socket.on("delete-messages", (data) => {
-      setMessages((previousMessages) => {
-        const idsOfMessageToBeDeleted = data.messages;
-        return previousMessages.filter(
-          (msg) => !idsOfMessageToBeDeleted.includes(msg._id)
-        );
-      });
+    socket.on("messages-deleted-for-everyone", () => {
+      setLoadMessages(true);
     });
 
     if (isChatRoomDeleted) {
@@ -262,6 +288,10 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           }
         )
         .then(() => {
+          socket.emit("messages-deleted-for-everyone", {
+            roomId: props.chatRoomId,
+          });
+          setLoadMessages(true);
           setSelectedMessagesData([]);
           setShowDeletePopupMenu(false);
           setIsSelectMessages(false);
@@ -296,7 +326,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
     return () => {
       socket.off("receieve message");
-      socket.off("delete-messages");
+      socket.off("messages-deleted-for-everyone");
     };
   }, [
     baseURL.baseUrl,
@@ -304,6 +334,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     deleteForMe,
     isChatRoomDeleted,
     isChatRoomMessagesCleared,
+    loadMessages,
     props,
     props.chatRoomId,
     selectedMessagesData,
@@ -337,6 +368,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           senderId: res.data.message.senderId,
           visibleTo: res.data.message.visibleTo,
           deletedFor: res.data.message.deletedFor,
+          deleteForEveryOne: res.data.message.deleteForEveryOne,
         });
       })
       .catch((err) => {
@@ -435,7 +467,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     isSelectMessages={isSelectMessages}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
                   >
-                    {message.text}
+                    {message.deleteForEveryOne === 0 ? (
+                      <span>{message.text}</span>
+                    ) : (
+                      <span className="text-gray-700 flex items-center gap-1">
+                        <img className="size-4" src={deleteForEveryOneIcon} />
+                        {message.text}
+                      </span>
+                    )}
                   </SenderMessage>
                 ) : (
                   <ReceiverMessage
@@ -446,7 +485,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     isSelectMessages={isSelectMessages}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
                   >
-                    {message.text}
+                    {message.deleteForEveryOne === 0 ? (
+                      <span>{message.text}</span>
+                    ) : (
+                      <span className="text-gray-700 flex items-center gap-1">
+                        <img className="size-4" src={deleteForEveryOneIcon} />
+                        {message.text}
+                      </span>
+                    )}
                   </ReceiverMessage>
                 );
               let dateJSX = <></>;
@@ -640,7 +686,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           <div
             className={`absolute w-[32%] ${
               selectedMessagesData
-                .map((selectedMessage) => selectedMessage.split("--")[1])
+                .map(
+                  (selectedMessage) => selectedMessage.messageId.split("--")[1]
+                )
                 .includes("receive")
                 ? "h-[17%]"
                 : "h-[30%]"
@@ -649,7 +697,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             <p className="text-base">Delete Chat ?</p>
             <div className="flex flex-col gap-3 justify-center items-end mt-3">
               {!selectedMessagesData
-                .map((selectedMessage) => selectedMessage.split("--")[1])
+                .map(
+                  (selectedMessage) => selectedMessage.messageId.split("--")[1]
+                )
                 .includes("receive") && (
                 <Button
                   className="rounded-full bg-blue-600 text-white border-2 w-fit"
@@ -664,7 +714,10 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               <div
                 className={`flex ${
                   selectedMessagesData
-                    .map((selectedMessage) => selectedMessage.split("--")[1])
+                    .map(
+                      (selectedMessage) =>
+                        selectedMessage.messageId.split("--")[1]
+                    )
                     .includes("receive")
                     ? "gap-3"
                     : "flex-col gap-3 items-end"
