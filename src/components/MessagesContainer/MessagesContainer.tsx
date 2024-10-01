@@ -113,7 +113,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
   const token = localStorage.getItem("token");
 
-  console.log(messages);
   if (messages.length > 0) {
     const lastMessage = document.getElementById(
       `${messages[messages.length - 1]._id}--${new Date(
@@ -207,7 +206,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           headers: { authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          console.log(res.data.data);
           setLoadMessages(false);
           setMessages(res.data.data);
           props.setUpdateChatRoomsData(
@@ -444,7 +442,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               props.chatRoomUserProfile ? "w-[44.8%]" : "w-[74.4%]"
             }  ${
               isScrolling ? "top-[6.7rem]" : "top-[3rem]"
-            } transition-all ease-in-out duration-200  z-10`}
+            } transition-all ease-in-out duration-200  z-[2]`}
           >
             <p
               id="scrolling-date"
