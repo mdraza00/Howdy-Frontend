@@ -60,7 +60,7 @@ function Header(props: propsType) {
         >
           <img
             src={`${baseURL.baseUrl}/${props.profilePhoto}`}
-            className={`object-cover ${styles["user-header-profile-photo"]}`}
+            className={`object-cover h-[2.3rem] rounded-full`}
           />
           <h2
             className={`${styles["user-header-username-greetings-h2"]} text-white`}

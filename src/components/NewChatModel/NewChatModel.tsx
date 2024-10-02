@@ -134,7 +134,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
               >
                 <img
                   src={`${baseURL.baseUrl}/${userData.profilePhotoAddress}`}
-                  className="border-2 border-black w-12 h-12 object-cover rounded-full"
+                  className="w-12 h-12 object-cover rounded-full"
                 />
                 <p>{userData.username}</p>
               </div>

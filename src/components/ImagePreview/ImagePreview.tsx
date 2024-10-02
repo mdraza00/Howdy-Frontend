@@ -47,7 +47,7 @@ function ImagePreview(props: PropsWithChildren<propsType>) {
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;
-    props.setCrop(centerAspectCrop(width, height, 4 / 3));
+    props.setCrop(centerAspectCrop(width, height, 1));
   }
 
   async function onDownloadCropClick() {
@@ -126,8 +126,7 @@ function ImagePreview(props: PropsWithChildren<propsType>) {
               crop={props.crop}
               onChange={(_, percentCrop) => props.setCrop(percentCrop)}
               onComplete={(c) => setCompletedCrop(c)}
-              aspect={4 / 3}
-              // minWidth={400}
+              aspect={1}
               minHeight={100}
               // circularCrop
             >

@@ -236,7 +236,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
             >
               <img
                 src={`${BaseURL.baseUrl}/${userData.profilePhotoAddress}`}
-                className="w-12 h-12 object-cover rounded-full"
+                className="object-cover w-12 rounded-full"
               />
               <p>{userData.username}</p>
             </div>

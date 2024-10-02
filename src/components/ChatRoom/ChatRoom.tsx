@@ -114,12 +114,11 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
         props.setChatRoomUserProfile(props.userId, props.id, false);
       }}
     >
-      <div className="w-12 h-10 overflow-hidden rounded-full flex items-center justify-center">
-        <img
-          className="object-scale-down scale-150"
-          src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
-        />
-      </div>
+      <img
+        className="object-cover h-12 rounded-full"
+        src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
+      />
+
       <div className="flex flex-col w-full">
         <p className="w-full flex justify-between">
           {userData?.name}
