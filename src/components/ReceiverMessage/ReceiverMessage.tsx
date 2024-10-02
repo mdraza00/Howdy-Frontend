@@ -1,10 +1,12 @@
 import { PropsWithChildren, useState } from "react";
-import downArrowHead from "/icons/down-arrow-head.png";
+import { MdKeyboardArrowDown } from "react-icons/md";
+
 type propsType = {
   time: string;
   createdAt: string;
   messageId: string;
   isSelectMessages: boolean;
+  setShowDeletePopupMenu: (a: boolean) => void;
   setSelectedMessagesData: (
     messageId: string,
     isSelected: boolean,
@@ -22,8 +24,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
         const rect = messagePopupElement.getBoundingClientRect();
 
         if (rect.bottom - window.innerHeight > 0) {
-          messagePopupElement.style.top = "-850%";
-          // messagePopupElement.scrollIntoView();
+          messagePopupElement.style.top = "-19rem";
         }
       }
     }, 0);
@@ -56,25 +57,38 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
               id="message-popup-container"
               className="absolute top-[50%] left-[80%] py-2 bg-white z-[60] shadow-2xl"
             >
-              <div className="hover:bg-black/5 px-3 py-2 w-40">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 cursor-pointer">
                 Message info
               </div>
-              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                 Reply
               </div>
-              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                 React
               </div>
-              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                 Forward
               </div>
-              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                 Pin
               </div>
-              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                 Star
               </div>
-              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+              <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
+                Report
+              </div>
+              <div
+                className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer"
+                onClick={() => {
+                  props.setSelectedMessagesData(
+                    `${props.messageId}--receive`,
+                    true,
+                    props.createdAt
+                  );
+                  props.setShowDeletePopupMenu(true);
+                }}
+              >
                 Delete
               </div>
             </div>
@@ -97,12 +111,16 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
               </div>
             )}
             <span
-              className={`absolute right-1 top-[0.5%] invisible group-hover:visible hover:bg-black/10 rounded-sm active:bg-white transition-all ease-in-out`}
+              className={`absolute bg-gradient-to-tr from-transparent  via-white to-white z-10 h-full w-[40%] top-[1px] left-[60%] ${
+                messagePopup ? "visible" : "invisible"
+              } group-hover:visible  rounded-md transition-all ease-in-out cursor-pointer`}
               onClick={() => {
                 setMessagePopup(messagePopup ? false : true);
               }}
             >
-              <img className="w-5" src={downArrowHead} />
+              <div className="flex justify-end pr-[5px]">
+                <MdKeyboardArrowDown size={25} color="grey" />
+              </div>
             </span>
             <div
               className={`${

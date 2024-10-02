@@ -6,6 +6,7 @@ import commonStyles from "../Common/Common.module.css";
 import { useNavigate } from "react-router-dom";
 import rollingIcon from "/icons/RollingIcon.svg";
 import { Button, Input } from "@material-tailwind/react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 interface response {
   status: boolean;
   data: {
@@ -13,10 +14,12 @@ interface response {
     jwt_token: string;
   };
 }
+
 function Signup() {
   const [showWarning, setShowWarning] = useState("");
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
@@ -105,9 +108,9 @@ function Signup() {
         />
       </div>
 
-      <div className={commonStyles["input-container"]}>
+      <div className={`${commonStyles["input-container"]} relative`}>
         <Input
-          type="password"
+          type={showPassword ? "text" : "password"}
           name="password"
           label="password"
           required
@@ -119,6 +122,19 @@ function Signup() {
           onPointerLeaveCapture={undefined}
           crossOrigin={undefined}
         />
+        {showPassword ? (
+          <FaEyeSlash
+            className="absolute right-2 top-1/2 translate-y-[-50%]"
+            size={22}
+            onClick={() => setShowPassword(false)}
+          />
+        ) : (
+          <FaEye
+            className="absolute right-2 top-1/2 translate-y-[-50%]"
+            size={22}
+            onClick={() => setShowPassword(true)}
+          />
+        )}
       </div>
       <div className={commonStyles["input-container"]}>
         <Button

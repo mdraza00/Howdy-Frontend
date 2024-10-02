@@ -1,10 +1,11 @@
 import { PropsWithChildren, useState } from "react";
-import downArrowHead from "/icons/down-arrow-head.png";
+import { MdKeyboardArrowDown } from "react-icons/md";
 type propsType = {
   time: string;
   createdAt: string;
   messageId: string;
   isSelectMessages: boolean;
+  setShowDeletePopupMenu: (a: boolean) => void;
   setSelectedMessagesData: (
     messageId: string,
     isSelected: boolean,
@@ -24,7 +25,6 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
 
         if (rect.bottom - window.innerHeight > 0) {
           messagePopupElement.style.top = "-19rem";
-          // messagePopupElement.scrollIntoView();
         }
       }
     }, 0);
@@ -33,7 +33,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
     <>
       {messagePopup && (
         <div
-          className="absolute w-[75vw] h-screen top-0 bg-transparent"
+          className="absolute w-[75vw] h-screen top-0 bg-transparent z-[60]"
           onClick={() => setMessagePopup(false)}
         ></div>
       )}
@@ -76,25 +76,36 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 id="message-popup-container"
                 className="absolute bg-white shadow-2xl z-[60] right-5 top-5 py-2"
               >
-                <div className="hover:bg-black/5 px-3 py-2 w-40">
+                <div className="hover:bg-black/5 px-3 py-2 w-40 cursor-pointer">
                   Message info
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                   Reply
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                   React
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                   Forward
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                   Pin
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                   Star
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out">
+                <div
+                  className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer active:bg-white"
+                  onClick={() => {
+                    console.log("delete");
+                    props.setSelectedMessagesData(
+                      `${props.messageId}--send`,
+                      true,
+                      props.createdAt
+                    );
+                    props.setShowDeletePopupMenu(true);
+                  }}
+                >
                   Delete
                 </div>
               </div>
@@ -104,10 +115,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               
             )} */}
             <span
-              className="absolute right-4 top-[5%] invisible group-hover:visible hover:bg-black/10 rounded-sm"
+              className={`absolute w-[40%] z-10 right-3 h-[80%] top-1 ${
+                messagePopup ? "visible" : "invisible"
+              } bg-gradient-to-tr from-transparent via-blue-200 to-blue-200 group-hover:visible rounded-sm cursor-pointer`}
               onClick={() => setMessagePopup(messagePopup ? false : true)}
             >
-              <img className="w-5" src={downArrowHead} />
+              <div className="flex justify-end">
+                <MdKeyboardArrowDown size={25} color="grey" />
+              </div>
             </span>
             <div>
               <p

@@ -1,10 +1,13 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "/logo/Howdy_Logo.png";
 import styles from "./Header.module.css";
 import BaseURLContext from "../../contexts/BaseURLContext";
 import commonStyles from "../Common/Common.module.css";
 import { Button } from "@material-tailwind/react";
+// import Confetti from "react-confetti";
+import ConfettiExplosion from "react-confetti-explosion";
+
 type propsType = {
   name: string;
   profilePhoto: string;
@@ -12,15 +15,36 @@ type propsType = {
 };
 function Header(props: propsType) {
   const [popUpMenu, setPopUpMenu] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
   const baseURL = useContext(BaseURLContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (showConfetti) {
+      setTimeout(() => {
+        setShowConfetti(false);
+      }, 3000);
+    }
+  }, [showConfetti]);
+
   return (
     <>
+      {showConfetti && (
+        <ConfettiExplosion
+          force={1}
+          duration={3000}
+          particleCount={500}
+          width={3000}
+        />
+      )}
       <header
         className={`${styles["header"]} ${commonStyles["flex-center"]} h-1/6 bg-blue-600 relative z-[90]`}
       >
         <div
-          className={`${styles["logo-container"]} ${commonStyles["flex-center"]}`}
+          className={`${styles["logo-container"]} ${commonStyles["flex-center"]} cursor-pointer`}
+          onClick={() => {
+            setShowConfetti(true);
+          }}
         >
           <img src={logo} className={`${styles["logo-img"]}`} />
           <h1

@@ -97,7 +97,7 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
 
   return (
     <div
-      className={`w-full flex p-2 gap-2 ${
+      className={`w-full flex items-center justify-center p-2 gap-2 ${
         styles["chatroom-contanier"]
       } border-b-2 ${
         props.id === props.activeChatRoomId && `${styles["active-chat"]}`
@@ -114,10 +114,12 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
         props.setChatRoomUserProfile(props.userId, props.id, false);
       }}
     >
-      <img
-        className="w-12 h-12 object-cover rounded-full"
-        src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
-      />
+      <div className="w-12 h-10 overflow-hidden rounded-full flex items-center justify-center">
+        <img
+          className="object-scale-down scale-150"
+          src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
+        />
+      </div>
       <div className="flex flex-col w-full">
         <p className="w-full flex justify-between">
           {userData?.name}

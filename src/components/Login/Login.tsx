@@ -5,6 +5,7 @@ import BaseURLContext from "../../contexts/BaseURLContext";
 import commonStyles from "../Common/Common.module.css";
 import rollingIcon from "/icons/RollingIcon.svg";
 import { Button, Input } from "@material-tailwind/react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 interface Response {
   status: boolean;
   data: {
@@ -20,6 +21,7 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const baseURL = useContext(BaseURLContext);
   useEffect(() => {
@@ -84,10 +86,10 @@ function Login() {
           crossOrigin={undefined}
         />
       </div>
-      <div className={commonStyles["input-container"]}>
+      <div className={`${commonStyles["input-container"]} relative`}>
         <Input
           className={``}
-          type="password"
+          type={showPassword ? "text" : "password"}
           name="password"
           label="Password"
           id="input-password"
@@ -98,6 +100,19 @@ function Login() {
           onPointerLeaveCapture={undefined}
           crossOrigin={undefined}
         />
+        {showPassword ? (
+          <FaEyeSlash
+            className="absolute right-2 top-1/2 translate-y-[-50%]"
+            size={22}
+            onClick={() => setShowPassword(false)}
+          />
+        ) : (
+          <FaEye
+            className="absolute right-2 top-1/2 translate-y-[-50%]"
+            size={22}
+            onClick={() => setShowPassword(true)}
+          />
+        )}
       </div>
       <div className={commonStyles["input-container"]}>
         <Button

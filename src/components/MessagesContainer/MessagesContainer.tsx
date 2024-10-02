@@ -22,6 +22,7 @@ import threeDotsIcon from "/three-dots-icon.png";
 import searchIcon from "/search-icon.png";
 import NoMessagesP from "../NoMessagesP/NoMessagesP";
 import { Button } from "@material-tailwind/react";
+import SendFile from "../SendFile.tsx/SendFile";
 interface getMessagesRes {
   status: boolean;
   data: {
@@ -104,6 +105,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const [deleteForEveryOne, setDeleteForEveryOne] = useState(false);
   const [deleteForMe, setDeleteForMe] = useState(false);
   const [showDeletePopupMenu, setShowDeletePopupMenu] = useState(false);
+  const [sendFile, setSendFile] = useState(false);
 
   const [selectedMessagesData, setSelectedMessagesData] = useState<
     selectedMessageData[]
@@ -215,7 +217,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     }
 
     socket.on("receieve message", (data) => {
-      console.log(data);
       const newMessage: messagesData = {
         chatRoomId: data.roomId,
         createdAt: data.createdAt,
@@ -316,13 +317,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             headers: { authorization: `Bearer ${token}` },
           }
         )
-        .then((res) => {
-          console.log(res.data.data);
+        .then(() => {
+          setTimeout(() => {
+            setLoadMessages(true);
+          }, 150);
           setSelectedMessagesData([]);
           setShowDeletePopupMenu(false);
           setIsSelectMessages(false);
           setDeleteForMe(false);
-          setLoadMessages(true);
         })
         .catch((err) => {
           console.log("error in deleting message for me. error => ", err);
@@ -469,6 +471,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     time={message.createdAt}
                     createdAt={message.createdAt}
                     messageId={message._id}
+                    setShowDeletePopupMenu={setShowDeletePopupMenu}
                     isSelectMessages={isSelectMessages}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
                   >
@@ -488,6 +491,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     createdAt={message.createdAt}
                     messageId={message._id}
                     isSelectMessages={isSelectMessages}
+                    setShowDeletePopupMenu={setShowDeletePopupMenu}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
                   >
                     {message.deleteForEveryOne === 0 ? (
@@ -525,29 +529,34 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             })}
         </div>
         {/* send-messages-container */}
-        <div>
+        <div className="relative">
           {!isSelectMessages && (
-            <form
-              className={`h-[6.2vh] flex items-center bg-slate-200`}
-              onSubmit={sendMessageBtnHandler}
-            >
-              <input
-                id="message-input"
-                type="text"
-                className="w-full rounded-sm px-2 mx-2 focus:outline-none text-xl"
-                placeholder="message"
-                ref={inputRef}
-                // value={messageInput}
-                // onChange={(e) => setMessageInput(e.target.value)}
-              />
+            <>
+              <SendFile sendFile={sendFile} setSendFile={setSendFile} />
+              <div className="h-[6.2vh] flex bg-blue-gray-50 items-center justify-end px-2 z-[72] relative">
+                <form
+                  className={`w-[96%] flex items-center  `}
+                  onSubmit={sendMessageBtnHandler}
+                >
+                  <input
+                    id="message-input"
+                    type="text"
+                    className="w-full rounded-sm px-2 py-1 mx-2 focus:outline-none text-xl"
+                    placeholder="Type a message"
+                    ref={inputRef}
+                    // value={messageInput}
+                    // onChange={(e) => setMessageInput(e.target.value)}
+                  />
 
-              <button
-                type="submit"
-                className={`w-fit flex justify-center ${styles["send-message-btn"]}`}
-              >
-                <img className="w-6" src={sendMessageBtnIcon} />
-              </button>
-            </form>
+                  <button
+                    type="submit"
+                    className={`w-fit flex justify-center ${styles["send-message-btn"]}`}
+                  >
+                    <img className="w-6" src={sendMessageBtnIcon} />
+                  </button>
+                </form>
+              </div>
+            </>
           )}
           {isSelectMessages && (
             <div className="h-[6.3vh] flex items-center px-5 justify-between">
@@ -573,9 +582,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                       : "opacity-15"
                   } `}
                   disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {
-                    console.log("apply star on message ", selectedMessagesData);
-                  }}
+                  onClick={() => {}}
                 >
                   <img src={starIcon} className="w-6 cursor" />
                 </button>
@@ -588,8 +595,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                   disabled={!(selectedMessagesData.length > 0)}
                   onClick={() => {
                     setShowDeletePopupMenu(true);
-                    console.log();
-                    // setDeleteSelectedMessages(true);
                   }}
                 >
                   <img src={dustbinIcon} className="w-6 cursor-pointer" />
@@ -601,9 +606,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                       : "opacity-15"
                   } `}
                   disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {
-                    console.log("forward", selectedMessagesData);
-                  }}
+                  onClick={() => {}}
                 >
                   <img src={forwardIcon} className="w-6 cursor-pointer" />
                 </button>
@@ -614,9 +617,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                       : "opacity-15"
                   } `}
                   disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {
-                    console.log("download");
-                  }}
+                  onClick={() => {}}
                 >
                   <img src={downloadIcon} className="w-6 cursor-pointer" />
                 </button>
