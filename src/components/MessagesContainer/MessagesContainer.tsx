@@ -22,7 +22,7 @@ import threeDotsIcon from "/three-dots-icon.png";
 import searchIcon from "/search-icon.png";
 import NoMessagesP from "../NoMessagesP/NoMessagesP";
 import { Button } from "@material-tailwind/react";
-import SendFile from "../SendFile.tsx/SendFile";
+import SendFile from "../SendFile/SendFile";
 interface getMessagesRes {
   status: boolean;
   data: {
