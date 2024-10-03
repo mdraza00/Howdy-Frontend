@@ -42,6 +42,7 @@ function Home() {
   });
   const [isUserDataUpdated, setIsUserDataUpdated] = useState(false);
   const [showNewChatModel, setShowNewChatModel] = useState(false);
+  const [loadMessages, setLoadMessages] = useState(false);
   const [showUserProfileModel, setShowUserProfileModel] = useState(false);
   const [chatRoomUserProfile, setChatRoomUserProfile] = useState({
     isChatRoomUserProfile: false,
@@ -137,6 +138,7 @@ function Home() {
           setActiveChatRoomId={setActiveChatRoomId}
           setUpdateChatRoomsData={setUpdateChatRoomsData}
           setShowMessagesContainer={displayMessagesContainer}
+          setLoadMessages={setLoadMessages}
         />
       )}
 
@@ -164,6 +166,7 @@ function Home() {
             activeChatRoomId={activeChatRoomId}
             setActiveChatRoomId={setActiveChatRoomId}
             setShowMessagesContainer={displayMessagesContainer}
+            setLoadMessages={setLoadMessages}
           />
           {!!showMessagesContainer && (
             <MessagesContainer
@@ -177,6 +180,8 @@ function Home() {
               updateChatRoomsData={updateChatRoomsData}
               setUpdateChatRoomsData={setUpdateChatRoomsData}
               setShowMessagesContainer={displayMessagesContainer}
+              loadMessages={loadMessages}
+              setLoadMessages={setLoadMessages}
             />
           )}
           {chatRoomUserProfile.isChatRoomUserProfile && (

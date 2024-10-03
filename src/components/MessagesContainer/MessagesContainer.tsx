@@ -23,37 +23,64 @@ import searchIcon from "/search-icon.png";
 import NoMessagesP from "../NoMessagesP/NoMessagesP";
 import { Button } from "@material-tailwind/react";
 import SendFile from "../SendFile/SendFile";
+import { MessageType } from "../../enums/message";
+
+/* status: boolean;
+  message: {
+    chatRoomId: string;
+    senderId: string;
+    messageType: MessageType;
+    text: string;
+    image: { name: string; address: string } | null;
+    video: { name: string; address: string } | null;
+    visibleTo: string[];
+    deletedFor: string[];
+    _id: string;
+    deleteForEveryOne: number;
+    createdAt: string;
+    updatedAt: string;
+  }; */
 interface getMessagesRes {
   status: boolean;
   data: {
     chatRoomId: string;
-    createdAt: string;
     senderId: string;
+    messageType: MessageType;
     text: string;
-    deleteForEveryOne: number;
-    deletedFor: string[];
+    image: { name: string; address: string } | null;
+    video: { name: string; address: string } | null;
     visibleTo: string[];
-    updatedAt: string;
+    deletedFor: string[];
     _id: string;
+    deleteForEveryOne: number;
+    createdAt: string;
+    updatedAt: string;
   }[];
 }
 interface messagesData {
   chatRoomId: string;
-  createdAt: string;
   senderId: string;
+  messageType: MessageType;
+  text: string;
+  image: { name: string; address: string } | null;
+  video: { name: string; address: string } | null;
   visibleTo: string[];
   deletedFor: string[];
-  text: string;
-  deleteForEveryOne: number;
-  updatedAt: string;
   _id: string;
+  deleteForEveryOne: number;
+  createdAt: string;
+  updatedAt: string;
 }
+
 interface storeMessageRes {
   status: boolean;
   message: {
     chatRoomId: string;
     senderId: string;
+    messageType: MessageType;
     text: string;
+    image: { name: string; address: string } | null;
+    video: { name: string; address: string } | null;
     visibleTo: string[];
     deletedFor: string[];
     _id: string;
@@ -68,6 +95,8 @@ type propsType = {
   chatRoomId: string;
   updateChatRoomsData: boolean;
   setUpdateChatRoomsData: (a: boolean) => void;
+  setLoadMessages: (a: boolean) => void;
+  loadMessages: boolean;
   setShowMessagesContainer: (
     chatRoomId: string,
     userName: string,
@@ -93,7 +122,6 @@ interface selectedMessageData {
 }
 
 function MessagesContainer(props: PropsWithChildren<propsType>) {
-  const [loadMessages, setLoadMessages] = useState(true);
   const [messages, setMessages] = useState<messagesData[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -201,14 +229,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   }
 
   useEffect(() => {
-    if (loadMessages) {
+    if (props.loadMessages) {
       const url = `${baseURL.baseUrl}/message/get/${props.chatRoomId}`;
       axios
         .get<getMessagesRes>(url, {
           headers: { authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          setLoadMessages(false);
+          props.setLoadMessages(false);
           setMessages(res.data.data);
           props.setUpdateChatRoomsData(
             props.updateChatRoomsData ? false : true
@@ -222,6 +250,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
         senderId: data.senderId,
+        messageType: data.type,
+        image: data.image,
+        video: data.video,
         text: data.message,
         deleteForEveryOne: data.deleteForEveryOne,
         visibleTo: data.visibleTo,
@@ -232,7 +263,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     });
 
     socket.on("messages-deleted-for-everyone", () => {
-      setLoadMessages(true);
+      props.setLoadMessages(true);
     });
 
     if (isChatRoomDeleted) {
@@ -294,7 +325,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           socket.emit("messages-deleted-for-everyone", {
             roomId: props.chatRoomId,
           });
-          setLoadMessages(true);
+          props.setLoadMessages(true);
           setSelectedMessagesData([]);
           setShowDeletePopupMenu(false);
           setIsSelectMessages(false);
@@ -319,7 +350,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         )
         .then(() => {
           setTimeout(() => {
-            setLoadMessages(true);
+            props.setLoadMessages(true);
           }, 150);
           setSelectedMessagesData([]);
           setShowDeletePopupMenu(false);
@@ -341,7 +372,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     deleteForMe,
     isChatRoomDeleted,
     isChatRoomMessagesCleared,
-    loadMessages,
     props,
     props.chatRoomId,
     selectedMessagesData,
@@ -351,7 +381,8 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const storeMessagesInDB = (
     message: string,
     chatRoomId: string,
-    senderId: string
+    senderId: string,
+    messageType: MessageType
   ) => {
     const url = `${baseURL.baseUrl}/message/save`;
     axios
@@ -361,22 +392,28 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           chatRoomId: chatRoomId,
           senderId: senderId,
           text: message,
+          messageType: messageType,
         },
         { headers: { authorization: `Bearer ${token}` } }
       )
       .then((res) => {
-        socket.emit("sent message", {
-          _id: res.data.message._id,
-          roomId: res.data.message.chatRoomId,
-          message: res.data.message.text,
-          lastMessageDate: res.data.message.createdAt,
-          createdAt: res.data.message.createdAt,
-          updatedAt: res.data.message.updatedAt,
-          senderId: res.data.message.senderId,
-          visibleTo: res.data.message.visibleTo,
-          deletedFor: res.data.message.deletedFor,
-          deleteForEveryOne: res.data.message.deleteForEveryOne,
-        });
+        if (res.data.message.messageType === MessageType.TEXT) {
+          socket.emit("sent message", {
+            _id: res.data.message._id,
+            roomId: res.data.message.chatRoomId,
+            messageType: MessageType.TEXT,
+            image: null,
+            video: null,
+            message: res.data.message.text,
+            lastMessageDate: res.data.message.createdAt,
+            createdAt: res.data.message.createdAt,
+            updatedAt: res.data.message.updatedAt,
+            senderId: res.data.message.senderId,
+            visibleTo: res.data.message.visibleTo,
+            deletedFor: res.data.message.deletedFor,
+            deleteForEveryOne: res.data.message.deleteForEveryOne,
+          });
+        }
       })
       .catch((err) => {
         console.log("error in storing message. error => ", err);
@@ -388,7 +425,13 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     const messageInput = inputRef.current?.value;
     if (messageInput && messageInput.length > 0) {
       const senderId = props.userId;
-      if (senderId) storeMessagesInDB(messageInput, props.chatRoomId, senderId);
+      if (senderId)
+        storeMessagesInDB(
+          messageInput,
+          props.chatRoomId,
+          senderId,
+          MessageType.TEXT
+        );
       if (inputRef.current) inputRef.current.value = "";
       setIsChatRoomMessagesCleared(false);
     }

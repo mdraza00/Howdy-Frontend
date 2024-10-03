@@ -10,6 +10,7 @@ type propsType = {
   setNewChatModel: (a: boolean) => void;
   updateChatRoomsData: boolean;
   setUpdateChatRoomsData: (a: boolean) => void;
+  setLoadMessages: (a: boolean) => void;
   setShowMessagesContainer: (
     chatRoomId: string,
     userName: string,
@@ -183,6 +184,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
                 members={chatRoom.members}
                 activeChatRoomId={props.activeChatRoomId}
                 setShowMessagesContainer={props.setShowMessagesContainer}
+                setLoadMessages={props.setLoadMessages}
                 setActiveChatRoomId={props.setActiveChatRoomId}
                 setChatRoomUserProfile={props.setChatRoomUserProfile}
               />
@@ -222,6 +224,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
                       senderId,
                       recipientId
                     );
+                    props.setLoadMessages(true);
                     props.setNewChatModel(false);
                   })
                   .catch((err) => {

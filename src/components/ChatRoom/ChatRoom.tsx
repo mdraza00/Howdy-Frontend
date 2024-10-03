@@ -10,6 +10,7 @@ type propsType = {
   lastMessage: string;
   lastMessageDate: string;
   lastMessageVisibleTo: string[];
+  setLoadMessages: (a: boolean) => void;
   setShowMessagesContainer: (
     chatRoomId: string,
     userName: string,
@@ -111,6 +112,7 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
           userId,
           recipientId
         );
+        props.setLoadMessages(true);
         props.setChatRoomUserProfile(props.userId, props.id, false);
       }}
     >

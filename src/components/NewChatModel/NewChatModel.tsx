@@ -11,6 +11,7 @@ type propsType = {
   setNewChatModel: (a: boolean) => void;
   setUpdateChatRoomsData: (a: boolean) => void;
   updateChatRoomsData: boolean;
+  setLoadMessages: (a: boolean) => void;
   setShowMessagesContainer: (
     chatRoomId: string,
     userName: string,
@@ -182,6 +183,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
                       senderId ? senderId : "",
                       recipientId
                     );
+                    props.setLoadMessages(true);
                     props.setNewChatModel(false);
                   })
                   .catch((err) => {

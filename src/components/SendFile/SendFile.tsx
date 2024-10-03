@@ -1,10 +1,11 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { FaPlus, FaFileAlt } from "react-icons/fa";
 import { FaFileVideo } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
 import { IoMdPhotos } from "react-icons/io";
 import { FaPollH } from "react-icons/fa";
 import { PiStickerFill } from "react-icons/pi";
+import SendImage from "../SendImage/SendImage";
 
 type props = {
   sendFile: boolean;
@@ -12,6 +13,7 @@ type props = {
 };
 
 export default function SendFile(props: PropsWithChildren<props>) {
+  const [sendPhotos, setSendPhotos] = useState(false);
   return (
     <>
       {props.sendFile && (
@@ -21,27 +23,35 @@ export default function SendFile(props: PropsWithChildren<props>) {
         ></div>
       )}
 
+      <SendImage sendPhotos={sendPhotos} setSendPhotos={setSendPhotos} />
+
       <div
         className={`transition-all ease-in-out duration-[390ms] fixed left-[25.45%] z-[71] ${
           props.sendFile ? `bottom-[3.2rem]` : "bottom-[-900px]"
         } bg-white shadow-xl py-2 px-3 rounded-xl `}
       >
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
           <FaFileAlt size={19} color="purple" /> <span>Document</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div
+          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
+          onClick={() => {
+            setSendPhotos(true);
+            props.setSendFile(false);
+          }}
+        >
           <IoMdPhotos size={19} color="blue" /> <span>Photos</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
           <FaFileVideo size={19} color="red" /> <span>Videos</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
           <FaCamera size={19} color="orange" /> <span>Camera</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
           <FaPollH size={19} color="brown" /> <span>Poll</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
           <PiStickerFill size={19} color="purple" /> <span>New sticker</span>
         </div>
       </div>
