@@ -1,7 +1,14 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useContext, useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
-
+import BaseURLContext from "../../contexts/BaseURLContext";
+import { MessageType } from "../../enums/message";
+import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
 type propsType = {
+  deleteForEveryOne: number;
+  messageType: MessageType;
+  text: string;
+  image: { name: string; address: string; caption: string } | null;
+  video: { name: string; address: string; caption: string } | null;
   time: string;
   createdAt: string;
   messageId: string;
@@ -14,6 +21,7 @@ type propsType = {
   ) => void;
 };
 function ReceiverMessage(props: PropsWithChildren<propsType>) {
+  const BaseUrlContext = useContext(BaseURLContext);
   const [messagePopup, setMessagePopup] = useState(false);
   if (messagePopup) {
     setTimeout(() => {
@@ -127,7 +135,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 props.isSelectMessages ? "flex items-center gap-2" : ""
               }`}
             >
-              <p
+              <div
                 id={
                   props.messageId +
                   "--" +
@@ -135,19 +143,42 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 }
                 className={`message-p flex items-center w-fit p-1 ${
                   props.isSelectMessages ? "ml-11" : "ml-3"
-                }  rounded-md rounded-tl-none my-1 bg-white shadow-lg border-2 select-none`}
+                }  rounded-md rounded-tl-none my-1 bg-white shadow-lg border-2 select-none ${
+                  props.messageType === MessageType.TEXT
+                    ? "pr-[4.25rem]"
+                    : "pb-7"
+                }`}
               >
-                {props.children}
-                <span className="text-slate-500 text-sm ml-1">
-                  <sub>
-                    {" "}
-                    {`${new Date(props.time).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}`}
-                  </sub>
+                {props.deleteForEveryOne === 0 ? (
+                  <>
+                    {props.messageType === MessageType.TEXT && (
+                      <span>{props.text}</span>
+                    )}
+                    {props.messageType === MessageType.IMAGE && props.image && (
+                      <div>
+                        <img
+                          className="h-60"
+                          src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
+                        />
+                        <p>{props.image.caption}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-gray-700 flex items-center gap-1">
+                    <img className="size-4" src={deleteForEveryOneIcon} />
+                    {props.text}
+                  </span>
+                )}
+                <span
+                  className={`absolute bottom-[0.4rem] right-[0.59rem] text-blue-gray-800 text-xs ml-1`}
+                >
+                  {`${new Date(props.time).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}`}
                 </span>
-              </p>
+              </div>
             </div>
           </div>
         </div>

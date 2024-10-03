@@ -14,7 +14,6 @@ import starIcon from "/icons/star.png";
 import dustbinIcon from "/icons/dustbin-black.png";
 import forwardIcon from "/icons/forward.png";
 import downloadIcon from "/icons/download.png";
-import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
 import styles from "./MessagesContainer.module.css";
 import SenderMessage from "../SenderMessage/SenderMessage";
 import ReceiverMessage from "../ReceiverMessage/ReceiverMessage";
@@ -22,24 +21,9 @@ import threeDotsIcon from "/three-dots-icon.png";
 import searchIcon from "/search-icon.png";
 import NoMessagesP from "../NoMessagesP/NoMessagesP";
 import { Button } from "@material-tailwind/react";
-import SendFile from "../SendFile/SendFile";
+import SendMultiMedia from "../SendMultiMedia/SendMultiMedia";
 import { MessageType } from "../../enums/message";
 
-/* status: boolean;
-  message: {
-    chatRoomId: string;
-    senderId: string;
-    messageType: MessageType;
-    text: string;
-    image: { name: string; address: string } | null;
-    video: { name: string; address: string } | null;
-    visibleTo: string[];
-    deletedFor: string[];
-    _id: string;
-    deleteForEveryOne: number;
-    createdAt: string;
-    updatedAt: string;
-  }; */
 interface getMessagesRes {
   status: boolean;
   data: {
@@ -47,8 +31,8 @@ interface getMessagesRes {
     senderId: string;
     messageType: MessageType;
     text: string;
-    image: { name: string; address: string } | null;
-    video: { name: string; address: string } | null;
+    image: { name: string; address: string; caption: string } | null;
+    video: { name: string; address: string; caption: string } | null;
     visibleTo: string[];
     deletedFor: string[];
     _id: string;
@@ -62,8 +46,8 @@ interface messagesData {
   senderId: string;
   messageType: MessageType;
   text: string;
-  image: { name: string; address: string } | null;
-  video: { name: string; address: string } | null;
+  image: { name: string; address: string; caption: string } | null;
+  video: { name: string; address: string; caption: string } | null;
   visibleTo: string[];
   deletedFor: string[];
   _id: string;
@@ -79,8 +63,8 @@ interface storeMessageRes {
     senderId: string;
     messageType: MessageType;
     text: string;
-    image: { name: string; address: string } | null;
-    video: { name: string; address: string } | null;
+    image: { name: string; address: string; caption: string } | null;
+    video: { name: string; address: string; caption: string } | null;
     visibleTo: string[];
     deletedFor: string[];
     _id: string;
@@ -121,6 +105,25 @@ interface selectedMessageData {
   createdAtTime: string;
 }
 
+interface ISendMessage {
+  isSendMessage: boolean;
+  data: {
+    _id: string;
+    roomId: string;
+    messageType: MessageType;
+    image: { name: string; address: string; caption: string } | null;
+    video: { name: string; address: string; caption: string } | null;
+    message: string;
+    lastMessageDate: string;
+    createdAt: string;
+    updatedAt: string;
+    senderId: string;
+    visibleTo: string[];
+    deletedFor: string[];
+    deleteForEveryOne: number;
+  } | null;
+}
+
 function MessagesContainer(props: PropsWithChildren<propsType>) {
   const [messages, setMessages] = useState<messagesData[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -133,8 +136,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const [deleteForEveryOne, setDeleteForEveryOne] = useState(false);
   const [deleteForMe, setDeleteForMe] = useState(false);
   const [showDeletePopupMenu, setShowDeletePopupMenu] = useState(false);
-  const [sendFile, setSendFile] = useState(false);
-
+  const [sendMultiMedia, setSendMultiMedia] = useState(false);
+  const [scrollToView, setScrollToView] = useState(false);
+  const [sendMessage, setSendMessage] = useState<ISendMessage>({
+    isSendMessage: false,
+    data: null,
+  });
   const [selectedMessagesData, setSelectedMessagesData] = useState<
     selectedMessageData[]
   >([]);
@@ -142,15 +149,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const baseURL = useContext(BaseURLContext);
 
   const token = localStorage.getItem("token");
-
-  if (messages.length > 0) {
-    const lastMessage = document.getElementById(
-      `${messages[messages.length - 1]._id}--${new Date(
-        messages[messages.length - 1].createdAt
-      ).toLocaleDateString()}`
-    );
-    if (lastMessage) lastMessage.scrollIntoView();
-  }
 
   let date = new Date(13, 7, 2003);
 
@@ -229,6 +227,17 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   }
 
   useEffect(() => {
+    if (scrollToView) {
+      if (messages.length > 0) {
+        const lastMessage = document.getElementById(
+          `${messages[messages.length - 1]._id}--${new Date(
+            messages[messages.length - 1].createdAt
+          ).toLocaleDateString()}`
+        );
+        if (lastMessage) lastMessage.scrollIntoView();
+      }
+      setScrollToView(false);
+    }
     if (props.loadMessages) {
       const url = `${baseURL.baseUrl}/message/get/${props.chatRoomId}`;
       axios
@@ -237,7 +246,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         })
         .then((res) => {
           props.setLoadMessages(false);
+          setSendMultiMedia(false);
           setMessages(res.data.data);
+          setScrollToView(true);
           props.setUpdateChatRoomsData(
             props.updateChatRoomsData ? false : true
           );
@@ -246,25 +257,45 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
     socket.on("receieve message", (data) => {
       const newMessage: messagesData = {
+        _id: data._id,
         chatRoomId: data.roomId,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-        senderId: data.senderId,
-        messageType: data.type,
+        messageType: data.messageType,
         image: data.image,
         video: data.video,
         text: data.message,
-        deleteForEveryOne: data.deleteForEveryOne,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+        senderId: data.senderId,
         visibleTo: data.visibleTo,
         deletedFor: data.deletedFor,
-        _id: data._id,
+        deleteForEveryOne: data.deleteForEveryOne,
       };
       setMessages((msgsArray) => [...msgsArray, newMessage]);
+      setScrollToView(true);
     });
 
     socket.on("messages-deleted-for-everyone", () => {
       props.setLoadMessages(true);
     });
+
+    if (sendMessage.isSendMessage && sendMessage.data) {
+      socket.emit("sent message", {
+        _id: sendMessage.data._id,
+        roomId: sendMessage.data.roomId,
+        messageType: sendMessage.data.messageType,
+        image: sendMessage.data.image,
+        video: sendMessage.data.video,
+        message: sendMessage.data.message,
+        lastMessageDate: sendMessage.data.createdAt,
+        createdAt: sendMessage.data.createdAt,
+        updatedAt: sendMessage.data.updatedAt,
+        senderId: sendMessage.data.senderId,
+        visibleTo: sendMessage.data.visibleTo,
+        deletedFor: sendMessage.data.deletedFor,
+        deleteForEveryOne: sendMessage.data.deleteForEveryOne,
+      });
+      setSendMessage({ isSendMessage: false, data: null });
+    }
 
     if (isChatRoomDeleted) {
       const chatroomId = props.chatRoomId;
@@ -365,6 +396,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     return () => {
       socket.off("receieve message");
       socket.off("messages-deleted-for-everyone");
+      socket.off("sent message");
     };
   }, [
     baseURL.baseUrl,
@@ -372,9 +404,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     deleteForMe,
     isChatRoomDeleted,
     isChatRoomMessagesCleared,
+    messages,
     props,
     props.chatRoomId,
+    scrollToView,
     selectedMessagesData,
+    sendMessage,
     token,
   ]);
 
@@ -397,13 +432,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         { headers: { authorization: `Bearer ${token}` } }
       )
       .then((res) => {
-        if (res.data.message.messageType === MessageType.TEXT) {
-          socket.emit("sent message", {
+        setSendMessage({
+          isSendMessage: true,
+          data: {
             _id: res.data.message._id,
             roomId: res.data.message.chatRoomId,
             messageType: MessageType.TEXT,
-            image: null,
-            video: null,
+            image: res.data.message.image,
+            video: res.data.message.video,
             message: res.data.message.text,
             lastMessageDate: res.data.message.createdAt,
             createdAt: res.data.message.createdAt,
@@ -412,8 +448,8 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             visibleTo: res.data.message.visibleTo,
             deletedFor: res.data.message.deletedFor,
             deleteForEveryOne: res.data.message.deleteForEveryOne,
-          });
-        }
+          },
+        });
       })
       .catch((err) => {
         console.log("error in storing message. error => ", err);
@@ -507,9 +543,15 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 !message.deletedFor.includes(props.userId)
             )
             .map((message) => {
+              console.log(message);
               const msg =
                 message.senderId === props.userId ? (
                   <SenderMessage
+                    messageType={message.messageType}
+                    image={message.image}
+                    text={message.text}
+                    video={message.video}
+                    deleteForEveryOne={message.deleteForEveryOne}
                     key={message._id}
                     time={message.createdAt}
                     createdAt={message.createdAt}
@@ -517,18 +559,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     setShowDeletePopupMenu={setShowDeletePopupMenu}
                     isSelectMessages={isSelectMessages}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
-                  >
-                    {message.deleteForEveryOne === 0 ? (
-                      <span>{message.text}</span>
-                    ) : (
-                      <span className="text-gray-700 flex items-center gap-1">
-                        <img className="size-4" src={deleteForEveryOneIcon} />
-                        {message.text}
-                      </span>
-                    )}
-                  </SenderMessage>
+                  />
                 ) : (
                   <ReceiverMessage
+                    messageType={message.messageType}
+                    image={message.image}
+                    text={message.text}
+                    video={message.video}
+                    deleteForEveryOne={message.deleteForEveryOne}
                     key={message._id}
                     time={message.createdAt}
                     createdAt={message.createdAt}
@@ -536,16 +574,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     isSelectMessages={isSelectMessages}
                     setShowDeletePopupMenu={setShowDeletePopupMenu}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
-                  >
-                    {message.deleteForEveryOne === 0 ? (
-                      <span>{message.text}</span>
-                    ) : (
-                      <span className="text-gray-700 flex items-center gap-1">
-                        <img className="size-4" src={deleteForEveryOneIcon} />
-                        {message.text}
-                      </span>
-                    )}
-                  </ReceiverMessage>
+                  />
                 );
               let dateJSX = <></>;
               if (
@@ -575,7 +604,13 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         <div className="relative">
           {!isSelectMessages && (
             <>
-              <SendFile sendFile={sendFile} setSendFile={setSendFile} />
+              <SendMultiMedia
+                chatRoomId={props.chatRoomId}
+                senderId={props.userId}
+                setSendMessage={setSendMessage}
+                sendMultiMedia={sendMultiMedia}
+                setSendMultiMedia={setSendMultiMedia}
+              />
               <div className="h-[6.2vh] flex bg-blue-gray-50 items-center justify-end px-2 z-[72] relative">
                 <form
                   className={`w-[96%] flex items-center  `}

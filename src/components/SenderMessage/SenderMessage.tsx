@@ -1,6 +1,14 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useContext, useState } from "react";
+import BaseURLContext from "../../contexts/BaseURLContext";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
+import { MessageType } from "../../enums/message";
 type propsType = {
+  deleteForEveryOne: number;
+  messageType: MessageType;
+  text: string;
+  image: { name: string; address: string; caption: string } | null;
+  video: { name: string; address: string; caption: string } | null;
   time: string;
   createdAt: string;
   messageId: string;
@@ -14,6 +22,7 @@ type propsType = {
 };
 
 function SenderMessage(props: PropsWithChildren<propsType>) {
+  const BaseUrlContext = useContext(BaseURLContext);
   const [messagePopup, setMessagePopup] = useState(false);
   if (messagePopup) {
     setTimeout(() => {
@@ -125,25 +134,49 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               </div>
             </span>
             <div>
-              <p
+              <div
                 id={
                   props.messageId +
                   "--" +
                   new Date(props.createdAt).toLocaleDateString()
                 }
-                className={`message-p flex items-center p-2 mr-3 rounded-md rounded-tr-none my-1 bg-blue-200 shadow-lg select-none`}
+                className={`message-p relative flex items-center p-2 mr-3 rounded-md rounded-tr-none my-1 bg-blue-200 shadow-lg select-none ${
+                  props.messageType === MessageType.TEXT
+                    ? "pr-[4.25rem]"
+                    : "pb-7"
+                }`}
               >
-                {props.children}{" "}
-                <span className="text-slate-500 text-sm ml-1">
-                  <sub>
-                    {" "}
-                    {`${new Date(props.time).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}`}
-                  </sub>
+                {props.deleteForEveryOne === 0 ? (
+                  <>
+                    {props.messageType === MessageType.TEXT && (
+                      <span>{props.text}</span>
+                    )}
+                    {props.messageType === MessageType.IMAGE && props.image && (
+                      <div>
+                        <img
+                          className="h-60"
+                          src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
+                        />
+                        <p>{props.image.caption}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-gray-700 flex items-center gap-1">
+                    <img className="size-4" src={deleteForEveryOneIcon} />
+                    {props.text}
+                  </span>
+                )}
+
+                <span
+                  className={`absolute bottom-[0.4rem] right-[0.59rem] text-blue-gray-800 text-xs ml-1`}
+                >
+                  {`${new Date(props.time).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}`}
                 </span>
-              </p>
+              </div>
             </div>
           </div>
         </div>
