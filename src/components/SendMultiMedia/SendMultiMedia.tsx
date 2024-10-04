@@ -20,6 +20,7 @@ type props = {
       messageType: MessageType;
       image: { name: string; address: string; caption: string } | null;
       video: { name: string; address: string; caption: string } | null;
+      doc: { name: string; address: string; caption: string } | null;
       message: string;
       lastMessageDate: string;
       createdAt: string;
@@ -86,9 +87,6 @@ export default function SendFile(props: PropsWithChildren<props>) {
             ? "video/*"
             : ""
         }`}
-        // accept={`${multiMediaType === MessageType.IMAGE && "image/*"} ${
-        //   multiMediaType === MessageType.VIDEO && "video/*"
-        // }`}
         onChange={(e) => {
           const files = e.target.files;
           if (files && files.length > 0) {

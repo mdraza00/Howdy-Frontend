@@ -34,6 +34,7 @@ type propsType = {
       messageType: MessageType;
       image: { name: string; address: string; caption: string } | null;
       video: { name: string; address: string; caption: string } | null;
+      doc: { name: string; address: string; caption: string } | null;
       message: string;
       lastMessageDate: string;
       createdAt: string;
@@ -63,6 +64,11 @@ interface ISaveMultimediaMessageRes {
       caption: string;
       address: string;
     } | null;
+    doc: {
+      name: string;
+      caption: string;
+      address: string;
+    } | null;
     visibleTo: string[];
     deletedFor: string[];
     deleteForEveryOne: number;
@@ -81,7 +87,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
   useEffect(() => {
     if (multimediaFormSubmitted) {
       (async () => {
-        if (props.messageMultiMedia.data) {
+        if (props.messageMultiMedia.data && props.messageMultiMedia.data.type) {
           const response = await fetch(props.messageMultiMedia.data.url);
           const blob = await response.blob();
           const fileName =
@@ -99,7 +105,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
           formData.append("chatRoomId", props.chatRoomId);
           formData.append("senderId", props.senderId);
           formData.append("caption", caption);
-          formData.append("messageType", MessageType.IMAGE);
+          formData.append("messageType", props.messageMultiMedia.data.type);
           axios
             .post<ISaveMultimediaMessageRes>(
               `${baseUrl.baseUrl}/message/save/multimedia`,
@@ -124,6 +130,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
                   messageType: res.data.message.messageType,
                   image: res.data.message.image,
                   video: res.data.message.video,
+                  doc: res.data.message.doc,
                   message: res.data.message.text,
                   lastMessageDate: res.data.message.createdAt,
                   createdAt: res.data.message.createdAt,

@@ -9,6 +9,7 @@ type propsType = {
   text: string;
   image: { name: string; address: string; caption: string } | null;
   video: { name: string; address: string; caption: string } | null;
+  doc: { name: string; address: string; caption: string } | null;
   time: string;
   createdAt: string;
   messageId: string;
@@ -119,8 +120,12 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
               </div>
             )}
             <span
-              className={`absolute bg-gradient-to-tr from-transparent  via-white to-white z-10 h-full w-[40%] top-[1px] left-[60%] ${
+              className={`absolute bg-gradient-to-tr  z-10  ${
                 messagePopup ? "visible" : "invisible"
+              } ${
+                props.messageType == MessageType.TEXT
+                  ? "from-transparent  via-white to-white h-full w-[40%] top-[1px] left-[60%]"
+                  : "from-transparent from-45%  via-white to-white h-[20%] w-[20%] top-0 right-0"
               } group-hover:visible  rounded-md transition-all ease-in-out cursor-pointer`}
               onClick={() => {
                 setMessagePopup(messagePopup ? false : true);
@@ -144,9 +149,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 className={`message-p flex items-center w-fit p-1 ${
                   props.isSelectMessages ? "ml-11" : "ml-3"
                 }  rounded-md rounded-tl-none my-1 bg-white shadow-lg border-2 select-none ${
-                  props.messageType === MessageType.TEXT
-                    ? "pr-[4.25rem]"
-                    : "pb-7"
+                  props.messageType === MessageType.TEXT ? "pr-[4.25rem]" : ""
                 }`}
               >
                 {props.deleteForEveryOne === 0 ? (
@@ -155,12 +158,39 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                       <span>{props.text}</span>
                     )}
                     {props.messageType === MessageType.IMAGE && props.image && (
-                      <div>
+                      <div className="flex flex-col gap-2">
                         <img
                           className="h-60"
                           src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
                         />
-                        <p>{props.image.caption}</p>
+                        <p
+                          className={`${
+                            props.image.caption.length <= 0 && "h-3"
+                          }`}
+                        >
+                          {props.image.caption}
+                        </p>
+                      </div>
+                    )}
+                    {props.messageType === MessageType.VIDEO && props.video && (
+                      <div className="flex flex-col gap-2">
+                        <video
+                          className="h-60"
+                          src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}
+                          controls={true}
+                        />
+                        <p
+                          className={`${
+                            props.video.caption.length <= 0 && "h-3"
+                          }`}
+                        >
+                          {props.video.caption}
+                        </p>
+                      </div>
+                    )}
+                    {props.messageType === MessageType.DOC && props.doc && (
+                      <div className="flex flex-col gap-2">
+                        <div className="h-20 w-28"></div>
                       </div>
                     )}
                   </>

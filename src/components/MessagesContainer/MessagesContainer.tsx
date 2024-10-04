@@ -33,6 +33,7 @@ interface getMessagesRes {
     text: string;
     image: { name: string; address: string; caption: string } | null;
     video: { name: string; address: string; caption: string } | null;
+    doc: { name: string; address: string; caption: string } | null;
     visibleTo: string[];
     deletedFor: string[];
     _id: string;
@@ -48,6 +49,7 @@ interface messagesData {
   text: string;
   image: { name: string; address: string; caption: string } | null;
   video: { name: string; address: string; caption: string } | null;
+  doc: { name: string; address: string; caption: string } | null;
   visibleTo: string[];
   deletedFor: string[];
   _id: string;
@@ -65,6 +67,7 @@ interface storeMessageRes {
     text: string;
     image: { name: string; address: string; caption: string } | null;
     video: { name: string; address: string; caption: string } | null;
+    doc: { name: string; address: string; caption: string } | null;
     visibleTo: string[];
     deletedFor: string[];
     _id: string;
@@ -113,6 +116,7 @@ interface ISendMessage {
     messageType: MessageType;
     image: { name: string; address: string; caption: string } | null;
     video: { name: string; address: string; caption: string } | null;
+    doc: { name: string; address: string; caption: string } | null;
     message: string;
     lastMessageDate: string;
     createdAt: string;
@@ -263,6 +267,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         image: data.image,
         video: data.video,
         text: data.message,
+        doc: data.message,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
         senderId: data.senderId,
@@ -285,6 +290,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         messageType: sendMessage.data.messageType,
         image: sendMessage.data.image,
         video: sendMessage.data.video,
+        doc: sendMessage.data.doc,
         message: sendMessage.data.message,
         lastMessageDate: sendMessage.data.createdAt,
         createdAt: sendMessage.data.createdAt,
@@ -441,6 +447,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             image: res.data.message.image,
             video: res.data.message.video,
             message: res.data.message.text,
+            doc: res.data.message.doc,
             lastMessageDate: res.data.message.createdAt,
             createdAt: res.data.message.createdAt,
             updatedAt: res.data.message.updatedAt,
@@ -551,6 +558,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     image={message.image}
                     text={message.text}
                     video={message.video}
+                    doc={message.doc}
                     deleteForEveryOne={message.deleteForEveryOne}
                     key={message._id}
                     time={message.createdAt}
@@ -566,6 +574,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     image={message.image}
                     text={message.text}
                     video={message.video}
+                    doc={message.doc}
                     deleteForEveryOne={message.deleteForEveryOne}
                     key={message._id}
                     time={message.createdAt}
