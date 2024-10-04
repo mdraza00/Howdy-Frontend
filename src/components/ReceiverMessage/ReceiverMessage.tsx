@@ -3,6 +3,9 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import BaseURLContext from "../../contexts/BaseURLContext";
 import { MessageType } from "../../enums/message";
 import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
+import { TfiDownload } from "react-icons/tfi";
+import { FaFileAlt } from "react-icons/fa";
+import closeBtnIcon from "../../assets/close-btn-icon.png";
 type propsType = {
   deleteForEveryOne: number;
   messageType: MessageType;
@@ -22,8 +25,24 @@ type propsType = {
   ) => void;
 };
 function ReceiverMessage(props: PropsWithChildren<propsType>) {
+  const browserSupportedExtentions = [
+    "pdf",
+    "jpg",
+    "jpeg",
+    "png",
+    "mp4",
+    "gif",
+    "txt",
+    "svg",
+  ];
   const BaseUrlContext = useContext(BaseURLContext);
   const [messagePopup, setMessagePopup] = useState(false);
+  const [zoomImage, setZoomImage] = useState({ isZoom: false, src: "" });
+  const [fileData, setFileData] = useState({
+    isFile: false,
+    filename: "",
+    extention: "",
+  });
   if (messagePopup) {
     setTimeout(() => {
       const messagePopupElement = document.getElementById(
@@ -38,7 +57,13 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
       }
     }, 0);
   }
-
+  if (props.doc && !fileData.isFile) {
+    const filename =
+      props.doc.name.split("__")[props.doc.name.split("__").length - 1];
+    const extention =
+      props.doc.name.split(".")[props.doc.name.split(".").length - 1];
+    setFileData({ filename, extention, isFile: true });
+  }
   return (
     <>
       {messagePopup && (
@@ -46,6 +71,24 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
           className="absolute w-[75vw] h-screen top-0 z-[50]"
           onClick={() => setMessagePopup(false)}
         ></div>
+      )}
+      {zoomImage.isZoom && (
+        <>
+          <div
+            className="fixed top-0 right-0 w-screen h-screen bg-transparent black z-[100]"
+            onClick={() => setZoomImage({ isZoom: false, src: "" })}
+          ></div>
+          <div className="fixed top-[5.55vh] right-[0] w-[75%] h-[94.35%] bg-blue-gray-50 black z-[101]">
+            <div className="h-full w-full flex items-center justify-center">
+              <img
+                className="absolute w-10 top-3 right-3"
+                src={closeBtnIcon}
+                onClick={() => setZoomImage({ isZoom: false, src: "" })}
+              />
+              <img className="shadow-2xl h-[60%]" src={zoomImage.src} />
+            </div>
+          </div>
+        </>
       )}
       <div className="w-full relative">
         {props.isSelectMessages && (
@@ -162,6 +205,13 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                         <img
                           className="h-60"
                           src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
+                          onClick={() => {
+                            if (props.image)
+                              setZoomImage({
+                                isZoom: true,
+                                src: `${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`,
+                              });
+                          }}
                         />
                         <p
                           className={`${
@@ -189,8 +239,36 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                       </div>
                     )}
                     {props.messageType === MessageType.DOC && props.doc && (
-                      <div className="flex flex-col gap-2">
-                        <div className="h-20 w-28"></div>
+                      <div className={`flex flex-col gap-2`}>
+                        <div className="flex gap-5 items-center bg-black/15 py-4 px-2 rounded-md">
+                          <div className="flex items-center justify-center gap-1">
+                            <FaFileAlt size={25} className="p-1" />
+                            {fileData.filename}
+                          </div>
+                          <div className="cursor-pointer">
+                            <a
+                              href={`${BaseUrlContext.baseUrl}/${props.doc.address}/${props.doc.name}`}
+                              download={true}
+                            >
+                              {browserSupportedExtentions.includes(
+                                fileData.extention
+                              ) ? (
+                                <div className="px-3 py-1 text-sm border border-black text-black bg-transparent rounded-md cursor-pointer">
+                                  View
+                                </div>
+                              ) : (
+                                <TfiDownload
+                                  color="black"
+                                  size={28}
+                                  className="border-[1.5px] border-black p-1 rounded-full"
+                                />
+                              )}
+                            </a>
+                          </div>
+                        </div>
+                        <p className={`${!props.doc.caption && "h-2"}`}>
+                          {props.doc.caption}
+                        </p>
                       </div>
                     )}
                   </>

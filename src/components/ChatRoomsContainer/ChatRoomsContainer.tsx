@@ -99,7 +99,6 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
       // console.log(userNameInput);
     } else {
       socket.on("last message", (data) => {
-        console.log(data);
         setChatRoomsData((chatRoomsData) => {
           const updatedData = chatRoomsData.map((chatRoom) => {
             return {

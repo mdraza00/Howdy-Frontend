@@ -99,7 +99,6 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
           const multiMediaFile = new File([blob], fileName, {
             type: blob.type,
           });
-          console.log(multiMediaFile);
           const formData = new FormData();
           formData.append("multimedia", multiMediaFile);
           formData.append("chatRoomId", props.chatRoomId);

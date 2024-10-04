@@ -260,22 +260,23 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     }
 
     socket.on("receieve message", (data) => {
-      const newMessage: messagesData = {
-        _id: data._id,
-        chatRoomId: data.roomId,
-        messageType: data.messageType,
-        image: data.image,
-        video: data.video,
-        text: data.message,
-        doc: data.message,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
-        senderId: data.senderId,
-        visibleTo: data.visibleTo,
-        deletedFor: data.deletedFor,
-        deleteForEveryOne: data.deleteForEveryOne,
-      };
-      setMessages((msgsArray) => [...msgsArray, newMessage]);
+      // const newMessage: messagesData = {
+      //   _id: data._id,
+      //   chatRoomId: data.roomId,
+      //   messageType: data.messageType,
+      //   image: data.image,
+      //   video: data.video,
+      //   text: data.message,
+      //   doc: data.message,
+      //   createdAt: data.createdAt,
+      //   updatedAt: data.updatedAt,
+      //   senderId: data.senderId,
+      //   visibleTo: data.visibleTo,
+      //   deletedFor: data.deletedFor,
+      //   deleteForEveryOne: data.deleteForEveryOne,
+      // };
+      // setMessages((msgsArray) => [...msgsArray, newMessage]);
+      props.setLoadMessages(true);
       setScrollToView(true);
     });
 
@@ -550,7 +551,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 !message.deletedFor.includes(props.userId)
             )
             .map((message) => {
-              console.log(message);
               const msg =
                 message.senderId === props.userId ? (
                   <SenderMessage

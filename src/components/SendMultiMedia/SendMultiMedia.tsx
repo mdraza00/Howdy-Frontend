@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useState, useRef } from "react";
 import { FaPlus, FaFileAlt } from "react-icons/fa";
 import { FaFileVideo } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
@@ -42,7 +42,9 @@ interface IMessageMultiMedia {
 }
 
 export default function SendFile(props: PropsWithChildren<props>) {
+  const videoStream = useRef<MediaStream>();
   const [multiMediaType, setMultiMediaType] = useState<MessageType>();
+  const [cameraInput, setCameraInput] = useState(false);
   const [takeInput, setTakeInput] = useState(false);
   const [messageMultiMedia, setMessageMultiMedia] =
     useState<IMessageMultiMedia>({ isMessageMultiMedia: false, data: null });
@@ -50,15 +52,41 @@ export default function SendFile(props: PropsWithChildren<props>) {
     "multimedia-message-input"
   );
 
+  const cameraVideo = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     if (takeInput) {
       multimediaMessageInput?.click();
       setTakeInput(false);
     }
+    if (cameraInput) {
+      (async () => {
+        await navigator.mediaDevices
+          .getUserMedia({
+            video: {
+              width: { min: 640, ideal: 1280, max: 1920 },
+              height: { min: 480, ideal: 720, max: 1080 },
+              frameRate: { ideal: 30, max: 60 },
+            },
+          })
+          .then((stream) => {
+            if (cameraVideo.current) {
+              videoStream.current = stream;
+              cameraVideo.current.srcObject = videoStream.current;
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      })();
+    }
+    if (!cameraInput) {
+      if (videoStream.current)
+        videoStream.current.getTracks().forEach((stream) => stream.stop());
+    }
     return () => {
       if (multimediaMessageInput) multimediaMessageInput.nodeValue = "";
     };
-  }, [multimediaMessageInput, takeInput]);
+  }, [multimediaMessageInput, takeInput, cameraInput]);
   return (
     <>
       {props.sendMultiMedia && (
@@ -67,6 +95,57 @@ export default function SendFile(props: PropsWithChildren<props>) {
           onClick={() => props.setSendMultiMedia(false)}
         ></div>
       )}
+
+      {cameraInput && (
+        <div
+          className="fixed top-0 left-0 w-screen h-screen bg-transparent z-[100]"
+          onClick={() => {
+            setCameraInput(false);
+            if (cameraVideo.current) cameraVideo.current.nodeValue = "";
+            setMultiMediaType(undefined);
+            setMessageMultiMedia({ isMessageMultiMedia: false, data: null });
+          }}
+        ></div>
+      )}
+      <div
+        className={`fixed flex items-center justify-center gap-5 transition-all ease-in-out duration-500 ${
+          cameraInput ? "bottom-0" : "bottom-[-999px]"
+        }  right-0 w-[75%] h-[45.783rem] bg-blue-gray-50 z-[101]`}
+      >
+        <video
+          id="user-camera-video-stream"
+          className=" w-[55%]"
+          autoPlay
+          ref={cameraVideo}
+        ></video>
+        <button
+          className="p-2 rounded-full bg-transparent hover:bg-black/15"
+          onClick={() => {
+            if (videoStream.current && cameraVideo.current) {
+              const stream = videoStream.current.getVideoTracks()[0];
+              const canvas = document.createElement("canvas");
+              const { width, height } = stream.getSettings();
+              canvas.width = width || 250;
+              canvas.height = height || 250;
+
+              canvas.getContext("2d")?.drawImage(cameraVideo.current, 0, 0);
+              const image = canvas.toDataURL("image/png");
+              setMessageMultiMedia({
+                isMessageMultiMedia: true,
+                data: {
+                  url: image,
+                  filename: "camera-photo.png",
+                  type: multiMediaType,
+                },
+              });
+              videoStream.current.getTracks().forEach((stream) => stream.stop);
+              setCameraInput(false);
+            }
+          }}
+        >
+          <FaCamera size={40} />
+        </button>
+      </div>
 
       <MultiMediaPreview
         setSendMessage={props.setSendMessage}
@@ -94,7 +173,6 @@ export default function SendFile(props: PropsWithChildren<props>) {
             const reader = new FileReader();
             reader.onload = function () {
               if (reader.result) {
-                console.log(reader.result);
                 const multiMediaURL = reader.result.toString();
                 setMessageMultiMedia({
                   isMessageMultiMedia: true,
@@ -144,7 +222,13 @@ export default function SendFile(props: PropsWithChildren<props>) {
         >
           <FaFileVideo size={19} color="red" /> <span>Videos</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div
+          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
+          onClick={() => {
+            setMultiMediaType(MessageType.IMAGE);
+            setCameraInput(true);
+          }}
+        >
           <FaCamera size={19} color="orange" /> <span>Camera</span>
         </div>
         <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
