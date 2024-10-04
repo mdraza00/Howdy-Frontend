@@ -225,7 +225,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                       </div>
                     )}
                     {props.messageType === MessageType.VIDEO && props.video && (
-                      <div className="flex flex-col gap-2">
+                      <div className={`flex flex-col gap-2 `}>
                         <video
                           className="h-60"
                           src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}

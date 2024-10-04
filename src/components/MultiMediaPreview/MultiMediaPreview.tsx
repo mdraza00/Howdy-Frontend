@@ -5,8 +5,12 @@ import closeBtnIcon from "../../assets/close-btn-icon.png";
 import sendMessageBtn from "../../assets/send-message-btn-icon.png";
 import axios from "axios";
 import { MessageType } from "../../enums/message";
+import { ImessageRes } from "../../Interface/Interface";
 
 type propsType = {
+  setCloseModel: (a: boolean) => void;
+  setMultiMediaType: (a: MessageType | undefined) => void;
+  setSendMultiMedia: (a: boolean) => void;
   chatRoomId: string;
   senderId: string;
   messageMultiMedia: {
@@ -26,57 +30,8 @@ type propsType = {
     } | null;
   }) => void;
 
-  setSendMessage: (object: {
-    isSendMessage: boolean;
-    data: {
-      _id: string;
-      roomId: string;
-      messageType: MessageType;
-      image: { name: string; address: string; caption: string } | null;
-      video: { name: string; address: string; caption: string } | null;
-      doc: { name: string; address: string; caption: string } | null;
-      message: string;
-      lastMessageDate: string;
-      createdAt: string;
-      updatedAt: string;
-      senderId: string;
-      visibleTo: string[];
-      deletedFor: string[];
-      deleteForEveryOne: number;
-    } | null;
-  }) => void;
+  setSendMessage: (message: ImessageRes) => void;
 };
-
-interface ISaveMultimediaMessageRes {
-  status: boolean;
-  message: {
-    chatRoomId: string;
-    senderId: string;
-    messageType: MessageType;
-    text: string;
-    image: {
-      name: string;
-      caption: string;
-      address: string;
-    } | null;
-    video: {
-      name: string;
-      caption: string;
-      address: string;
-    } | null;
-    doc: {
-      name: string;
-      caption: string;
-      address: string;
-    } | null;
-    visibleTo: string[];
-    deletedFor: string[];
-    deleteForEveryOne: number;
-    _id: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-}
 
 export default function SendImage(props: PropsWithChildren<propsType>) {
   const token = localStorage.getItem("token");
@@ -106,7 +61,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
           formData.append("caption", caption);
           formData.append("messageType", props.messageMultiMedia.data.type);
           axios
-            .post<ISaveMultimediaMessageRes>(
+            .post<ImessageRes>(
               `${baseUrl.baseUrl}/message/save/multimedia`,
               formData,
               {
@@ -121,25 +76,25 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
                 isMessageMultiMedia: false,
                 data: null,
               });
-              props.setSendMessage({
-                isSendMessage: true,
-                data: {
-                  _id: res.data.message._id,
-                  roomId: res.data.message.chatRoomId,
-                  messageType: res.data.message.messageType,
-                  image: res.data.message.image,
-                  video: res.data.message.video,
-                  doc: res.data.message.doc,
-                  message: res.data.message.text,
-                  lastMessageDate: res.data.message.createdAt,
-                  createdAt: res.data.message.createdAt,
-                  updatedAt: res.data.message.updatedAt,
-                  senderId: res.data.message.senderId,
-                  visibleTo: res.data.message.visibleTo,
-                  deletedFor: res.data.message.deletedFor,
-                  deleteForEveryOne: res.data.message.deleteForEveryOne,
-                },
-              });
+              if (res.data.message)
+                props.setSendMessage({
+                  status: true,
+                  message: {
+                    _id: res.data.message._id,
+                    chatRoomId: res.data.message.chatRoomId,
+                    messageType: res.data.message.messageType,
+                    image: res.data.message.image,
+                    video: res.data.message.video,
+                    doc: res.data.message.doc,
+                    text: res.data.message.text,
+                    createdAt: res.data.message.createdAt,
+                    updatedAt: res.data.message.updatedAt,
+                    senderId: res.data.message.senderId,
+                    visibleTo: res.data.message.visibleTo,
+                    deletedFor: res.data.message.deletedFor,
+                    deleteForEveryOne: res.data.message.deleteForEveryOne,
+                  },
+                });
               setMultimediaFromSubmitted(false);
             })
             .catch((err) => {
@@ -163,12 +118,9 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
       {props.messageMultiMedia.isMessageMultiMedia && (
         <div
           className={`fixed top-0 left-0 w-screen h-screen bg-transparent z-[85]`}
-          onClick={() =>
-            props.setMessageMultiMedia({
-              isMessageMultiMedia: false,
-              data: null,
-            })
-          }
+          onClick={() => {
+            props.setCloseModel(true);
+          }}
         ></div>
       )}
 
@@ -182,10 +134,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
         <button
           className="absolute p-0 top-4 left-4"
           onClick={() => {
-            props.setMessageMultiMedia({
-              isMessageMultiMedia: false,
-              data: null,
-            });
+            props.setCloseModel(true);
           }}
         >
           <img className="w-10" src={closeBtnIcon} />

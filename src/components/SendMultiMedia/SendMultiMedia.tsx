@@ -6,31 +6,33 @@ import { IoMdPhotos } from "react-icons/io";
 import { FaPollH } from "react-icons/fa";
 import { PiStickerFill } from "react-icons/pi";
 import { MessageType } from "../../enums/message";
+import closeBtnIcon from "../../assets/close-btn-icon.png";
 import MultiMediaPreview from "../MultiMediaPreview/MultiMediaPreview";
+import { ImessageRes } from "../../Interface/Interface";
 type props = {
   sendMultiMedia: boolean;
   chatRoomId: string;
   senderId: string;
   setSendMultiMedia: (a: boolean) => void;
-  setSendMessage: (object: {
-    isSendMessage: boolean;
-    data: {
-      _id: string;
-      roomId: string;
-      messageType: MessageType;
-      image: { name: string; address: string; caption: string } | null;
-      video: { name: string; address: string; caption: string } | null;
-      doc: { name: string; address: string; caption: string } | null;
-      message: string;
-      lastMessageDate: string;
-      createdAt: string;
-      updatedAt: string;
-      senderId: string;
-      visibleTo: string[];
-      deletedFor: string[];
-      deleteForEveryOne: number;
-    } | null;
-  }) => void;
+  // setSendMessage: (object: {
+  //   status: boolean;
+  //   message: {
+  //     _id: string;
+  //     chatRoomId: string;
+  //     messageType: MessageType;
+  //     image: { name: string; address: string; caption: string } | null;
+  //     video: { name: string; address: string; caption: string } | null;
+  //     doc: { name: string; address: string; caption: string } | null;
+  //     text: string;
+  //     createdAt: string;
+  //     updatedAt: string;
+  //     senderId: string;
+  //     visibleTo: string[];
+  //     deletedFor: string[];
+  //     deleteForEveryOne: number;
+  //   } | null;
+  // }) => void;
+  setSendMessage: (message: ImessageRes) => void;
 };
 interface IMessageMultiMedia {
   isMessageMultiMedia: boolean;
@@ -43,19 +45,24 @@ interface IMessageMultiMedia {
 
 export default function SendFile(props: PropsWithChildren<props>) {
   const videoStream = useRef<MediaStream>();
+  const [closeModel, setCloseModel] = useState(false);
   const [multiMediaType, setMultiMediaType] = useState<MessageType>();
   const [cameraInput, setCameraInput] = useState(false);
   const [takeInput, setTakeInput] = useState(false);
   const [messageMultiMedia, setMessageMultiMedia] =
     useState<IMessageMultiMedia>({ isMessageMultiMedia: false, data: null });
-  const multimediaMessageInput = document.getElementById(
-    "multimedia-message-input"
-  );
+  const multimediaMessageInputRef = useRef<HTMLInputElement>(null);
 
   const cameraVideo = useRef<HTMLVideoElement>(null);
   useEffect(() => {
+    if (closeModel && multimediaMessageInputRef.current) {
+      setMessageMultiMedia({ isMessageMultiMedia: false, data: null });
+      setMultiMediaType(undefined);
+      setCloseModel(false);
+      multimediaMessageInputRef.current.value = "";
+    }
     if (takeInput) {
-      multimediaMessageInput?.click();
+      multimediaMessageInputRef.current?.click();
       setTakeInput(false);
     }
     if (cameraInput) {
@@ -83,16 +90,15 @@ export default function SendFile(props: PropsWithChildren<props>) {
       if (videoStream.current)
         videoStream.current.getTracks().forEach((stream) => stream.stop());
     }
-    return () => {
-      if (multimediaMessageInput) multimediaMessageInput.nodeValue = "";
-    };
-  }, [multimediaMessageInput, takeInput, cameraInput]);
+  }, [multimediaMessageInputRef, takeInput, cameraInput, closeModel]);
   return (
     <>
       {props.sendMultiMedia && (
         <div
           className="absolute w-[100vw] h-screen left-[-25vw] bottom-0 bg-transparent z-[71]"
-          onClick={() => props.setSendMultiMedia(false)}
+          onClick={() => {
+            props.setSendMultiMedia(false);
+          }}
         ></div>
       )}
 
@@ -108,10 +114,21 @@ export default function SendFile(props: PropsWithChildren<props>) {
         ></div>
       )}
       <div
-        className={`fixed flex items-center justify-center gap-5 transition-all ease-in-out duration-500 ${
+        className={`fixed flex items-center justify-center gap-24 transition-all ease-in-out duration-500 ${
           cameraInput ? "bottom-0" : "bottom-[-999px]"
         }  right-0 w-[75%] h-[45.783rem] bg-blue-gray-50 z-[101]`}
       >
+        <button
+          className="absolute top-4 right-4"
+          onClick={() => {
+            setCameraInput(false);
+            if (cameraVideo.current) cameraVideo.current.nodeValue = "";
+            setMultiMediaType(undefined);
+            setMessageMultiMedia({ isMessageMultiMedia: false, data: null });
+          }}
+        >
+          <img className="w-10" src={closeBtnIcon} />
+        </button>
         <video
           id="user-camera-video-stream"
           className=" w-[55%]"
@@ -148,6 +165,9 @@ export default function SendFile(props: PropsWithChildren<props>) {
       </div>
 
       <MultiMediaPreview
+        setCloseModel={setCloseModel}
+        setSendMultiMedia={props.setSendMultiMedia}
+        setMultiMediaType={setMultiMediaType}
         setSendMessage={props.setSendMessage}
         messageMultiMedia={messageMultiMedia}
         setMessageMultiMedia={setMessageMultiMedia}
@@ -159,6 +179,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
         id="multimedia-message-input"
         className="hidden absolute top-[1000000px]"
         type="file"
+        ref={multimediaMessageInputRef}
         accept={`${
           multiMediaType == MessageType.IMAGE
             ? "image/*"
@@ -198,8 +219,9 @@ export default function SendFile(props: PropsWithChildren<props>) {
         <div
           className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
           onClick={() => {
-            setMultiMediaType(MessageType.DOC);
             setTakeInput(true);
+            setMultiMediaType(MessageType.DOC);
+            props.setSendMultiMedia(false);
           }}
         >
           <FaFileAlt size={19} color="purple" /> <span>Document</span>
@@ -207,8 +229,9 @@ export default function SendFile(props: PropsWithChildren<props>) {
         <div
           className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
           onClick={() => {
-            setMultiMediaType(MessageType.IMAGE);
             setTakeInput(true);
+            setMultiMediaType(MessageType.IMAGE);
+            props.setSendMultiMedia(false);
           }}
         >
           <IoMdPhotos size={19} color="blue" /> <span>Photos</span>
@@ -216,8 +239,9 @@ export default function SendFile(props: PropsWithChildren<props>) {
         <div
           className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
           onClick={() => {
-            setMultiMediaType(MessageType.VIDEO);
             setTakeInput(true);
+            setMultiMediaType(MessageType.VIDEO);
+            props.setSendMultiMedia(false);
           }}
         >
           <FaFileVideo size={19} color="red" /> <span>Videos</span>
@@ -225,17 +249,32 @@ export default function SendFile(props: PropsWithChildren<props>) {
         <div
           className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
           onClick={() => {
-            setMultiMediaType(MessageType.IMAGE);
             setCameraInput(true);
+            setMultiMediaType(MessageType.IMAGE);
+            props.setSendMultiMedia(false);
           }}
         >
           <FaCamera size={19} color="orange" /> <span>Camera</span>
         </div>
         <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
-          <FaPollH size={19} color="brown" /> <span>Poll</span>
+          <FaPollH
+            size={19}
+            color="brown"
+            onClick={() => {
+              props.setSendMultiMedia(false);
+            }}
+          />{" "}
+          <span>Poll</span>
         </div>
         <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
-          <PiStickerFill size={19} color="purple" /> <span>New sticker</span>
+          <PiStickerFill
+            size={19}
+            color="purple"
+            onClick={() => {
+              props.setSendMultiMedia(false);
+            }}
+          />{" "}
+          <span>New sticker</span>
         </div>
       </div>
 

@@ -23,59 +23,13 @@ import NoMessagesP from "../NoMessagesP/NoMessagesP";
 import { Button } from "@material-tailwind/react";
 import SendMultiMedia from "../SendMultiMedia/SendMultiMedia";
 import { MessageType } from "../../enums/message";
+import {
+  Imessage,
+  ImessageRes,
+  IGetMessagesRes,
+  ISelectedMessageData,
+} from "../../Interface/Interface";
 
-interface getMessagesRes {
-  status: boolean;
-  data: {
-    chatRoomId: string;
-    senderId: string;
-    messageType: MessageType;
-    text: string;
-    image: { name: string; address: string; caption: string } | null;
-    video: { name: string; address: string; caption: string } | null;
-    doc: { name: string; address: string; caption: string } | null;
-    visibleTo: string[];
-    deletedFor: string[];
-    _id: string;
-    deleteForEveryOne: number;
-    createdAt: string;
-    updatedAt: string;
-  }[];
-}
-interface messagesData {
-  chatRoomId: string;
-  senderId: string;
-  messageType: MessageType;
-  text: string;
-  image: { name: string; address: string; caption: string } | null;
-  video: { name: string; address: string; caption: string } | null;
-  doc: { name: string; address: string; caption: string } | null;
-  visibleTo: string[];
-  deletedFor: string[];
-  _id: string;
-  deleteForEveryOne: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface storeMessageRes {
-  status: boolean;
-  message: {
-    chatRoomId: string;
-    senderId: string;
-    messageType: MessageType;
-    text: string;
-    image: { name: string; address: string; caption: string } | null;
-    video: { name: string; address: string; caption: string } | null;
-    doc: { name: string; address: string; caption: string } | null;
-    visibleTo: string[];
-    deletedFor: string[];
-    _id: string;
-    deleteForEveryOne: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-}
 type propsType = {
   userId: string;
   recipientId: string;
@@ -102,34 +56,8 @@ type propsType = {
   chatRoomProfilePhoto: string;
 };
 
-interface selectedMessageData {
-  messageId: string;
-  createdAtDate: string;
-  createdAtTime: string;
-}
-
-interface ISendMessage {
-  isSendMessage: boolean;
-  data: {
-    _id: string;
-    roomId: string;
-    messageType: MessageType;
-    image: { name: string; address: string; caption: string } | null;
-    video: { name: string; address: string; caption: string } | null;
-    doc: { name: string; address: string; caption: string } | null;
-    message: string;
-    lastMessageDate: string;
-    createdAt: string;
-    updatedAt: string;
-    senderId: string;
-    visibleTo: string[];
-    deletedFor: string[];
-    deleteForEveryOne: number;
-  } | null;
-}
-
 function MessagesContainer(props: PropsWithChildren<propsType>) {
-  const [messages, setMessages] = useState<messagesData[]>([]);
+  const [messages, setMessages] = useState<Imessage[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isChatRoomDeleted, setIsChatRoomDeleted] = useState(false);
@@ -142,12 +70,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const [showDeletePopupMenu, setShowDeletePopupMenu] = useState(false);
   const [sendMultiMedia, setSendMultiMedia] = useState(false);
   const [scrollToView, setScrollToView] = useState(false);
-  const [sendMessage, setSendMessage] = useState<ISendMessage>({
-    isSendMessage: false,
-    data: null,
+  const [sendMessage, setSendMessage] = useState<ImessageRes>({
+    status: false,
+    message: null,
   });
   const [selectedMessagesData, setSelectedMessagesData] = useState<
-    selectedMessageData[]
+    ISelectedMessageData[]
   >([]);
 
   const baseURL = useContext(BaseURLContext);
@@ -245,7 +173,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     if (props.loadMessages) {
       const url = `${baseURL.baseUrl}/message/get/${props.chatRoomId}`;
       axios
-        .get<getMessagesRes>(url, {
+        .get<IGetMessagesRes>(url, {
           headers: { authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -259,7 +187,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         });
     }
 
-    socket.on("receieve message", (data) => {
+    socket.on("receieve message", (/* data*/) => {
       // const newMessage: messagesData = {
       //   _id: data._id,
       //   chatRoomId: data.roomId,
@@ -284,24 +212,24 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
       props.setLoadMessages(true);
     });
 
-    if (sendMessage.isSendMessage && sendMessage.data) {
+    if (sendMessage.status && sendMessage.message) {
       socket.emit("sent message", {
-        _id: sendMessage.data._id,
-        roomId: sendMessage.data.roomId,
-        messageType: sendMessage.data.messageType,
-        image: sendMessage.data.image,
-        video: sendMessage.data.video,
-        doc: sendMessage.data.doc,
-        message: sendMessage.data.message,
-        lastMessageDate: sendMessage.data.createdAt,
-        createdAt: sendMessage.data.createdAt,
-        updatedAt: sendMessage.data.updatedAt,
-        senderId: sendMessage.data.senderId,
-        visibleTo: sendMessage.data.visibleTo,
-        deletedFor: sendMessage.data.deletedFor,
-        deleteForEveryOne: sendMessage.data.deleteForEveryOne,
+        _id: sendMessage.message._id,
+        roomId: sendMessage.message.chatRoomId,
+        messageType: sendMessage.message.messageType,
+        image: sendMessage.message.image,
+        video: sendMessage.message.video,
+        doc: sendMessage.message.doc,
+        message: sendMessage.message.text,
+        lastMessageDate: sendMessage.message.createdAt,
+        createdAt: sendMessage.message.createdAt,
+        updatedAt: sendMessage.message.updatedAt,
+        senderId: sendMessage.message.senderId,
+        visibleTo: sendMessage.message.visibleTo,
+        deletedFor: sendMessage.message.deletedFor,
+        deleteForEveryOne: sendMessage.message.deleteForEveryOne,
       });
-      setSendMessage({ isSendMessage: false, data: null });
+      setSendMessage({ status: false, message: null });
     }
 
     if (isChatRoomDeleted) {
@@ -325,7 +253,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
       const chatroomId = props.chatRoomId;
       const userId = props.userId;
       axios
-        .patch<getMessagesRes>(
+        .patch<IGetMessagesRes>(
           `${baseURL.baseUrl}/message/clear-messages`,
           {
             chatroomId,
@@ -376,7 +304,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
     if (deleteForMe) {
       axios
-        .delete<getMessagesRes>(
+        .delete<IGetMessagesRes>(
           `${baseURL.baseUrl}/message/delete-for-me/${props.userId}/${
             props.chatRoomId
           }/${selectedMessagesData
@@ -428,7 +356,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   ) => {
     const url = `${baseURL.baseUrl}/message/save`;
     axios
-      .post<storeMessageRes>(
+      .post<ImessageRes>(
         url,
         {
           chatRoomId: chatRoomId,
@@ -439,25 +367,25 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         { headers: { authorization: `Bearer ${token}` } }
       )
       .then((res) => {
-        setSendMessage({
-          isSendMessage: true,
-          data: {
-            _id: res.data.message._id,
-            roomId: res.data.message.chatRoomId,
-            messageType: MessageType.TEXT,
-            image: res.data.message.image,
-            video: res.data.message.video,
-            message: res.data.message.text,
-            doc: res.data.message.doc,
-            lastMessageDate: res.data.message.createdAt,
-            createdAt: res.data.message.createdAt,
-            updatedAt: res.data.message.updatedAt,
-            senderId: res.data.message.senderId,
-            visibleTo: res.data.message.visibleTo,
-            deletedFor: res.data.message.deletedFor,
-            deleteForEveryOne: res.data.message.deleteForEveryOne,
-          },
-        });
+        if (res.data.message)
+          setSendMessage({
+            status: true,
+            message: {
+              _id: res.data.message._id,
+              chatRoomId: res.data.message.chatRoomId,
+              messageType: res.data.message.messageType,
+              image: res.data.message.image,
+              video: res.data.message.video,
+              text: res.data.message.text,
+              doc: res.data.message.doc,
+              createdAt: res.data.message.createdAt,
+              updatedAt: res.data.message.updatedAt,
+              senderId: res.data.message.senderId,
+              visibleTo: res.data.message.visibleTo,
+              deletedFor: res.data.message.deletedFor,
+              deleteForEveryOne: res.data.message.deleteForEveryOne,
+            },
+          });
       })
       .catch((err) => {
         console.log("error in storing message. error => ", err);
