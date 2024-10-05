@@ -8,40 +8,15 @@ import { PiStickerFill } from "react-icons/pi";
 import { MessageType } from "../../enums/message";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
 import MultiMediaPreview from "../MultiMediaPreview/MultiMediaPreview";
-import { ImessageRes } from "../../Interface/Interface";
+import { ImessageRes, IMessageMultiMedia } from "../../Interface/Interface";
+
 type props = {
   sendMultiMedia: boolean;
   chatRoomId: string;
   senderId: string;
   setSendMultiMedia: (a: boolean) => void;
-  // setSendMessage: (object: {
-  //   status: boolean;
-  //   message: {
-  //     _id: string;
-  //     chatRoomId: string;
-  //     messageType: MessageType;
-  //     image: { name: string; address: string; caption: string } | null;
-  //     video: { name: string; address: string; caption: string } | null;
-  //     doc: { name: string; address: string; caption: string } | null;
-  //     text: string;
-  //     createdAt: string;
-  //     updatedAt: string;
-  //     senderId: string;
-  //     visibleTo: string[];
-  //     deletedFor: string[];
-  //     deleteForEveryOne: number;
-  //   } | null;
-  // }) => void;
   setSendMessage: (message: ImessageRes) => void;
 };
-interface IMessageMultiMedia {
-  isMessageMultiMedia: boolean;
-  data: {
-    url: string;
-    filename: string;
-    type: MessageType | undefined;
-  } | null;
-}
 
 export default function SendFile(props: PropsWithChildren<props>) {
   const videoStream = useRef<MediaStream>();

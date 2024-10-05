@@ -96,6 +96,8 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
                   },
                 });
               setMultimediaFromSubmitted(false);
+              props.setCloseModel(true);
+              setCaption("");
             })
             .catch((err) => {
               console.log("error in saving image as message. error => ", err);

@@ -30,3 +30,12 @@ export interface ISelectedMessageData {
   createdAtDate: string;
   createdAtTime: string;
 }
+
+export interface IMessageMultiMedia {
+  isMessageMultiMedia: boolean;
+  data: {
+    url: string;
+    filename: string;
+    type: MessageType | undefined;
+  } | null;
+}

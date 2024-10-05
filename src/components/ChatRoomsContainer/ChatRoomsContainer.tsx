@@ -92,31 +92,36 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
           }
         )
         .then((res) => {
-          // console.log(res.data);
-
           setUsersData(res.data.message);
         });
-      // console.log(userNameInput);
     } else {
-      socket.on("last message", (data) => {
-        setChatRoomsData((chatRoomsData) => {
-          const updatedData = chatRoomsData.map((chatRoom) => {
-            return {
-              ...chatRoom,
-              lastMessage:
-                chatRoom._id === data.roomId
-                  ? data.message
-                  : chatRoom.lastMessage,
-              lastMessageDate:
-                chatRoom._id === data.roomId
-                  ? data.lastMessageDate
-                  : chatRoom.lastMessageDate,
-              lastMessageVisibleTo: data.visibleTo,
-            };
+      socket.on(
+        "last-message",
+        (data: {
+          chatRoomId: string;
+          text: string;
+          date: string;
+          visibleTo: string[];
+        }) => {
+          setChatRoomsData((chatRoomsData) => {
+            const updatedData = chatRoomsData.map((chatRoom) => {
+              return {
+                ...chatRoom,
+                lastMessage:
+                  chatRoom._id === data.chatRoomId
+                    ? data.text
+                    : chatRoom.lastMessage,
+                lastMessageDate:
+                  chatRoom._id === data.chatRoomId
+                    ? data.date
+                    : chatRoom.lastMessageDate,
+                lastMessageVisibleTo: data.visibleTo,
+              };
+            });
+            return [...updatedData];
           });
-          return [...updatedData];
-        });
-      });
+        }
+      );
       const url = `${BaseURL.baseUrl}/chatroom/get/ChatRooms`;
       const currentUserId = props.userId;
       axios
@@ -136,7 +141,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
         });
     }
     return () => {
-      socket.off("last message");
+      socket.off("last-message");
     };
   }, [
     BaseURL.baseUrl,

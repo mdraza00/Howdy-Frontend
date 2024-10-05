@@ -187,24 +187,8 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         });
     }
 
-    socket.on("receieve message", (/* data*/) => {
-      // const newMessage: messagesData = {
-      //   _id: data._id,
-      //   chatRoomId: data.roomId,
-      //   messageType: data.messageType,
-      //   image: data.image,
-      //   video: data.video,
-      //   text: data.message,
-      //   doc: data.message,
-      //   createdAt: data.createdAt,
-      //   updatedAt: data.updatedAt,
-      //   senderId: data.senderId,
-      //   visibleTo: data.visibleTo,
-      //   deletedFor: data.deletedFor,
-      //   deleteForEveryOne: data.deleteForEveryOne,
-      // };
-      // setMessages((msgsArray) => [...msgsArray, newMessage]);
-      props.setLoadMessages(true);
+    socket.on("receieve-message", (data) => {
+      setMessages((msgsArray) => [...msgsArray, data]);
       setScrollToView(true);
     });
 
@@ -213,18 +197,17 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     });
 
     if (sendMessage.status && sendMessage.message) {
-      socket.emit("sent message", {
+      socket.emit("send-message", {
         _id: sendMessage.message._id,
-        roomId: sendMessage.message.chatRoomId,
+        chatRoomId: sendMessage.message.chatRoomId,
+        senderId: sendMessage.message.senderId,
         messageType: sendMessage.message.messageType,
         image: sendMessage.message.image,
         video: sendMessage.message.video,
         doc: sendMessage.message.doc,
-        message: sendMessage.message.text,
-        lastMessageDate: sendMessage.message.createdAt,
+        text: sendMessage.message.text,
         createdAt: sendMessage.message.createdAt,
         updatedAt: sendMessage.message.updatedAt,
-        senderId: sendMessage.message.senderId,
         visibleTo: sendMessage.message.visibleTo,
         deletedFor: sendMessage.message.deletedFor,
         deleteForEveryOne: sendMessage.message.deleteForEveryOne,
@@ -329,9 +312,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     }
 
     return () => {
-      socket.off("receieve message");
+      socket.off("receieve-message");
       socket.off("messages-deleted-for-everyone");
-      socket.off("sent message");
+      socket.off("send-message");
     };
   }, [
     baseURL.baseUrl,
@@ -394,9 +377,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   // handling message input
   const sendMessageBtnHandler = function (e: React.BaseSyntheticEvent) {
     e.preventDefault();
+
     const messageInput = inputRef.current?.value;
+
     if (messageInput && messageInput.length > 0) {
       const senderId = props.userId;
+
       if (senderId)
         storeMessagesInDB(
           messageInput,
@@ -404,7 +390,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           senderId,
           MessageType.TEXT
         );
+
       if (inputRef.current) inputRef.current.value = "";
+
       setIsChatRoomMessagesCleared(false);
     }
   };
