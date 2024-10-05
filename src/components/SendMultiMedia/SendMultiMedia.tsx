@@ -8,10 +8,15 @@ import { PiStickerFill } from "react-icons/pi";
 import { MessageType } from "../../enums/message";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
 import MultiMediaPreview from "../MultiMediaPreview/MultiMediaPreview";
-import { ImessageRes, IMessageMultiMedia } from "../../Interface/Interface";
+import {
+  ImessageRes,
+  IMessageMultiMedia,
+  IReplayMessage,
+} from "../../Interface/Interface";
 
 type props = {
   sendMultiMedia: boolean;
+  replyToMessage: IReplayMessage;
   chatRoomId: string;
   senderId: string;
   setSendMultiMedia: (a: boolean) => void;
@@ -188,7 +193,11 @@ export default function SendFile(props: PropsWithChildren<props>) {
 
       <div
         className={`transition-all ease-in-out duration-[390ms] fixed left-[25.45%] z-[71] ${
-          props.sendMultiMedia ? `bottom-[3.2rem]` : "bottom-[-900px]"
+          props.sendMultiMedia
+            ? props.replyToMessage.isReply
+              ? "bottom-[7.95rem]"
+              : `bottom-[3.8rem]`
+            : "bottom-[-900px]"
         } bg-white shadow-xl py-2 px-3 rounded-xl `}
       >
         <div
@@ -254,7 +263,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
       </div>
 
       <div
-        className={`absolute top-[50%] translate-y-[-50%] left-[0.65rem] w-11 h-fit z-[81]`}
+        className={`fixed bottom-[0.85rem] left-[24.5rem] w-11 h-fit z-[81]`}
       >
         <button
           className={`px-2 ${

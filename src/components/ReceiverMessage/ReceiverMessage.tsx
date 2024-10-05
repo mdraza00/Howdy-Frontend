@@ -6,6 +6,7 @@ import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
 import { TfiDownload } from "react-icons/tfi";
 import { FaFileAlt } from "react-icons/fa";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
+import domains from "../../assets/domains";
 type propsType = {
   deleteForEveryOne: number;
   messageType: MessageType;
@@ -41,7 +42,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
   const [fileData, setFileData] = useState({
     isFile: false,
     filename: "",
-    extention: "",
+    extension: "",
   });
   if (messagePopup) {
     setTimeout(() => {
@@ -60,9 +61,9 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
   if (props.doc && !fileData.isFile) {
     const filename =
       props.doc.name.split("__")[props.doc.name.split("__").length - 1];
-    const extention =
+    const extension =
       props.doc.name.split(".")[props.doc.name.split(".").length - 1];
-    setFileData({ filename, extention, isFile: true });
+    setFileData({ filename, extension: extension, isFile: true });
   }
   return (
     <>
@@ -197,9 +198,46 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
               >
                 {props.deleteForEveryOne === 0 ? (
                   <>
-                    {props.messageType === MessageType.TEXT && (
-                      <span>{props.text}</span>
-                    )}
+                    {
+                      props.messageType === MessageType.TEXT && (
+                        <div>
+                          {props.text.split(" ").map((word) => {
+                            return domains
+                              .map(
+                                (domain) =>
+                                  word.endsWith(domain) && word.length > 4
+                              )
+                              .filter((bool) => bool)[0] ? (
+                              <a
+                                className="text-blue-800 hover:underline"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href={`${
+                                  word.startsWith("http") ||
+                                  word.startsWith("https")
+                                    ? word
+                                    : "https://" + word
+                                }`}
+                              >
+                                {" " + word + " "}
+                              </a>
+                            ) : (
+                              <span>{" " + word + " "}</span>
+                            );
+                          })}
+                        </div>
+                      )
+                      // (domains.includes(
+                      //   "." +
+                      //     props.text.split(".")[
+                      //       props.text.split(".").length - 1
+                      //     ]
+                      // ) ? (
+
+                      // ) : (
+
+                      // ))
+                    }
                     {props.messageType === MessageType.IMAGE && props.image && (
                       <div className="flex flex-col gap-2">
                         <img
@@ -251,7 +289,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                               download={true}
                             >
                               {browserSupportedExtentions.includes(
-                                fileData.extention
+                                fileData.extension
                               ) ? (
                                 <div className="px-3 py-1 text-sm border border-black text-black bg-transparent rounded-md cursor-pointer">
                                   View

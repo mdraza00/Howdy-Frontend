@@ -39,3 +39,16 @@ export interface IMessageMultiMedia {
     type: MessageType | undefined;
   } | null;
 }
+
+export interface IReplayMessage {
+  isReply: boolean;
+  data: {
+    senderName: string;
+    text: string;
+    image: { name: string; address: string } | null;
+    video: { name: string; address: string } | null;
+    doc: boolean;
+    messageId: string;
+    messageType: MessageType;
+  } | null;
+}

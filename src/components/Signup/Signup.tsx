@@ -45,15 +45,14 @@ function Signup() {
           }
         })
         .catch((err) => {
+          const errorMessage = !err.response
+            ? "something went wrong"
+            : err.response.data.message.includes("duplicate key error")
+            ? "user already exists"
+            : "error kya hai pata nahi console check karo";
+          console.log(err.response);
           setIsLoading(false);
-          if (axios.isAxiosError(err)) {
-            if (err.response.data.message.includes("duplicate key error")) {
-              setShowWarning("This user already exists");
-            }
-          } else {
-            setShowWarning("an error has occured");
-          }
-          console.log("err = ", err);
+          setShowWarning(errorMessage);
         });
     }
 
@@ -149,7 +148,7 @@ function Signup() {
           {isLoading ? <img className="w-10" src={rollingIcon} /> : "Signup"}
         </Button>
       </div>
-      {!!showWarning && (
+      {showWarning && (
         <p className={commonStyles["wrong-password-p"]}>{showWarning}</p>
       )}
     </form>

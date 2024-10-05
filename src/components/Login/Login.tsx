@@ -16,7 +16,7 @@ interface Response {
 
 function Login() {
   const [isUserAuthorized, setIsUserAuthorized] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
+  const [showWarning, setShowWarning] = useState("");
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [emailInput, setEmailInput] = useState("");
@@ -44,10 +44,11 @@ function Login() {
           }
         })
         .catch((err) => {
-          if (err) {
-            setIsLoading(false);
-            setShowWarning(true);
-          }
+          const warning = err.response
+            ? "Incorrect email or password"
+            : "Something went wrong";
+          setIsLoading(false);
+          setShowWarning(warning);
         });
     }
 
@@ -67,7 +68,7 @@ function Login() {
         e.preventDefault();
         setIsLoading(true);
         setIsFormSubmitted(true);
-        setShowWarning(false);
+        setShowWarning("");
       }}
     >
       <h2 className={"text-center py-1 my-2 text-lg"}>Login</h2>
@@ -129,9 +130,7 @@ function Login() {
         </Button>
       </div>
       {showWarning && (
-        <p className={commonStyles["wrong-password-p"]}>
-          Incorrect Email or Password
-        </p>
+        <p className={commonStyles["wrong-password-p"]}>{showWarning}</p>
       )}
     </form>
   );

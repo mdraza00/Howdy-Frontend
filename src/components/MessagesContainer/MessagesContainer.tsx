@@ -28,7 +28,9 @@ import {
   ImessageRes,
   IGetMessagesRes,
   ISelectedMessageData,
+  IReplayMessage,
 } from "../../Interface/Interface";
+import ReplyMessage from "../ReplyMessage/ReplyMessage";
 
 type propsType = {
   userId: string;
@@ -57,6 +59,10 @@ type propsType = {
 };
 
 function MessagesContainer(props: PropsWithChildren<propsType>) {
+  const [replyToMessage, setReplyToMessage] = useState<IReplayMessage>({
+    isReply: false,
+    data: null,
+  });
   const [messages, setMessages] = useState<Imessage[]>([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -400,9 +406,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   return (
     <>
       <div
-        className={`${
-          props.chatRoomUserProfile ? "w-[45%]" : "w-[75%]"
-        } h-[85.9vh] transition-all ease-in-out`}
+        className={`${props.chatRoomUserProfile ? "w-[45%]" : "w-[75%]"} ${
+          replyToMessage.isReply ? "h-[36.6rem]" : "h-[41rem]"
+        } transition-all ease-in-out`}
       >
         <div className="w-full bg-light-blue-800 flex justify-between relative z-[70]">
           <div
@@ -470,6 +476,8 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               const msg =
                 message.senderId === props.userId ? (
                   <SenderMessage
+                    setReplyToMessage={setReplyToMessage}
+                    chatRoomName={props.chatRoomName}
                     messageType={message.messageType}
                     image={message.image}
                     text={message.text}
@@ -530,15 +538,26 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           {!isSelectMessages && (
             <>
               <SendMultiMedia
+                replyToMessage={replyToMessage}
                 chatRoomId={props.chatRoomId}
                 senderId={props.userId}
                 setSendMessage={setSendMessage}
                 sendMultiMedia={sendMultiMedia}
                 setSendMultiMedia={setSendMultiMedia}
               />
-              <div className="h-[6.2vh] flex bg-blue-gray-50 items-center justify-end px-2 z-[72] relative">
+              <div
+                className={`fixed transition-all ease-in-out duration-200 ${
+                  replyToMessage.isReply ? "h-[7.80rem]" : "h-[3.63rem]"
+                }  bottom-0 left-[24rem] w-[71.9rem] py-3 flex flex-col gap-2 bg-blue-gray-50 items-center justify-end z-[72]`}
+              >
+                {replyToMessage.isReply && replyToMessage.data && (
+                  <ReplyMessage
+                    setReplyToMessage={setReplyToMessage}
+                    replyToMessage={replyToMessage}
+                  />
+                )}
                 <form
-                  className={`w-[96%] flex items-center  `}
+                  className={`w-[96%] flex items-center ml-11 `}
                   onSubmit={sendMessageBtnHandler}
                 >
                   <input
@@ -547,8 +566,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     className="w-full rounded-sm px-2 py-1 mx-2 focus:outline-none text-xl"
                     placeholder="Type a message"
                     ref={inputRef}
-                    // value={messageInput}
-                    // onChange={(e) => setMessageInput(e.target.value)}
                   />
 
                   <button

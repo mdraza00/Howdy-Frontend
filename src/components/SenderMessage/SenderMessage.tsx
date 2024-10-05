@@ -6,9 +6,12 @@ import { TfiDownload } from "react-icons/tfi";
 import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
 import { MessageType } from "../../enums/message";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
-// import { IoOpenOutline } from "react-icons/io5";
+import domains from "../../assets/domains";
+import { IReplayMessage } from "../../Interface/Interface";
 
 type propsType = {
+  chatRoomName: string;
+  setReplyToMessage: (data: IReplayMessage) => void;
   deleteForEveryOne: number;
   messageType: MessageType;
   text: string;
@@ -140,7 +143,35 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 <div className="hover:bg-black/5 px-3 py-2 w-40 cursor-pointer">
                   Message info
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
+                <div
+                  className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer"
+                  onClick={() => {
+                    setMessagePopup(false);
+                    props.setReplyToMessage({
+                      isReply: true,
+                      data: {
+                        senderName: "You",
+                        text: props.text,
+                        image: props.image
+                          ? {
+                              name: props.image.name,
+                              address: props.image.address,
+                            }
+                          : null,
+                        video: props.video
+                          ? {
+                              name: props.video.name,
+                              address: props.video.address,
+                            }
+                          : null,
+                        doc:
+                          props.messageType === MessageType.DOC ? true : false,
+                        messageId: props.messageId,
+                        messageType: props.messageType,
+                      },
+                    });
+                  }}
+                >
                   Reply
                 </div>
                 <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
@@ -199,7 +230,32 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 {props.deleteForEveryOne === 0 ? (
                   <>
                     {props.messageType === MessageType.TEXT && (
-                      <span>{props.text}</span>
+                      <div>
+                        {props.text.split(" ").map((word) => {
+                          return domains
+                            .map(
+                              (domain) =>
+                                word.endsWith(domain) && word.length > 4
+                            )
+                            .filter((bool) => bool)[0] ? (
+                            <a
+                              className="text-blue-800 hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href={`${
+                                word.startsWith("http") ||
+                                word.startsWith("https")
+                                  ? word
+                                  : "https://" + word
+                              }`}
+                            >
+                              {" " + word + " "}
+                            </a>
+                          ) : (
+                            <span>{" " + word + " "}</span>
+                          );
+                        })}
+                      </div>
                     )}
                     {props.messageType === MessageType.IMAGE && props.image && (
                       <div className="flex flex-col gap-1">
