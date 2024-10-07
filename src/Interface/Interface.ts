@@ -14,6 +14,7 @@ export interface Imessage {
   deleteForEveryOne: number;
   createdAt: string;
   updatedAt: string;
+  replyTo: string | undefined;
 }
 export interface ImessageRes {
   status: boolean;

@@ -351,11 +351,15 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           chatRoomId: chatRoomId,
           senderId: senderId,
           text: message,
+          replyTo: replyToMessage.data
+            ? replyToMessage.data.messageId
+            : undefined,
           messageType: messageType,
         },
         { headers: { authorization: `Bearer ${token}` } }
       )
       .then((res) => {
+        console.log(res.data.message);
         if (res.data.message)
           setSendMessage({
             status: true,
@@ -373,6 +377,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               visibleTo: res.data.message.visibleTo,
               deletedFor: res.data.message.deletedFor,
               deleteForEveryOne: res.data.message.deleteForEveryOne,
+              replyTo: res.data.message.replyTo,
             },
           });
       })
@@ -398,7 +403,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         );
 
       if (inputRef.current) inputRef.current.value = "";
-
+      setReplyToMessage({ isReply: false, data: null });
       setIsChatRoomMessagesCleared(false);
     }
   };
