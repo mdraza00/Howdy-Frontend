@@ -11,12 +11,14 @@ import MultiMediaPreview from "../MultiMediaPreview/MultiMediaPreview";
 import {
   ImessageRes,
   IMessageMultiMedia,
-  IReplayMessage,
+  IReplyMessage,
 } from "../../Interface/Interface";
 
 type props = {
   sendMultiMedia: boolean;
-  replyToMessage: IReplayMessage;
+  setReplyToMessage: (data: IReplyMessage) => void;
+  replyToMessage: IReplyMessage;
+
   chatRoomId: string;
   senderId: string;
   setSendMultiMedia: (a: boolean) => void;
@@ -145,6 +147,8 @@ export default function SendFile(props: PropsWithChildren<props>) {
       </div>
 
       <MultiMediaPreview
+        setReplyToMessage={props.setReplyToMessage}
+        replyToMessage={props.replyToMessage}
         setCloseModel={setCloseModel}
         setSendMultiMedia={props.setSendMultiMedia}
         setMultiMediaType={setMultiMediaType}

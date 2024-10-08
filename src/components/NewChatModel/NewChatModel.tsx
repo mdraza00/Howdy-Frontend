@@ -4,6 +4,11 @@ import BaseURLContext from "../../contexts/BaseURLContext";
 import styles from "./NewChatModel.module.css";
 import rollingIcon from "/icons/RollingIcon.svg";
 import { Button } from "@material-tailwind/react";
+import {
+  createOrGetChatRoomRes,
+  getUsersRes,
+  User,
+} from "../../Interface/Interface";
 
 type propsType = {
   userId: string | null;
@@ -22,25 +27,6 @@ type propsType = {
   setActiveChatRoomId: (a: string) => void;
 };
 
-interface getUsersRes {
-  status: boolean;
-  message: {
-    _id: string;
-    email: string;
-    username: string;
-    profilePhotoAddress: string;
-  }[];
-}
-interface User {
-  _id: string;
-  email: string;
-  username: string;
-  profilePhotoAddress: string;
-}
-interface createChatRoomRes {
-  status: boolean;
-  message: string;
-}
 function NewChatModel(props: PropsWithChildren<propsType>) {
   const [usernameInput, setUsernameInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -108,6 +94,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
             onChange={(e) => {
               setUsernameInput(e.target.value);
             }}
+            value={usernameInput}
           />
           <div
             id="users-container"
@@ -161,7 +148,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
                 const senderId = props.userId;
                 const url = `${baseURL.baseUrl}/chatroom/createRoom`;
                 axios
-                  .post<createChatRoomRes>(
+                  .post<createOrGetChatRoomRes>(
                     url,
                     {
                       senderId,

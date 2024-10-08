@@ -1,4 +1,4 @@
-import { PropsWithChildren, useContext, useState } from "react";
+import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import BaseURLContext from "../../contexts/BaseURLContext";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaFileAlt } from "react-icons/fa";
@@ -7,11 +7,17 @@ import deleteForEveryOneIcon from "/icons/delete-for-every-one-icon.png";
 import { MessageType } from "../../enums/message";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
 import domains from "../../assets/domains";
-import { IReplayMessage } from "../../Interface/Interface";
+import {
+  ImessageRes,
+  IReplyMessage,
+  IReplyToMessageData,
+} from "../../Interface/Interface";
+import axios from "axios";
 
 type propsType = {
   chatRoomName: string;
-  setReplyToMessage: (data: IReplayMessage) => void;
+  setReplyToMessage: (data: IReplyMessage) => void;
+  senderId: string;
   deleteForEveryOne: number;
   messageType: MessageType;
   text: string;
@@ -21,7 +27,9 @@ type propsType = {
   time: string;
   createdAt: string;
   messageId: string;
+  replyTo: string | undefined;
   isSelectMessages: boolean;
+  setIsSelectMessages: (data: boolean) => void;
   setShowDeletePopupMenu: (a: boolean) => void;
   setSelectedMessagesData: (
     messageId: string,
@@ -43,13 +51,67 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
   ];
   const BaseUrlContext = useContext(BaseURLContext);
   const [zoomImage, setZoomImage] = useState({ isZoom: false, src: "" });
+  const [gotToMessage, setGoToMessage] = useState("");
+  const [forwardMessage, setForwardMessage] = useState(false);
   const [messagePopup, setMessagePopup] = useState(false);
+  const [replyToMessageData, setReplyToMessageData] =
+    useState<IReplyToMessageData>();
   const [fileData, setFileData] = useState({
     isFile: false,
     filename: "",
     extention: "",
   });
 
+  useEffect(() => {
+    if (forwardMessage) {
+      const selectMessageCheckBox = document.getElementById(props.messageId);
+      selectMessageCheckBox?.click();
+      setForwardMessage(false);
+    }
+    if (gotToMessage.length > 0) {
+      const message = document.getElementById("--" + gotToMessage);
+      if (message) message.scrollIntoView();
+      setGoToMessage("");
+    }
+    if (props.replyTo) {
+      const token = localStorage.getItem("token");
+      axios
+        .get<ImessageRes>(
+          `${BaseUrlContext.baseUrl}/message/get-message/${props.replyTo}`,
+          {
+            headers: { authorization: `Bearer ${token}` },
+          }
+        )
+        .then((res) => {
+          if (res.data.message)
+            setReplyToMessageData({
+              isReplyTo: true,
+              data: {
+                repliedTo:
+                  res.data.message.senderId === props.senderId
+                    ? "you"
+                    : props.chatRoomName,
+                messageType: res.data.message.messageType,
+                text: res.data.message.text,
+                image: res.data.message.image,
+                video: res.data.message.video,
+                doc: !!res.data.message.doc,
+              },
+            });
+        })
+        .catch(() => {
+          console.log("error in finding the response message");
+        });
+    }
+  }, [
+    BaseUrlContext.baseUrl,
+    forwardMessage,
+    gotToMessage,
+    props.chatRoomName,
+    props.messageId,
+    props.replyTo,
+    props.senderId,
+  ]);
   if (messagePopup) {
     setTimeout(() => {
       const messagePopupElement = document.getElementById(
@@ -63,9 +125,6 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
         }
       }
     }, 0);
-    if (props.doc) {
-      console.log(props.doc.name);
-    }
   }
   if (props.doc && !fileData.isFile) {
     const filename =
@@ -134,7 +193,10 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
             props.isSelectMessages ? "hover:bg-black/10" : ""
           }`}
         >
-          <div className="group relative w-fit">
+          <div
+            className="message-div-container group relative w-fit"
+            id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
+          >
             {messagePopup && (
               <div
                 id="message-popup-container"
@@ -177,7 +239,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
                   React
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
+                <div
+                  className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer"
+                  onClick={() => {
+                    props.setIsSelectMessages(true);
+                    setForwardMessage(true);
+                    setMessagePopup(false);
+                  }}
+                >
                   Forward
                 </div>
                 <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
@@ -189,7 +258,6 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 <div
                   className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer active:bg-white"
                   onClick={() => {
-                    console.log("delete");
                     props.setSelectedMessagesData(
                       `${props.messageId}--send`,
                       true,
@@ -216,14 +284,50 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 <MdKeyboardArrowDown size={25} color="grey" />
               </div>
             </span>
-            <div>
+            <div
+              className={`relative pb-2 ${
+                props.replyTo && props.deleteForEveryOne === 0
+                  ? "pt-[4px]"
+                  : "pt-1"
+              }  px-[4px] shadow-lg mr-3 bg-blue-200 my-1 rounded-md rounded-tr-none`}
+            >
+              {props.deleteForEveryOne === 0 && props.replyTo && (
+                <div
+                  onClick={() => {
+                    if (props.replyTo) setGoToMessage(props.replyTo);
+                  }}
+                  className={`flex justify-between items-center gap-12 rounded-md rounded-tr-none p-1 mb-1 bg-[#abd3f7] ${
+                    replyToMessageData?.data?.messageType ===
+                      MessageType.TEXT ||
+                    replyToMessageData?.data?.messageType === MessageType.DOC
+                      ? "h-[3.1rem]"
+                      : "h-[4rem]"
+                  }`}
+                >
+                  <div>
+                    <p className="">{replyToMessageData?.data?.repliedTo}</p>
+                    <p className="text-gray-800 flex gap-1 items-center">
+                      {replyToMessageData?.data?.doc && <FaFileAlt />}{" "}
+                      {replyToMessageData?.data?.text}
+                    </p>
+                  </div>
+                  {replyToMessageData?.data?.image && (
+                    <img
+                      className="h-14"
+                      src={`${BaseUrlContext.baseUrl}/${replyToMessageData?.data?.image.address}/${replyToMessageData?.data?.image.name}`}
+                    />
+                  )}
+                  {replyToMessageData?.data?.video && (
+                    <video
+                      className="h-14"
+                      src={`${BaseUrlContext.baseUrl}/${replyToMessageData?.data?.video.address}/${replyToMessageData?.data?.video.name}`}
+                    />
+                  )}
+                </div>
+              )}
               <div
-                id={
-                  props.messageId +
-                  "--" +
-                  new Date(props.createdAt).toLocaleDateString()
-                }
-                className={`message-p relative flex items-center p-2 mr-3 rounded-md rounded-tr-none my-1 bg-blue-200 shadow-lg select-none ${
+                id={"--" + props.messageId}
+                className={`px-2 flex items-center select-none ${
                   props.messageType === MessageType.TEXT ? "pr-[4.25rem]" : ""
                 }`}
               >

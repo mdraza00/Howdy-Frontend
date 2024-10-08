@@ -77,20 +77,13 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
 
   useEffect(() => {
     if (userNameInput) {
-      const url = `${BaseURL.baseUrl}/user/getUsers`;
+      const url = `${BaseURL.baseUrl}/chatroom/get-my-chatroom-members-by-name/${props.userId}/${userNameInput}`;
       axios
-        .post<getUsersRes>(
-          url,
-          {
-            userNametoFind: userNameInput,
-            senderId: props.userId,
+        .get<getUsersRes>(url, {
+          headers: {
+            authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          }
-        )
+        })
         .then((res) => {
           setUsersData(res.data.message);
         });
@@ -242,6 +235,11 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
               }}
             >
               <img
+                onClick={() => {
+                  console.log(
+                    `${BaseURL.baseUrl}/${userData.profilePhotoAddress}`
+                  );
+                }}
                 src={`${BaseURL.baseUrl}/${userData.profilePhotoAddress}`}
                 className="object-cover w-12 rounded-full"
               />

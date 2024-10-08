@@ -10,6 +10,7 @@ export default withMT({
       lightpurple: "#ac207b",
       lightGreen: "#5a928d",
       homePageBg: "#abbfc7",
+      lightblue: "#71BEE3",
     },
     extend: {},
   },

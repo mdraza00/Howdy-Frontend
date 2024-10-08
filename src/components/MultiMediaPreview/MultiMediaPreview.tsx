@@ -5,9 +5,11 @@ import closeBtnIcon from "../../assets/close-btn-icon.png";
 import sendMessageBtn from "../../assets/send-message-btn-icon.png";
 import axios from "axios";
 import { MessageType } from "../../enums/message";
-import { ImessageRes } from "../../Interface/Interface";
+import { ImessageRes, IReplyMessage } from "../../Interface/Interface";
 
 type propsType = {
+  setReplyToMessage: (data: IReplyMessage) => void;
+  replyToMessage: IReplyMessage;
   setCloseModel: (a: boolean) => void;
   setMultiMediaType: (a: MessageType | undefined) => void;
   setSendMultiMedia: (a: boolean) => void;
@@ -60,6 +62,10 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
           formData.append("senderId", props.senderId);
           formData.append("caption", caption);
           formData.append("messageType", props.messageMultiMedia.data.type);
+          formData.append(
+            "replyTo",
+            props.replyToMessage.data ? props.replyToMessage.data.messageId : ""
+          );
           axios
             .post<ImessageRes>(
               `${baseUrl.baseUrl}/message/save/multimedia`,
@@ -93,8 +99,10 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
                     visibleTo: res.data.message.visibleTo,
                     deletedFor: res.data.message.deletedFor,
                     deleteForEveryOne: res.data.message.deleteForEveryOne,
+                    replyTo: res.data.message.replyTo,
                   },
                 });
+              props.setReplyToMessage({ isReply: false, data: null });
               setMultimediaFromSubmitted(false);
               props.setCloseModel(true);
               setCaption("");

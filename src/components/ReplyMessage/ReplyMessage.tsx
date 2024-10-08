@@ -1,12 +1,12 @@
 import { PropsWithChildren, useContext } from "react";
-import { IReplayMessage } from "../../Interface/Interface";
+import { IReplyMessage } from "../../Interface/Interface";
 import Context from "../../contexts/BaseURLContext";
 import { MessageType } from "../../enums/message";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
 import { IoIosDocument } from "react-icons/io";
 type propsType = {
-  setReplyToMessage: (data: IReplayMessage) => void;
-  replyToMessage: IReplayMessage;
+  setReplyToMessage: (data: IReplyMessage) => void;
+  replyToMessage: IReplyMessage;
 };
 export default function ReplyMessage(props: PropsWithChildren<propsType>) {
   const baseURL = useContext(Context);

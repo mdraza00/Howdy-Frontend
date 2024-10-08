@@ -28,9 +28,10 @@ import {
   ImessageRes,
   IGetMessagesRes,
   ISelectedMessageData,
-  IReplayMessage,
+  IReplyMessage,
 } from "../../Interface/Interface";
 import ReplyMessage from "../ReplyMessage/ReplyMessage";
+import ForwardMessagesModel from "../ForwardMessagesModel/ForwardMessagesModel";
 
 type propsType = {
   userId: string;
@@ -59,11 +60,12 @@ type propsType = {
 };
 
 function MessagesContainer(props: PropsWithChildren<propsType>) {
-  const [replyToMessage, setReplyToMessage] = useState<IReplayMessage>({
+  const [replyToMessage, setReplyToMessage] = useState<IReplyMessage>({
     isReply: false,
     data: null,
   });
   const [messages, setMessages] = useState<Imessage[]>([]);
+  const [forwardMessages, setForwardMessages] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isChatRoomDeleted, setIsChatRoomDeleted] = useState(false);
@@ -136,7 +138,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   }
 
   function messagesContainerScrollHandler() {
-    const MessagesPs = document.querySelectorAll(".message-p");
+    const MessagesPs = document.querySelectorAll(".message-div-container");
     const scrollingDate = document.getElementById("scrolling-date");
     if (messagesContainerDiv) {
       if (messagesContainerDiv.scrollTop < 52) {
@@ -168,9 +170,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     if (scrollToView) {
       if (messages.length > 0) {
         const lastMessage = document.getElementById(
-          `${messages[messages.length - 1]._id}--${new Date(
-            messages[messages.length - 1].createdAt
-          ).toLocaleDateString()}`
+          `${"--" + messages[messages.length - 1]._id}`
         );
         if (lastMessage) lastMessage.scrollIntoView();
       }
@@ -193,8 +193,10 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         });
     }
 
-    socket.on("receieve-message", (data) => {
-      setMessages((msgsArray) => [...msgsArray, data]);
+    // data
+    socket.on("receieve-message", () => {
+      // setMessages((msgsArray) => [...msgsArray, data]);
+      props.setLoadMessages(true);
       setScrollToView(true);
     });
 
@@ -482,6 +484,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 message.senderId === props.userId ? (
                   <SenderMessage
                     setReplyToMessage={setReplyToMessage}
+                    senderId={props.userId}
                     chatRoomName={props.chatRoomName}
                     messageType={message.messageType}
                     image={message.image}
@@ -493,12 +496,17 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     time={message.createdAt}
                     createdAt={message.createdAt}
                     messageId={message._id}
+                    replyTo={message.replyTo}
                     setShowDeletePopupMenu={setShowDeletePopupMenu}
                     isSelectMessages={isSelectMessages}
+                    setIsSelectMessages={setIsSelectMessages}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
                   />
                 ) : (
                   <ReceiverMessage
+                    setReplyToMessage={setReplyToMessage}
+                    senderId={props.userId}
+                    chatRoomName={props.chatRoomName}
                     messageType={message.messageType}
                     image={message.image}
                     text={message.text}
@@ -510,6 +518,8 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     createdAt={message.createdAt}
                     messageId={message._id}
                     isSelectMessages={isSelectMessages}
+                    setIsSelectMessages={setIsSelectMessages}
+                    replyTo={message.replyTo}
                     setShowDeletePopupMenu={setShowDeletePopupMenu}
                     setSelectedMessagesData={setSelectedMessagesDataFunc}
                   />
@@ -531,7 +541,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 );
               }
               return (
-                <div key={message._id}>
+                <div key={message._id + "message-date"}>
                   {dateJSX}
                   {msg}
                 </div>
@@ -543,6 +553,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           {!isSelectMessages && (
             <>
               <SendMultiMedia
+                setReplyToMessage={setReplyToMessage}
                 replyToMessage={replyToMessage}
                 chatRoomId={props.chatRoomId}
                 senderId={props.userId}
@@ -582,6 +593,15 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 </form>
               </div>
             </>
+          )}
+          {forwardMessages && (
+            <ForwardMessagesModel
+              setSendMessage={setSendMessage}
+              userId={props.userId}
+              selectedMessagesData={selectedMessagesData}
+              setSelectedMessagesData={setSelectedMessagesData}
+              setForwardMessages={setForwardMessages}
+            />
           )}
           {isSelectMessages && (
             <div className="h-[6.3vh] flex items-center px-5 justify-between">
@@ -631,7 +651,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                       : "opacity-15"
                   } `}
                   disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {}}
+                  onClick={() => {
+                    console.log(selectedMessagesData);
+
+                    setIsSelectMessages(false);
+                    setForwardMessages(true);
+                  }}
                 >
                   <img src={forwardIcon} className="w-6 cursor-pointer" />
                 </button>

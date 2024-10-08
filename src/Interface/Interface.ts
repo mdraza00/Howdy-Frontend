@@ -41,7 +41,7 @@ export interface IMessageMultiMedia {
   } | null;
 }
 
-export interface IReplayMessage {
+export interface IReplyMessage {
   isReply: boolean;
   data: {
     senderName: string;
@@ -52,4 +52,42 @@ export interface IReplayMessage {
     messageId: string;
     messageType: MessageType;
   } | null;
+}
+export interface IReplyToMessageData {
+  isReplyTo: boolean;
+  data: {
+    repliedTo: string;
+    text: string;
+    messageType: MessageType;
+    image: { name: string; address: string } | null;
+    video: { name: string; address: string } | null;
+    doc: boolean;
+  } | null;
+}
+
+export interface IForwardMessageData {
+  isForwardMessage: boolean;
+  data: ISelectedMessageData[] | null;
+}
+
+export interface User {
+  _id: string;
+  email: string;
+  username: string;
+  profilePhotoAddress: string;
+}
+
+export interface getUsersRes {
+  status: boolean;
+  message: {
+    _id: string;
+    email: string;
+    username: string;
+    profilePhotoAddress: string;
+  }[];
+}
+
+export interface createOrGetChatRoomRes {
+  status: boolean;
+  message: string;
 }
