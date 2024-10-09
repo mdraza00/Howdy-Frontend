@@ -69,9 +69,24 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
       setForwardMessage(false);
     }
     if (gotToMessage.length > 0) {
+      console.log(gotToMessage);
       const message = document.getElementById("--" + gotToMessage);
-      if (message) message.scrollIntoView();
-      setGoToMessage("");
+      if (message) {
+        message.scrollIntoView({ block: "nearest" });
+        const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            const div = document.getElementById(`#${gotToMessage}`);
+            if (div) {
+              div.style.backgroundColor = "rgba(0,0,0,0.1)";
+              setTimeout(() => {
+                div.style.backgroundColor = "rgba(0,0,0,0)";
+              }, 900);
+            }
+            setGoToMessage("");
+          }
+        });
+        observer.observe(message);
+      }
     }
     if (props.replyTo) {
       const token = localStorage.getItem("token");
@@ -142,7 +157,13 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
           onClick={() => setMessagePopup(false)}
         ></div>
       )}
-      <div className="relative">
+      <div className=" relative ">
+        {
+          <div
+            className="absolute w-full h-full bg-black z-[100] opacity-15 invisible"
+            id={`${props.messageId}--blink`}
+          ></div>
+        }
         {props.isSelectMessages && (
           <>
             <div
@@ -155,18 +176,20 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               }}
             ></div>
             <div className="ml-2 absolute top-[50%] translate-y-[-42%]">
-              <input
-                className="w-5 h-5 cursor-pointer relative"
-                id={props.messageId}
-                type="checkbox"
-                onChange={(e) => {
-                  props.setSelectedMessagesData(
-                    `${props.messageId}--send`,
-                    e.target.checked,
-                    props.createdAt
-                  );
-                }}
-              />
+              {props.deleteForEveryOne != 1 && (
+                <input
+                  className="w-5 h-5 cursor-pointer relative"
+                  id={props.messageId}
+                  type="checkbox"
+                  onChange={(e) => {
+                    props.setSelectedMessagesData(
+                      `${props.messageId}--send`,
+                      e.target.checked,
+                      props.createdAt
+                    );
+                  }}
+                />
+              )}
             </div>
           </>
         )}
@@ -189,12 +212,13 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
           </>
         )}
         <div
-          className={`flex justify-end ${
+          className={` transition-all ease-in-out flex justify-end ${
             props.isSelectMessages ? "hover:bg-black/10" : ""
           }`}
+          id={`#${props.messageId}`}
         >
           <div
-            className="message-div-container group relative w-fit"
+            className=" message-div-container group relative w-fit"
             id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
           >
             {messagePopup && (
@@ -285,7 +309,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               </div>
             </span>
             <div
-              className={`relative pb-2 ${
+              className={` relative pb-2 ${
                 props.replyTo && props.deleteForEveryOne === 0
                   ? "pt-[4px]"
                   : "pt-1"
@@ -327,7 +351,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               )}
               <div
                 id={"--" + props.messageId}
-                className={`px-2 flex items-center select-none ${
+                className={`scroll-mt-[14rem] px-2 flex items-center select-none ${
                   props.messageType === MessageType.TEXT ? "pr-[4.25rem]" : ""
                 }`}
               >

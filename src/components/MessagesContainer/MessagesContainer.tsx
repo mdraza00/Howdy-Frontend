@@ -167,6 +167,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   }
 
   useEffect(() => {
+    if (replyToMessage.isReply) {
+      if (inputRef.current) inputRef.current.focus();
+    }
     if (scrollToView) {
       if (messages.length > 0) {
         const lastMessage = document.getElementById(
@@ -333,6 +336,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     messages,
     props,
     props.chatRoomId,
+    replyToMessage.isReply,
     scrollToView,
     selectedMessagesData,
     sendMessage,
@@ -582,6 +586,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                     className="w-full rounded-sm px-2 py-1 mx-2 focus:outline-none text-xl"
                     placeholder="Type a message"
                     ref={inputRef}
+                    autoFocus={true}
                   />
 
                   <button

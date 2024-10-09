@@ -70,6 +70,22 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
     if (gotToMessage.length > 0) {
       const message = document.getElementById("--" + gotToMessage);
       if (message) message.scrollIntoView();
+      if (message) {
+        message.scrollIntoView({ block: "nearest" });
+        const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            const div = document.getElementById(`#${gotToMessage}`);
+            if (div) {
+              div.style.backgroundColor = "rgba(0,0,0,0.1)";
+              setTimeout(() => {
+                div.style.backgroundColor = "rgba(0,0,0,0)";
+              }, 1000);
+            }
+            setGoToMessage("");
+          }
+        });
+        observer.observe(message);
+      }
       setGoToMessage("");
     }
 
@@ -162,7 +178,10 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
           </div>
         </>
       )}
-      <div className="w-full relative">
+      <div
+        className="transition-all ease-in-out w-full relative"
+        id={`#${props.messageId}`}
+      >
         {props.isSelectMessages && (
           <div
             className="absolute w-full h-full hover:bg-black/10"
@@ -261,18 +280,20 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
           >
             {props.isSelectMessages && (
               <div className="absolute top-[50%] translate-y-[-42%] left-[-2.18rem]">
-                <input
-                  className="w-5 h-5 cursor-pointer"
-                  id={props.messageId}
-                  type="checkbox"
-                  onChange={(e) => {
-                    props.setSelectedMessagesData(
-                      `${props.messageId}--receive`,
-                      e.target.checked,
-                      props.createdAt
-                    );
-                  }}
-                />
+                {props.deleteForEveryOne === 0 && (
+                  <input
+                    className="w-5 h-5 cursor-pointer"
+                    id={props.messageId}
+                    type="checkbox"
+                    onChange={(e) => {
+                      props.setSelectedMessagesData(
+                        `${props.messageId}--receive`,
+                        e.target.checked,
+                        props.createdAt
+                      );
+                    }}
+                  />
+                )}
               </div>
             )}
             <span
@@ -333,7 +354,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 </div>
               )}
               <div
-                className={`flex items-end justify-between ${
+                className={`scroll-mt-[14rem] flex items-end justify-between ${
                   props.messageType == MessageType.TEXT && "gap-5"
                 } ${props.messageId}`}
                 id={"--" + props.messageId}
