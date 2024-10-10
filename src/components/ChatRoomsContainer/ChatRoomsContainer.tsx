@@ -3,21 +3,17 @@ import { socket } from "../socket/socket";
 import axios from "axios";
 import BaseURLContext from "../../contexts/BaseURLContext";
 import newChatBtn from "/new-chat.png";
-import styles from "./ChatRoomsContainer.module.css";
 import ChatRoom from "../ChatRoom/ChatRoom";
+import User from "../User/User";
+import { RiChatNewFill } from "react-icons/ri";
+import { IShowMessagesContainer } from "../../Interface/Interface";
 type propsType = {
   userId: string;
   setNewChatModel: (a: boolean) => void;
   updateChatRoomsData: boolean;
   setUpdateChatRoomsData: (a: boolean) => void;
   setLoadMessages: (a: boolean) => void;
-  setShowMessagesContainer: (
-    chatRoomId: string,
-    userName: string,
-    profilePhoto: string,
-    senderId: string,
-    recipientId: string
-  ) => void;
+  setShowMessagesContainer: (data: IShowMessagesContainer) => void;
   activeChatRoomId: string;
   setActiveChatRoomId: (a: string) => void;
   setChatRoomUserProfile: (
@@ -62,10 +58,6 @@ interface User {
   email: string;
   username: string;
   profilePhotoAddress: string;
-}
-interface createChatRoomRes {
-  status: boolean;
-  message: string;
 }
 
 function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
@@ -144,9 +136,9 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
     userNameInput,
   ]);
   return (
-    <div className={`h-full w-1/4 gap-2 flex flex-col items-center px-2`}>
+    <div className={"h-auto w-full gap-2 flex flex-col items-center"}>
       {/* button  */}
-      <div className=" w-full flex items-center justify-between">
+      <div className="w-full h-fit hidden border-2 border-black items-center justify-between">
         <h2 className="text-2xl">Chat</h2>
         <button
           className=""
@@ -154,18 +146,18 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
             props.setNewChatModel(true);
           }}
         >
-          <img src={newChatBtn} className="size-7" />
+          <img src={newChatBtn} className="size-8" />
         </button>
       </div>
       <input
         type="text"
-        className="w-full text-md rounded-sm px-2 py-1 bg-gray-200 focus:outline-none"
+        className="w-full text-[1rem] rounded-full px-[0.9rem] py-[0.4rem] mt-2 bg-gray-200 focus:outline-none"
         placeholder="username"
         onChange={(e) => setUserNameInput(e.target.value)}
         value={userNameInput}
       />
       {/* chatrooms */}
-      <div className="h-full w-full flex flex-col border-r-2 overflow-auto scroll-bar">
+      <div className=" h-full w-full flex flex-col mt-3 overflow-auto scroll-bar">
         {!userNameInput &&
           chatRoomsData.map((chatRoom) => {
             // join chatroom using socket
@@ -189,65 +181,28 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
           })}
         {userNameInput &&
           usersData.map((userData) => (
-            <div
-              id={userData._id}
-              key={userData._id}
-              className={`flex items-center gap-2 p-2 rounded-md border-black ${styles["newChatUser"]}`}
-              onClick={(e) => {
-                const recipientId = e.currentTarget.id;
-                const senderId = props.userId;
-                const url = `${BaseURL.baseUrl}/chatroom/createRoom`;
-
-                axios
-                  .post<createChatRoomRes>(
-                    url,
-                    {
-                      senderId,
-                      recipientId,
-                    },
-                    { headers: { authorization: `Bearer ${token}` } }
-                  )
-                  .then((res) => {
-                    // update chatrooms
-                    props.setUpdateChatRoomsData(
-                      props.updateChatRoomsData ? false : true
-                    );
-                    // console.log(res.data.message);
-                    props.setActiveChatRoomId(res.data.message);
-                    props.setShowMessagesContainer(
-                      res.data.message,
-                      userData.username,
-                      userData.profilePhotoAddress,
-                      senderId,
-                      recipientId
-                    );
-                    props.setLoadMessages(true);
-                    props.setNewChatModel(false);
-                  })
-                  .catch((err) => {
-                    console.log(
-                      "an error has occured in creating chatroom. error = ",
-                      err
-                    );
-                  });
-
-                setUserNameInput("");
-              }}
-            >
-              <img
-                onClick={() => {
-                  console.log(
-                    `${BaseURL.baseUrl}/${userData.profilePhotoAddress}`
-                  );
-                }}
-                src={`${BaseURL.baseUrl}/${userData.profilePhotoAddress}`}
-                className="object-cover w-12 rounded-full"
-              />
-              <p>{userData.username}</p>
-            </div>
+            <User
+              _id={userData._id}
+              userId={props.userId}
+              updateChatRoomsData={props.updateChatRoomsData}
+              username={userData.username}
+              profilePhotoAddress={userData.profilePhotoAddress}
+              setUserNameInput={setUserNameInput}
+              setNewChatModel={props.setNewChatModel}
+              setLoadMessages={props.setLoadMessages}
+              setUpdateChatRoomsData={props.setUpdateChatRoomsData}
+              setActiveChatRoomId={props.setActiveChatRoomId}
+              setShowMessagesContainer={props.setShowMessagesContainer}
+            />
           ))}
         {/* {userNameInput && 
           usersData.map(userData=>)} */}
+      </div>
+      <div
+        className="fixed w-fit h-fit p-[0.5rem] bottom-4 right-4 bg-blue-600 rounded-md "
+        onClick={() => props.setNewChatModel(true)}
+      >
+        <RiChatNewFill color="white" size={25} />
       </div>
     </div>
   );

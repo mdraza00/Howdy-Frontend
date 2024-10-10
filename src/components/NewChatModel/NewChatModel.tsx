@@ -4,26 +4,23 @@ import BaseURLContext from "../../contexts/BaseURLContext";
 import styles from "./NewChatModel.module.css";
 import rollingIcon from "/icons/RollingIcon.svg";
 import { Button } from "@material-tailwind/react";
+import { FaArrowLeft } from "react-icons/fa6";
 import {
   createOrGetChatRoomRes,
   getUsersRes,
+  IShowMessagesContainer,
   User,
 } from "../../Interface/Interface";
 
 type propsType = {
   userId: string | null;
   profilePhoto: string;
+  newChatModel: boolean;
   setNewChatModel: (a: boolean) => void;
   setUpdateChatRoomsData: (a: boolean) => void;
   updateChatRoomsData: boolean;
   setLoadMessages: (a: boolean) => void;
-  setShowMessagesContainer: (
-    chatRoomId: string,
-    userName: string,
-    profilePhoto: string,
-    senderId: string,
-    recipientId: string
-  ) => void;
+  setShowMessagesContainer: (data: IShowMessagesContainer) => void;
   setActiveChatRoomId: (a: string) => void;
 };
 
@@ -60,6 +57,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
           console.log("error is fetching users => ", err);
         });
     } else {
+      console.log(props.userId);
       const url = `${baseURL.baseUrl}/user/getUsers/${props.userId}`;
       axios
         .get<getUsersRes>(url, {
@@ -80,31 +78,44 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
   return (
     <>
       <div
-        className="absolute h-screen w-screen bg-black opacity-15 z-40"
+        className="absolute hidden h-fit w-screen bg-black opacity-15 z-40"
         onClick={() => {
           props.setNewChatModel(false);
         }}
       ></div>
-      <div className="absolute top-[19%] left-[36.5%]">
-        <div className="h-fit shadow-2xl border-2 border-black w-fit p-10 bg-white rounded-md absolute z-50">
-          <input
-            type="text"
-            className="bg-gray-200 focus:outline-none px-3 py-1 w-80 rounded-md"
-            placeholder="search username"
-            onChange={(e) => {
-              setUsernameInput(e.target.value);
-            }}
-            value={usernameInput}
-          />
+      <div
+        className={`fixed top-0 transition-all ease-in-out duration-[510ms] ${
+          props.newChatModel ? "left-[0%]" : "left-[110%]"
+        }  w-full h-screen b z-[200]`}
+      >
+        <div className="h-full w-full shadow-2xl bg-white absolute z-50">
+          <div className="w-full h-fit flex items-center justify-center gap-2 py-2 px-2">
+            <FaArrowLeft
+              className="rounded-full p-1 active:bg-black/15 "
+              size={35}
+              onClick={() => {
+                props.setNewChatModel(false);
+              }}
+            />
+            <input
+              type="text"
+              className="bg-gray-200 focus:outline-none px-3 py-1 w-[100%] rounded-md"
+              placeholder="search username"
+              onChange={(e) => {
+                setUsernameInput(e.target.value);
+              }}
+              value={usernameInput}
+            />
+          </div>
           <div
             id="users-container"
-            className={`h-96 w-80 overflow-auto scroll-bar mt-4 pr-1 flex flex-col`}
+            className={`w-full h-[80%] overflow-auto scroll-bar pr-1 flex flex-col`}
           >
             {usersData.map((userData) => (
               <div
                 id={userData._id}
                 key={userData._id}
-                className={`flex items-center gap-2 border-b-2 p-2 ${
+                className={`flex h-fit w-full items-center gap-2 border-b-2 p-2 ${
                   styles["newChatUser"]
                 } ${
                   activeUser.active &&
@@ -128,7 +139,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
               </div>
             ))}
           </div>
-          <div className="mt-2 flex items-center justify-evenly">
+          <div className="mt-2 h-fit flex items-center justify-evenly">
             <Button
               onClick={() => {
                 props.setNewChatModel(false);
@@ -163,13 +174,17 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
                     );
                     console.log(res.data);
                     props.setActiveChatRoomId(res.data.message);
-                    props.setShowMessagesContainer(
-                      res.data.message,
-                      activeUser.username,
-                      activeUser.profilePhotoAddress,
-                      senderId ? senderId : "",
-                      recipientId
-                    );
+                    props.setShowMessagesContainer({
+                      isShow: true,
+                      data: {
+                        profilePhoto: activeUser.profilePhotoAddress,
+                        chatRoomId: res.data.message,
+                        userName: activeUser.username,
+                        senderId: senderId ? senderId : "",
+                        recipientId: recipientId,
+                      },
+                    });
+
                     props.setLoadMessages(true);
                     props.setNewChatModel(false);
                   })

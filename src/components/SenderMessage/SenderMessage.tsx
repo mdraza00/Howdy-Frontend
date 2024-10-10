@@ -151,23 +151,23 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
 
   return (
     <>
-      {messagePopup && (
+      {/* {messagePopup && (
         <div
-          className="absolute w-[75vw] h-screen top-0 bg-transparent z-[60]"
+          className="fixed w-full h-full bg-black left-0 top-0 bg-transparent z-[60]"
           onClick={() => setMessagePopup(false)}
         ></div>
-      )}
-      <div className=" relative ">
+      )} */}
+      <div className="relative h-fit">
         {
           <div
-            className="absolute w-full h-full bg-black z-[100] opacity-15 invisible"
+            className="absolute w-full h-fit bg-black z-[100] opacity-15"
             id={`${props.messageId}--blink`}
           ></div>
         }
         {props.isSelectMessages && (
           <>
             <div
-              className="absolute w-full h-full hover:bg-black/10"
+              className="absolute w-full h-fit hover:bg-black/10"
               onClick={() => {
                 if (props.isSelectMessages) {
                   const checkbox = document.getElementById(props.messageId);
@@ -214,14 +214,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
         <div
           className={` transition-all ease-in-out flex justify-end ${
             props.isSelectMessages ? "hover:bg-black/10" : ""
-          }`}
+          } `}
           id={`#${props.messageId}`}
         >
           <div
-            className=" message-div-container group relative w-fit"
+            className="message-div-container group relative w-fit h-fit"
             id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
           >
-            {messagePopup && (
+            {/* {messagePopup && (
               <div
                 id="message-popup-container"
                 className="absolute bg-white shadow-2xl z-[60] right-5 top-5 py-2"
@@ -293,15 +293,17 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                   Delete
                 </div>
               </div>
-            )}
-            <span
-              className={`absolute  z-10 bg-gradient-to-tr ${
+            )} */}
+
+            {/* `absolute  z-10 bg-gradient-to-tr ${
                 messagePopup ? "visible" : "invisible"
               } ${
                 props.messageType == MessageType.TEXT
                   ? "from-transparent via-blue-200 to-blue-200 w-[40%] h-[80%] right-3 top-1"
                   : "from-transparent from-40% via-blue-200 via-95% to-blue-200 w-[20%] h-[20%] top-2 right-5"
-              }  group-hover:visible rounded-sm cursor-pointer`}
+              }  group-hover:visible rounded-sm cursor-pointer` */}
+            <span
+              className={"absolute top-0 right-1 z-10"}
               onClick={() => setMessagePopup(messagePopup ? false : true)}
             >
               <div className="flex justify-end">
@@ -313,14 +315,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 props.replyTo && props.deleteForEveryOne === 0
                   ? "pt-[4px]"
                   : "pt-1"
-              }  px-[4px] shadow-lg mr-3 bg-blue-200 my-1 rounded-md rounded-tr-none`}
+              }  px-[4px] shadow-lg mr-2 bg-blue-200 my-1 rounded-md rounded-tr-none `}
             >
-              {props.deleteForEveryOne === 0 && props.replyTo && (
+              {/* {props.deleteForEveryOne === 0 && props.replyTo && (
                 <div
                   onClick={() => {
                     if (props.replyTo) setGoToMessage(props.replyTo);
                   }}
-                  className={`flex justify-between items-center gap-12 rounded-md rounded-tr-none p-1 mb-1 bg-[#abd3f7] ${
+                  className={`flex  justify-between items-center gap-12 rounded-md rounded-tr-none p-1 mb-1 bg-[#abd3f7] ${
                     replyToMessageData?.data?.messageType ===
                       MessageType.TEXT ||
                     replyToMessageData?.data?.messageType === MessageType.DOC
@@ -348,17 +350,17 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                     />
                   )}
                 </div>
-              )}
+              )} */}
               <div
                 id={"--" + props.messageId}
                 className={`scroll-mt-[14rem] px-2 flex items-center select-none ${
                   props.messageType === MessageType.TEXT ? "pr-[4.25rem]" : ""
-                }`}
+                } `}
               >
                 {props.deleteForEveryOne === 0 ? (
                   <>
                     {props.messageType === MessageType.TEXT && (
-                      <div>
+                      <div className="">
                         {props.text.split(" ").map((word) => {
                           return domains
                             .map(
@@ -386,7 +388,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                       </div>
                     )}
                     {props.messageType === MessageType.IMAGE && props.image && (
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-col gap-1 ">
                         <img
                           id={`image-message-${props.messageId}`}
                           className="h-60"

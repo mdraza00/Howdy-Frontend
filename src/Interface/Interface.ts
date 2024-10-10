@@ -76,6 +76,10 @@ export interface User {
   username: string;
   profilePhotoAddress: string;
 }
+export interface getUserRes {
+  status: boolean;
+  message: User | null;
+}
 
 export interface getUsersRes {
   status: boolean;
@@ -90,4 +94,20 @@ export interface getUsersRes {
 export interface createOrGetChatRoomRes {
   status: boolean;
   message: string;
+}
+
+export interface ICreateChatRoomRes {
+  status: boolean;
+  message: string;
+}
+
+export interface IShowMessagesContainer {
+  isShow: boolean;
+  data: {
+    profilePhoto: string;
+    chatRoomId: string;
+    userName: string;
+    senderId: string;
+    recipientId: string;
+  } | null;
 }

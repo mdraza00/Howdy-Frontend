@@ -12,7 +12,16 @@ export default withMT({
       homePageBg: "#abbfc7",
       lightblue: "#71BEE3",
     },
-    extend: {},
+    screens: {
+      "Mobile-S": "320px",
+      "Mobile-M": "375px",
+      "Mobile-L": "425px",
+    },
+    extend: {
+      backgroundImage: {
+        "chatroom-background": "url('chat-background.png')",
+      },
+    },
   },
   plugins: [
     function ({ addUtilities }) {

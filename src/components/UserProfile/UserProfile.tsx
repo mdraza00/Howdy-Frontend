@@ -97,18 +97,17 @@ function UserProfile(props: PropsWithChildren<propsType>) {
 
   function croppedImage(croppedImage: File) {
     setProfilePhotoInput(croppedImage);
-    // console.log("cropped file agyi", croppedImage);
   }
   return (
     <>
       <div
-        className="absolute w-screen h-screen z-[1001] bg-black/30"
+        className="absolute w-full h-full z-[1001] bg-black/30"
         onClick={() => {
           props.setShowUserProfileModel(false);
         }}
       ></div>
-      <div className="absolute w-fit h-fit left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] flex items-center justify-center z-[1003]">
-        <div className="w-fit px-20 py-10 h-fit bg-blue-400 flex flex-col items-center gap-4 relative z-[1003] rounded-md pt-10">
+      <div className="absolute w-full h-fit left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] flex items-center justify-center z-[1003]">
+        <div className="w-[90%] h-fit pb-10 bg-blue-400 flex flex-col items-center gap-4 relative z-[1003] rounded-xl shadow-2xl pt-10">
           <button
             className="absolute right-4 top-3 bg-white p-1"
             onClick={() => {
@@ -118,8 +117,8 @@ function UserProfile(props: PropsWithChildren<propsType>) {
             <img src={closeBtnIcon} className="w-6" />
           </button>
 
-          <div className="w-[40%] flex justify-between items-center flex-col gap-10">
-            <div className="flex flex-col gap-4">
+          <div className="w-fit flex justify-between items-center flex-col gap-5">
+            <div className="flex flex-col items-center gap-3">
               <img
                 src={`${
                   typeof profilePhotoInput == "string" &&
@@ -131,14 +130,15 @@ function UserProfile(props: PropsWithChildren<propsType>) {
                       }`
                 }`}
                 // src={`${baseURL.baseUrl}/${profilePhotoInput}`}
-                className="w-56 h-56 rounded-full object-cover"
+                className="w-[80%] object-cover aspect-square rounded-full"
               />
 
               {/* setIsImagePreview(true) */}
               <Button
                 onClick={() => document.getElementById("hidden-input")?.click()}
-                className="bg-lightblueBG w-60  h-10"
+                className="w-[80%] p-0 h-9"
                 placeholder={undefined}
+                color="blue-gray"
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               >
@@ -152,8 +152,8 @@ function UserProfile(props: PropsWithChildren<propsType>) {
                 />
               </Button>
             </div>
-            <div className="flex flex-col gap-4 mt-4">
-              <div className="w-60  h-10">
+            <div className="flex flex-col gap-3 mt-4 w-[80%]">
+              <div className="">
                 <Input
                   variant="outlined"
                   type="text"
@@ -166,7 +166,7 @@ function UserProfile(props: PropsWithChildren<propsType>) {
                   crossOrigin={undefined}
                 />
               </div>
-              <div className="w-60  h-10">
+              <div className="w-full">
                 <Input
                   variant="outlined"
                   type="text"
@@ -179,7 +179,7 @@ function UserProfile(props: PropsWithChildren<propsType>) {
                   crossOrigin={undefined}
                 />
               </div>
-              <div className="w-60  h-10">
+              <div className="w-full">
                 <Input
                   readOnly
                   variant="outlined"
@@ -193,7 +193,7 @@ function UserProfile(props: PropsWithChildren<propsType>) {
                   crossOrigin={undefined}
                 />
               </div>
-              <div className="w-60  h-10">
+              <div className="w-full">
                 <Input
                   variant="outlined"
                   type="password"
@@ -208,15 +208,16 @@ function UserProfile(props: PropsWithChildren<propsType>) {
               </div>
               <Button
                 onClick={handleChangeAllBtn}
-                className="bg-lightGreen w-60 h-10 flex items-center justify-center"
+                className="w-full p-0 flex items-center justify-center"
+                color="teal"
                 placeholder={undefined}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               >
                 {isLoading ? (
-                  <img src={rollingIcon} className="w-10" />
+                  <img src={rollingIcon} className="h-9" />
                 ) : (
-                  "update"
+                  <span className="h-9 flex items-center">update</span>
                 )}
               </Button>
             </div>
@@ -224,8 +225,9 @@ function UserProfile(props: PropsWithChildren<propsType>) {
         </div>
       </div>
       {isImagePreview && (
-        <div className="">
+        <div className="h-fit w-full">
           <ImagePreview
+            setImageSrc={setImgSrc}
             setIsImagePreview={setIsImagePreview}
             croppedImage={croppedImage}
             crop={crop}

@@ -66,9 +66,9 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
       .catch((err) => console.log(err));
   }, [props.userId, props.chatRoomId, baseUrl.baseUrl, token]);
   return (
-    <div className="w-[30%] bg-blue-gray-50 flex flex-col gap-4">
-      <div className="shadow-md">
-        <div className="flex items-center gap-7 bg-white">
+    <div className="w-full fixed top-0 left-0 bg-blue-gray-50 flex flex-col gap-3 z-[500]">
+      <div className="shadow-md h-fit">
+        <div className="flex items-center gap-7 bg-white h-fit">
           <button
             className="p-2"
             onClick={() => {
@@ -83,26 +83,26 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
           </button>
           <p className="text-lg">User Info</p>
         </div>
-        <div className="flex flex-col items-center bg-white py-10">
+        <div className="flex flex-col items-center bg-white py-4 h-fit">
           <img
-            className="w-52 h-52 object-cover rounded-full"
+            className="h-48 object-cover rounded-full"
             src={`${baseUrl.baseUrl}/${chatRoomUserData.profilePhoto}`}
           />
-          <p className="mt-1 text-2xl">{chatRoomUserData.username}</p>
-          <p className="text-gray-700">{chatRoomUserData.email}</p>
+          <p className="mt-1 text-xl">{chatRoomUserData.username}</p>
+          <p className="text-gray-700 text-[1rem]">{chatRoomUserData.email}</p>
         </div>
       </div>
-      <div className="bg-white shadow-md py-4 px-7">
+      <div className="bg-white shadow-md py-3 px-4 h-fit">
         <p className="text-gray-700 mb-1">About</p>
         <p>{chatRoomUserData.about}</p>
       </div>
-      <div className="bg-white shadow-md">
-        <div className="py-3 px-7 hover:bg-black/[.06] transition-all ease-in-out flex items-center justify-between cursor-pointer">
-          <p className="flex items-center gap-6">
-            <img src={notificationIcon} className="w-5" /> Mute Notifications
+      <div className="bg-white shadow-md h-fit">
+        <div className=" h-fit py-3 px-3 hover:bg-black/[.06] transition-all ease-in-out flex items-center justify-between cursor-pointer">
+          <p className="flex items-center gap-2">
+            <img src={notificationIcon} className="w-4" /> Mute Notifications
           </p>
           <div
-            className={`w-11 h-6 ${
+            className={`w-12 h-6 ${
               mute ? "bg-blue-600/[.20]" : "bg-gray-600"
             } border-2 border-gray-600 rounded-full`}
             onClick={() => {
@@ -118,31 +118,25 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
             ></div>
           </div>
         </div>
-        <div className="py-3 px-7 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
-          <p className="flex items-center gap-6">
-            <img src={blockIcon} className="w-5" /> Block{" "}
+        <div className="py-3 px-3  h-fit hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
+          <p className="flex items-center gap-2">
+            <img src={blockIcon} className="w-4" /> Block{" "}
             {chatRoomUserData.username}
           </p>
         </div>
-        <div className="py-3 px-7 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
-          <p className="flex items-center gap-6">
-            <img src={reportIcon} className="w-5" />
+        <div className="py-3 px-3 h-fit hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
+          <p className="flex items-center gap-2">
+            <img src={reportIcon} className="w-4" />
             Report {chatRoomUserData.username}
           </p>
         </div>
-        <div className="py-3 px-7 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
-          <p className="flex items-center gap-6">
+        <div className="py-3 px-3 h-fit hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
+          <p className="flex items-center gap-2">
             {" "}
-            <img src={deleteChatIcon} className="w-5" />
+            <img src={deleteChatIcon} className="w-4" />
             Delete Chat
           </p>
         </div>
-        {/* <div className="border-2 border-black">
-        </div>
-        <div className="border-2 border-black">
-        </div>
-        <div className="border-2 border-black">
-        </div> */}
       </div>
     </div>
   );

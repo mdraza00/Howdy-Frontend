@@ -1,6 +1,4 @@
 import { PropsWithChildren, useRef, useState } from "react";
-// import { Crop } from "react-image-crop";
-import closeBtnIcon from "../../assets/close-btn-icon.png";
 import { Button } from "@material-tailwind/react";
 import { centerCrop, Crop, makeAspectCrop, PixelCrop } from "react-image-crop";
 import ReactCrop from "react-image-crop";
@@ -9,6 +7,7 @@ import { canvasPreview } from "./canvasPreview";
 import "react-image-crop/dist/ReactCrop.css";
 
 type propsType = {
+  setImageSrc: (src: string) => void;
   setIsImagePreview: (a: boolean) => void;
   croppedImage: (image: File) => void;
   crop: Crop | undefined;
@@ -17,22 +16,9 @@ type propsType = {
 };
 
 function ImagePreview(props: PropsWithChildren<propsType>) {
-  // const [crop, setCrop] = useState<Crop>();
-  // const [imgSrc, setImgSrc] = useState("");
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const imgRef = useRef<HTMLImageElement>(null);
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
-
-  // const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setCrop(undefined);
-  //     const reader = new FileReader();
-  //     reader.addEventListener("load", () =>
-  //       setImgSrc(reader.result?.toString() || "")
-  //     );
-  //     reader.readAsDataURL(e.target.files[0]);
-  //   }
-  // };
 
   const centerAspectCrop = (
     mediaWidth: number,
@@ -109,26 +95,19 @@ function ImagePreview(props: PropsWithChildren<propsType>) {
     [completedCrop, 1, 0]
   );
 
+  // props.setIsImagePreview(false);
   return (
-    <div className="absolute flex w-screen h-screen items-center justify-center z-[1004]">
-      <button
-        className="absolute top-[27%] right-[27%] bg-white border-2 border-black z-50"
-        onClick={() => {
-          props.setIsImagePreview(false);
-        }}
-      >
-        <img src={closeBtnIcon} className="w-6" />
-      </button>
-      <div className="w-[50%] h-[50%] flex flex-col gap-3 items-center justify-center bg-black/35 py-2">
+    <div className="fixed top-0 left-0 w-full h-full bg-black/30 flex items-center justify-center z-[1004]">
+      <div className="relative h-fit w-full flex flex-col gap-14 items-center justify-center bg-black/15 py-2">
         {!!props.imgSrc && (
-          <div>
+          <div className="">
             <ReactCrop
               crop={props.crop}
               onChange={(_, percentCrop) => props.setCrop(percentCrop)}
               onComplete={(c) => setCompletedCrop(c)}
               aspect={1}
               minHeight={100}
-              // circularCrop
+              circularCrop
             >
               <img
                 ref={imgRef}
@@ -156,15 +135,28 @@ function ImagePreview(props: PropsWithChildren<propsType>) {
                 }}
               />
             </div>
-            <div>
+            <div className="w-full flex items-center justify-evenly">
               <Button
-                className="bg-lightGreen w-52"
+                className="w-[43%]"
+                color="teal"
                 onClick={onDownloadCropClick}
                 placeholder={undefined}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
               >
                 Select
+              </Button>
+              <Button
+                className="w-[43%]"
+                onClick={() => {
+                  props.setImageSrc("");
+                  props.setIsImagePreview(false);
+                }}
+                placeholder={undefined}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+              >
+                cancel
               </Button>
             </div>
           </>

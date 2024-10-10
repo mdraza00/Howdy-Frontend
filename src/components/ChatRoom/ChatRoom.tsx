@@ -2,6 +2,7 @@ import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import baseURLContext from "../../contexts/BaseURLContext";
 import styles from "./ChatRoom.module.css";
 import axios from "axios";
+import { IShowMessagesContainer } from "../../Interface/Interface";
 
 type propsType = {
   userId: string;
@@ -11,13 +12,7 @@ type propsType = {
   lastMessageDate: string;
   lastMessageVisibleTo: string[];
   setLoadMessages: (a: boolean) => void;
-  setShowMessagesContainer: (
-    chatRoomId: string,
-    userName: string,
-    profilePhoto: string,
-    senderId: string,
-    recipientId: string
-  ) => void;
+  setShowMessagesContainer: (data: IShowMessagesContainer) => void;
   activeChatRoomId: string;
   setActiveChatRoomId: (a: string) => void;
   setChatRoomUserProfile: (
@@ -98,20 +93,24 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
 
   return (
     <div
-      className={`w-full flex items-center justify-center p-2 gap-2 ${
+      className={`w-full h-fit flex items-center justify-center p-2 gap-2 ${
         styles["chatroom-contanier"]
       } border-b-2 ${
         props.id === props.activeChatRoomId && `${styles["active-chat"]}`
-      } cursor-pointer`}
+      } cursor-pointer hover:bg-black/15 active:bg-white`}
       onClick={() => {
         props.setActiveChatRoomId(props.id);
-        props.setShowMessagesContainer(
-          props.id,
-          userData?.name || "",
-          userData?.profilePhoto || "",
-          userId,
-          recipientId
-        );
+        props.setShowMessagesContainer({
+          isShow: true,
+          data: {
+            profilePhoto: userData?.profilePhoto || "",
+            chatRoomId: props.id,
+            userName: userData?.name || "",
+            senderId: userId,
+            recipientId: recipientId,
+          },
+        });
+
         props.setLoadMessages(true);
         props.setChatRoomUserProfile(props.userId, props.id, false);
       }}
@@ -121,7 +120,7 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
         src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
       />
 
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full h-fit">
         <p className="w-full flex justify-between">
           {userData?.name}
           <span className="text-sm"> {dateToDisplay}</span>

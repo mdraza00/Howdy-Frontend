@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseURLContext from "../../contexts/BaseURLContext";
-import commonStyles from "../Common/Common.module.css";
 import rollingIcon from "/icons/RollingIcon.svg";
 import { Button, Input } from "@material-tailwind/react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -63,7 +62,7 @@ function Login() {
   ]);
   return (
     <form
-      className={commonStyles["login-signup-form"]}
+      className={""}
       onSubmit={(e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -71,67 +70,69 @@ function Login() {
         setShowWarning("");
       }}
     >
-      <h2 className={"text-center py-1 my-2 text-lg"}>Login</h2>
-      <div className={commonStyles["input-container"]}>
-        <Input
-          className={``}
-          type="email"
-          name="email"
-          label="email"
-          id="input-email"
-          value={emailInput}
-          onChange={(e) => setEmailInput(e.target.value)}
-          required
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-          crossOrigin={undefined}
-        />
-      </div>
-      <div className={`${commonStyles["input-container"]} relative`}>
-        <Input
-          className={``}
-          type={showPassword ? "text" : "password"}
-          name="password"
-          label="Password"
-          id="input-password"
-          value={passwordInput}
-          onChange={(e) => setPasswordInput(e.target.value)}
-          required
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-          crossOrigin={undefined}
-        />
-        {showPassword ? (
-          <FaEyeSlash
-            className="absolute right-2 top-1/2 translate-y-[-50%]"
-            size={22}
-            onClick={() => setShowPassword(false)}
+      <h2 className={"text-center py-1 mt-2 mb-4 text-[1.4rem]"}>Login</h2>
+      <div className="w-full flex justify-center items-center flex-col gap-3">
+        <div className={"w-full xl:w-5/12"}>
+          <Input
+            className={"text-[1rem]"}
+            type="email"
+            name="email"
+            label="email"
+            id="input-email"
+            value={emailInput}
+            onChange={(e) => setEmailInput(e.target.value)}
+            required
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            crossOrigin={undefined}
           />
-        ) : (
-          <FaEye
-            className="absolute right-2 top-1/2 translate-y-[-50%]"
-            size={22}
-            onClick={() => setShowPassword(true)}
+        </div>
+        <div className={"relative w-full xl:w-5/12"}>
+          <Input
+            className={"text-[1rem]"}
+            type={showPassword ? "text" : "password"}
+            name="password"
+            label="Password"
+            id="input-password"
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            required
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+            crossOrigin={undefined}
           />
-        )}
+          {showPassword ? (
+            <FaEyeSlash
+              className="absolute right-2 top-1/2 translate-y-[-50%] size-6"
+              onClick={() => setShowPassword(false)}
+            />
+          ) : (
+            <FaEye
+              className="absolute right-2 top-1/2 translate-y-[-50%] size-6"
+              onClick={() => setShowPassword(true)}
+            />
+          )}
+        </div>
+        <div className={"flex justify-center mt-5 w-full xl:w-5/12"}>
+          <Button
+            id="login-form-submit-button"
+            color="blue"
+            className={"flex items-center justify-center w-full py-[1px]"}
+            type="submit"
+            // variant="outlined"
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
+          >
+            {isLoading ? (
+              <img className="h-9" src={rollingIcon} />
+            ) : (
+              <span className="h-9 flex items-center">Login</span>
+            )}
+          </Button>
+        </div>
       </div>
-      <div className={commonStyles["input-container"]}>
-        <Button
-          id="login-form-submit-button"
-          color="blue"
-          className={`flex items-center justify-center h-11`}
-          type="submit"
-          // variant="outlined"
-          placeholder={undefined}
-          onPointerEnterCapture={undefined}
-          onPointerLeaveCapture={undefined}
-        >
-          {isLoading ? <img className="w-10" src={rollingIcon} /> : "Login"}
-        </Button>
-      </div>
-      {showWarning && (
-        <p className={commonStyles["wrong-password-p"]}>{showWarning}</p>
-      )}
+      {showWarning && <p className={""}>{showWarning}</p>}
     </form>
   );
 }

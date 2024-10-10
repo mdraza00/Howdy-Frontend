@@ -14,7 +14,6 @@ import starIcon from "/icons/star.png";
 import dustbinIcon from "/icons/dustbin-black.png";
 import forwardIcon from "/icons/forward.png";
 import downloadIcon from "/icons/download.png";
-import styles from "./MessagesContainer.module.css";
 import SenderMessage from "../SenderMessage/SenderMessage";
 import ReceiverMessage from "../ReceiverMessage/ReceiverMessage";
 import threeDotsIcon from "/three-dots-icon.png";
@@ -23,12 +22,14 @@ import NoMessagesP from "../NoMessagesP/NoMessagesP";
 import { Button } from "@material-tailwind/react";
 import SendMultiMedia from "../SendMultiMedia/SendMultiMedia";
 import { MessageType } from "../../enums/message";
+import { FaArrowLeft } from "react-icons/fa6";
 import {
   Imessage,
   ImessageRes,
   IGetMessagesRes,
   ISelectedMessageData,
   IReplyMessage,
+  IShowMessagesContainer,
 } from "../../Interface/Interface";
 import ReplyMessage from "../ReplyMessage/ReplyMessage";
 import ForwardMessagesModel from "../ForwardMessagesModel/ForwardMessagesModel";
@@ -38,25 +39,19 @@ type propsType = {
   recipientId: string;
   chatRoomId: string;
   updateChatRoomsData: boolean;
+  loadMessages: boolean;
+  chatRoomUserProfile: boolean;
+  chatRoomName: string;
+  chatRoomProfilePhoto: string;
+  showMessagesContainer: IShowMessagesContainer;
   setUpdateChatRoomsData: (a: boolean) => void;
   setLoadMessages: (a: boolean) => void;
-  loadMessages: boolean;
-  setShowMessagesContainer: (
-    chatRoomId: string,
-    userName: string,
-    profilePhoto: string,
-    senderId: string,
-    recipientId: string,
-    showMessagesContianer: boolean
-  ) => void;
+  setShowMessagesContainer: (data: IShowMessagesContainer) => void;
   setChatRoomUserProfile: (
     userId: string,
     chatRoomId: string,
     isChatRoomUserProfile: boolean
   ) => void;
-  chatRoomUserProfile: boolean;
-  chatRoomName: string;
-  chatRoomProfilePhoto: string;
 };
 
 function MessagesContainer(props: PropsWithChildren<propsType>) {
@@ -234,7 +229,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           headers: { authorization: `Bearer ${token}` },
         })
         .then(() => {
-          props.setShowMessagesContainer("", "", "", "", "", false);
+          props.setShowMessagesContainer({ isShow: false, data: null });
           props.setUpdateChatRoomsData(
             props.updateChatRoomsData ? false : true
           );
@@ -416,29 +411,36 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
   return (
     <>
-      <div
-        className={`${props.chatRoomUserProfile ? "w-[45%]" : "w-[75%]"} ${
+      {/* ${props.chatRoomUserProfile ? "w-[45%]" : "w-[75%]"} ${
           replyToMessage.isReply ? "h-[36.6rem]" : "h-[41rem]"
-        } transition-all ease-in-out`}
-      >
-        <div className="w-full bg-light-blue-800 flex justify-between relative z-[70]">
-          <div
-            className="flex gap-2 items-center p-1 px-4 rounded-md active:bg-white/[.15] transition-all ease-in-out cursor-pointer"
-            onClick={() => {
-              props.setChatRoomUserProfile(
-                props.userId,
-                props.chatRoomId,
-                true
-              );
-            }}
-          >
-            <img
-              src={`${baseURL.baseUrl}/${props.chatRoomProfilePhoto}`}
-              className="w-12 h-12 m-1 rounded-full object-cover"
+        } transition-all ease-in-out */}
+      <div className={` h-full w-full fixed top-0 z-[400]`}>
+        <div className=" h-[8.2vh] w-full bg-light-blue-800 flex justify-between items-center relative z-[900]">
+          <div className="flex items-center gap-1 pl-2">
+            <FaArrowLeft
+              size={25}
+              onClick={() => {
+                props.setShowMessagesContainer({ isShow: false, data: null });
+              }}
             />
-            <p className="text-white">{props.chatRoomName}</p>
+            <div
+              className=" h-fit  pl-1 py-[0.2rem] flex gap-2 items-center  rounded-md active:bg-white/[.15] transition-all ease-in-out cursor-pointer"
+              onClick={() => {
+                props.setChatRoomUserProfile(
+                  props.userId,
+                  props.chatRoomId,
+                  true
+                );
+              }}
+            >
+              <img
+                src={`${baseURL.baseUrl}/${props.chatRoomProfilePhoto}`}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              <p className="text-white">{props.chatRoomName}</p>
+            </div>
           </div>
-          <div className="flex items-center">
+          <div className="flex h-fit items-center">
             <button className="rounded-full active:bg-white/[.20] active:shadow-md transition-all ease-in-out duration-200">
               <img className="w-6" src={searchIcon} />
             </button>
@@ -452,19 +454,21 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             </button>
           </div>
         </div>
+
         <div
           id="messages-container-div"
-          className={`overflow-auto h-full scroll-bar ${styles["display-message-container"]} scroll-smooth`}
+          className={`overflow-auto border-2 border-black h-[90%] scroll-bar scroll-smooth bg-chatroom-background`}
           onScroll={messagesContainerScrollHandler}
         >
-          {/* top-[6.7rem] */}
-          {/* w-[74.4%] */}
+          {/* className={`flex border-2 border-black justify-center absolute ${
+            props.chatRoomUserProfile ? "w-[44.8%]" : "w-[74.4%]"
+          }  ${
+            isScrolling ? "top-[6.7rem]" : "top-[-10rem]"
+          } transition-all ease-in-out duration-200 h-fit z-[2]`} */}
           <div
-            className={`flex justify-center absolute ${
-              props.chatRoomUserProfile ? "w-[44.8%]" : "w-[74.4%]"
-            }  ${
-              isScrolling ? "top-[6.7rem]" : "top-[3rem]"
-            } transition-all ease-in-out duration-200  z-[2]`}
+            className={`h-fit w-[98.0%] ${
+              isScrolling ? "top-[3.39rem]" : "top-[-3rem]"
+            } transition-all ease-in-out flex duration-200 items-center justify-center absolute z-[500]`}
           >
             <p
               id="scrolling-date"
@@ -535,7 +539,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               ) {
                 date = new Date(message.createdAt);
                 dateJSX = (
-                  <div className="flex justify-center w-full">
+                  <div className="flex justify-center w-full h-fit">
                     <p
                       className={`date-p text-xs mb-4 text-center px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
                     >
@@ -545,7 +549,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 );
               }
               return (
-                <div key={message._id + "message-date"}>
+                <div className="h-fit" key={message._id + "message-date"}>
                   {dateJSX}
                   {msg}
                 </div>
@@ -553,10 +557,10 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             })}
         </div>
         {/* send-messages-container */}
-        <div className="relative">
+        <div className="relative ">
           {!isSelectMessages && (
             <>
-              <SendMultiMedia
+              {/* <SendMultiMedia
                 setReplyToMessage={setReplyToMessage}
                 replyToMessage={replyToMessage}
                 chatRoomId={props.chatRoomId}
@@ -564,35 +568,31 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
                 setSendMessage={setSendMessage}
                 sendMultiMedia={sendMultiMedia}
                 setSendMultiMedia={setSendMultiMedia}
-              />
-              <div
-                className={`fixed transition-all ease-in-out duration-200 ${
+              /> */}
+              {/* className={`fixed border-2 border-black transition-all ease-in-out duration-200 ${
                   replyToMessage.isReply ? "h-[7.80rem]" : "h-[3.63rem]"
-                }  bottom-0 left-[24rem] w-[71.9rem] py-3 flex flex-col gap-2 bg-blue-gray-50 items-center justify-end z-[72]`}
-              >
-                {replyToMessage.isReply && replyToMessage.data && (
+                }  bottom-0 left-[24rem] w-[71.9rem] py-3 flex flex-col gap-2 bg-blue-gray-50 items-center justify-end z-[72]`} */}
+              <div className="fixed h-fit w-full bottom-[0.1rem]">
+                {/* {replyToMessage.isReply && replyToMessage.data && (
                   <ReplyMessage
                     setReplyToMessage={setReplyToMessage}
                     replyToMessage={replyToMessage}
                   />
-                )}
+                )} */}
                 <form
-                  className={`w-[96%] flex items-center ml-11 `}
+                  className={`flex items-center ml-11 `}
                   onSubmit={sendMessageBtnHandler}
                 >
                   <input
                     id="message-input"
                     type="text"
-                    className="w-full rounded-sm px-2 py-1 mx-2 focus:outline-none text-xl"
+                    className="w-full rounded-sm px-2 py-1  mx-2 focus:outline-none"
                     placeholder="Type a message"
                     ref={inputRef}
                     autoFocus={true}
                   />
 
-                  <button
-                    type="submit"
-                    className={`w-fit flex justify-center ${styles["send-message-btn"]}`}
-                  >
+                  <button type="submit" className={`w-fit flex justify-center`}>
                     <img className="w-6" src={sendMessageBtnIcon} />
                   </button>
                 </form>
@@ -681,21 +681,21 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           )}
         </div>
       </div>
+
       {threeDotsPopupMenu && (
         <div
-          className="absolute w-screen h-[91.9vh] z-[60]"
+          className="fixed top-0 left-0 h-full bg-black w-full bg-transparent z-[400]"
           onClick={() => setThreeDotsPopupMenu(false)}
         ></div>
       )}
+
       <div
-        className={`absolute bg-white ${
-          threeDotsPopupMenu ? "top-28" : "-top-52"
-        }  ${
-          props.chatRoomUserProfile ? "right-[30rem]" : "right-3"
-        }  py-2 z-[60] transition-all ease-in-out duration-300`}
+        className={`fixed bg-white ${
+          threeDotsPopupMenu ? "top-[3.37rem]" : "top-[-20rem]"
+        } right-1  transition-all ease-in-out duration-[440ms] h-fit w-fit pr-2 py-1 z-[400]`}
       >
         <div
-          className="w-52 px-8 py-3 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
+          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
           onClick={() => {
             props.setChatRoomUserProfile(props.userId, props.chatRoomId, true);
             setThreeDotsPopupMenu(false);
@@ -704,7 +704,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           <p>Contact Info</p>
         </div>
         <div
-          className="w-52 px-8 py-3 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
+          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
           onClick={() => {
             setThreeDotsPopupMenu(false);
             setIsSelectMessages(true);
@@ -713,15 +713,15 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           <p>Select Messages</p>
         </div>
         <div
-          className="w-52 px-8 py-3 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
+          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
           onClick={() =>
-            props.setShowMessagesContainer("", "", "", "", "", false)
+            props.setShowMessagesContainer({ isShow: false, data: null })
           }
         >
           <p>Close Chat</p>
         </div>
         <div
-          className="w-52 px-8 py-3 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
+          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
           onClick={() => {
             setIsChatRoomMessagesCleared(true);
             setTimeout(() => {
@@ -732,7 +732,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           <p>Clear Chat</p>
         </div>
         <div
-          className="w-52 px-8 py-3 hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
+          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
           onClick={() => setIsChatRoomDeleted(true)}
         >
           <p>Delete Chat</p>
