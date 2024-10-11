@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useState, useRef } from "react";
-import { FaPlus, FaFileAlt } from "react-icons/fa";
+import { FaFileAlt } from "react-icons/fa";
 import { FaFileVideo } from "react-icons/fa";
 import { FaCamera } from "react-icons/fa";
 import { IoMdPhotos } from "react-icons/io";
@@ -77,7 +77,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
     <>
       {props.sendMultiMedia && (
         <div
-          className="absolute w-[100vw] h-screen left-[-25vw] bottom-0 bg-transparent z-[71]"
+          className="fixed w-full h-full top-0 left-0 bg-transparent bottom-0 z-[10]"
           onClick={() => {
             props.setSendMultiMedia(false);
           }}
@@ -196,16 +196,16 @@ export default function SendFile(props: PropsWithChildren<props>) {
       />
 
       <div
-        className={`transition-all ease-in-out duration-[390ms] fixed left-[25.45%] z-[71] ${
+        className={` ml-1 transition-all ease-in-out duration-[390ms] fixed left-[0] z-[71] ${
           props.sendMultiMedia
             ? props.replyToMessage.isReply
-              ? "bottom-[7.95rem]"
-              : `bottom-[3.8rem]`
-            : "bottom-[-900px]"
-        } bg-white shadow-xl py-2 px-3 rounded-xl `}
+              ? "bottom-[18vh]"
+              : `bottom-[8.40vh]`
+            : "bottom-[-33vh]"
+        } bg-white shadow-xl py-2 px-3 rounded-xl h-fit`}
       >
         <div
-          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
+          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit"
           onClick={() => {
             setTakeInput(true);
             setMultiMediaType(MessageType.DOC);
@@ -215,7 +215,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
           <FaFileAlt size={19} color="purple" /> <span>Document</span>
         </div>
         <div
-          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
+          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit"
           onClick={() => {
             setTakeInput(true);
             setMultiMediaType(MessageType.IMAGE);
@@ -225,7 +225,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
           <IoMdPhotos size={19} color="blue" /> <span>Photos</span>
         </div>
         <div
-          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
+          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit"
           onClick={() => {
             setTakeInput(true);
             setMultiMediaType(MessageType.VIDEO);
@@ -235,7 +235,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
           <FaFileVideo size={19} color="red" /> <span>Videos</span>
         </div>
         <div
-          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer"
+          className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit"
           onClick={() => {
             setCameraInput(true);
             setMultiMediaType(MessageType.IMAGE);
@@ -244,7 +244,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
         >
           <FaCamera size={19} color="orange" /> <span>Camera</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit">
           <FaPollH
             size={19}
             color="brown"
@@ -254,7 +254,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
           />{" "}
           <span>Poll</span>
         </div>
-        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer">
+        <div className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit">
           <PiStickerFill
             size={19}
             color="purple"
@@ -264,27 +264,6 @@ export default function SendFile(props: PropsWithChildren<props>) {
           />{" "}
           <span>New sticker</span>
         </div>
-      </div>
-
-      <div
-        className={`fixed bottom-[0.85rem] left-[24.5rem] w-11 h-fit z-[81]`}
-      >
-        <button
-          className={`px-2 ${
-            props.sendMultiMedia ? "bg-black/10" : ""
-          } rounded-full border-none hover:bg-black/10`}
-          onClick={() => {
-            props.setSendMultiMedia(props.sendMultiMedia ? false : true);
-          }}
-        >
-          <FaPlus
-            id="send-file-icon"
-            className={`transition-all ease-in-out duration-[370ms] ${
-              props.sendMultiMedia ? "rotate-[225deg]" : "rotate-[0deg]"
-            }`}
-            size={22}
-          />
-        </button>
       </div>
     </>
   );

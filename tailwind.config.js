@@ -13,9 +13,7 @@ export default withMT({
       lightblue: "#71BEE3",
     },
     screens: {
-      "Mobile-S": "320px",
-      "Mobile-M": "375px",
-      "Mobile-L": "425px",
+      Tablet: "425px",
     },
     extend: {
       backgroundImage: {

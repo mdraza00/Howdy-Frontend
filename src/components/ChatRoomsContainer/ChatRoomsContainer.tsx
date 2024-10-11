@@ -9,12 +9,13 @@ import { RiChatNewFill } from "react-icons/ri";
 import { IShowMessagesContainer } from "../../Interface/Interface";
 type propsType = {
   userId: string;
-  setNewChatModel: (a: boolean) => void;
   updateChatRoomsData: boolean;
+  activeChatRoomId: string;
+  isShowMessagesContainer: boolean;
+  setNewChatModel: (a: boolean) => void;
   setUpdateChatRoomsData: (a: boolean) => void;
   setLoadMessages: (a: boolean) => void;
   setShowMessagesContainer: (data: IShowMessagesContainer) => void;
-  activeChatRoomId: string;
   setActiveChatRoomId: (a: string) => void;
   setChatRoomUserProfile: (
     userId: string,
@@ -136,7 +137,9 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
     userNameInput,
   ]);
   return (
-    <div className={"h-auto w-full gap-2 flex flex-col items-center"}>
+    <div
+      className={`h-auto w-full gap-2 flex flex-col items-center fixed top-[6.5vh] left-[0] z-[10]`}
+    >
       {/* button  */}
       <div className="w-full h-fit hidden border-2 border-black items-center justify-between">
         <h2 className="text-2xl">Chat</h2>
@@ -199,7 +202,9 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
           usersData.map(userData=>)} */}
       </div>
       <div
-        className="fixed w-fit h-fit p-[0.5rem] bottom-4 right-4 bg-blue-600 rounded-md "
+        className={`fixed ${
+          props.isShowMessagesContainer && "hidden"
+        } w-fit h-fit p-[0.5rem] bottom-4 right-4 bg-blue-600 rounded-md z-[10]`}
         onClick={() => props.setNewChatModel(true)}
       >
         <RiChatNewFill color="white" size={25} />

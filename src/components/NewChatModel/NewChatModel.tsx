@@ -95,6 +95,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
               size={35}
               onClick={() => {
                 props.setNewChatModel(false);
+                setIsLoading(false);
               }}
             />
             <input
@@ -143,6 +144,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
             <Button
               onClick={() => {
                 props.setNewChatModel(false);
+                setIsLoading(false);
               }}
               variant="outlined"
               className="w-[48%] h-10"
@@ -187,6 +189,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
 
                     props.setLoadMessages(true);
                     props.setNewChatModel(false);
+                    setIsLoading(false);
                   })
                   .catch((err) => {
                     setIsLoading(false);

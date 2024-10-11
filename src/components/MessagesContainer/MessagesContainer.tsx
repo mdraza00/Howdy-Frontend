@@ -1,28 +1,12 @@
-import {
-  PropsWithChildren,
-  useEffect,
-  useState,
-  useContext,
-  useRef,
-} from "react";
+import { PropsWithChildren, useEffect, useState, useContext } from "react";
 import { socket } from "../socket/socket";
 import axios from "axios";
 import BaseURLContext from "../../contexts/BaseURLContext";
-import sendMessageBtnIcon from "../../assets/send-message-btn-icon.png";
-import closeBtnIcon from "../../assets/close-btn-icon.png";
-import starIcon from "/icons/star.png";
-import dustbinIcon from "/icons/dustbin-black.png";
-import forwardIcon from "/icons/forward.png";
-import downloadIcon from "/icons/download.png";
+
 import SenderMessage from "../SenderMessage/SenderMessage";
 import ReceiverMessage from "../ReceiverMessage/ReceiverMessage";
-import threeDotsIcon from "/three-dots-icon.png";
-import searchIcon from "/search-icon.png";
+
 import NoMessagesP from "../NoMessagesP/NoMessagesP";
-import { Button } from "@material-tailwind/react";
-import SendMultiMedia from "../SendMultiMedia/SendMultiMedia";
-import { MessageType } from "../../enums/message";
-import { FaArrowLeft } from "react-icons/fa6";
 import {
   Imessage,
   ImessageRes,
@@ -31,8 +15,14 @@ import {
   IReplyMessage,
   IShowMessagesContainer,
 } from "../../Interface/Interface";
-import ReplyMessage from "../ReplyMessage/ReplyMessage";
+
 import ForwardMessagesModel from "../ForwardMessagesModel/ForwardMessagesModel";
+import ChatroomHeader from "../ChatroomHeader/ChatroomHeader";
+
+import DeleteMessagePopup from "../DeleteMessagePopup/DeleteMessagePopup";
+import ThreeDotsPopupMenu from "../ThreeDotsPopupMenu/ThreeDotsPopupMenu";
+import SelectMessagesOptions from "../SelectMessagesOptions/SelectMessagesOptions";
+import SendMessagesForm from "../SendMessagesForm/SendMessagesForm";
 
 type propsType = {
   userId: string;
@@ -61,7 +51,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   });
   const [messages, setMessages] = useState<Imessage[]>([]);
   const [forwardMessages, setForwardMessages] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isChatRoomDeleted, setIsChatRoomDeleted] = useState(false);
   const [isSelectMessages, setIsSelectMessages] = useState(false);
@@ -162,9 +151,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   }
 
   useEffect(() => {
-    if (replyToMessage.isReply) {
-      if (inputRef.current) inputRef.current.focus();
-    }
     if (scrollToView) {
       if (messages.length > 0) {
         const lastMessage = document.getElementById(
@@ -330,134 +316,38 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     isChatRoomMessagesCleared,
     messages,
     props,
-    props.chatRoomId,
-    replyToMessage.isReply,
     scrollToView,
     selectedMessagesData,
-    sendMessage,
+    sendMessage.message,
+    sendMessage.status,
     token,
   ]);
 
-  const storeMessagesInDB = (
-    message: string,
-    chatRoomId: string,
-    senderId: string,
-    messageType: MessageType
-  ) => {
-    const url = `${baseURL.baseUrl}/message/save`;
-    axios
-      .post<ImessageRes>(
-        url,
-        {
-          chatRoomId: chatRoomId,
-          senderId: senderId,
-          text: message,
-          replyTo: replyToMessage.data
-            ? replyToMessage.data.messageId
-            : undefined,
-          messageType: messageType,
-        },
-        { headers: { authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        console.log(res.data.message);
-        if (res.data.message)
-          setSendMessage({
-            status: true,
-            message: {
-              _id: res.data.message._id,
-              chatRoomId: res.data.message.chatRoomId,
-              messageType: res.data.message.messageType,
-              image: res.data.message.image,
-              video: res.data.message.video,
-              text: res.data.message.text,
-              doc: res.data.message.doc,
-              createdAt: res.data.message.createdAt,
-              updatedAt: res.data.message.updatedAt,
-              senderId: res.data.message.senderId,
-              visibleTo: res.data.message.visibleTo,
-              deletedFor: res.data.message.deletedFor,
-              deleteForEveryOne: res.data.message.deleteForEveryOne,
-              replyTo: res.data.message.replyTo,
-            },
-          });
-      })
-      .catch((err) => {
-        console.log("error in storing message. error => ", err);
-      });
-  };
   // handling message input
-  const sendMessageBtnHandler = function (e: React.BaseSyntheticEvent) {
-    e.preventDefault();
-
-    const messageInput = inputRef.current?.value;
-
-    if (messageInput && messageInput.length > 0) {
-      const senderId = props.userId;
-
-      if (senderId)
-        storeMessagesInDB(
-          messageInput,
-          props.chatRoomId,
-          senderId,
-          MessageType.TEXT
-        );
-
-      if (inputRef.current) inputRef.current.value = "";
-      setReplyToMessage({ isReply: false, data: null });
-      setIsChatRoomMessagesCleared(false);
-    }
-  };
 
   return (
     <>
       {/* ${props.chatRoomUserProfile ? "w-[45%]" : "w-[75%]"} ${
           replyToMessage.isReply ? "h-[36.6rem]" : "h-[41rem]"
         } transition-all ease-in-out */}
-      <div className={` h-full w-full fixed top-0 z-[400]`}>
-        <div className=" h-[8.2vh] w-full bg-light-blue-800 flex justify-between items-center relative z-[900]">
-          <div className="flex items-center gap-1 pl-2">
-            <FaArrowLeft
-              size={25}
-              onClick={() => {
-                props.setShowMessagesContainer({ isShow: false, data: null });
-              }}
-            />
-            <div
-              className=" h-fit  pl-1 py-[0.2rem] flex gap-2 items-center  rounded-md active:bg-white/[.15] transition-all ease-in-out cursor-pointer"
-              onClick={() => {
-                props.setChatRoomUserProfile(
-                  props.userId,
-                  props.chatRoomId,
-                  true
-                );
-              }}
-            >
-              <img
-                src={`${baseURL.baseUrl}/${props.chatRoomProfilePhoto}`}
-                className="w-12 h-12 rounded-full object-cover"
-              />
-              <p className="text-white">{props.chatRoomName}</p>
-            </div>
-          </div>
-          <div className="flex h-fit items-center">
-            <button className="rounded-full active:bg-white/[.20] active:shadow-md transition-all ease-in-out duration-200">
-              <img className="w-6" src={searchIcon} />
-            </button>
-            <button
-              className="rounded-full active:bg-white/[.20] active:shadow-md transition-all ease-in-out duration-200"
-              onClick={() => {
-                setThreeDotsPopupMenu(threeDotsPopupMenu ? false : true);
-              }}
-            >
-              <img className="w-7" src={threeDotsIcon} />
-            </button>
-          </div>
-        </div>
-
+      <ChatroomHeader
+        userId={props.userId}
+        chatRoomId={props.chatRoomId}
+        chatRoomProfilePhoto={props.chatRoomProfilePhoto}
+        chatRoomName={props.chatRoomName}
+        threeDotsPopupMenu={threeDotsPopupMenu}
+        setThreeDotsPopupMenu={setThreeDotsPopupMenu}
+        setShowMessagesContainer={props.setShowMessagesContainer}
+        setChatRoomUserProfile={props.setChatRoomUserProfile}
+      />
+      <div className={` h-fit w-full fixed top-[8.2vh] z-[400]`}>
         <div
           id="messages-container-div"
-          className={`overflow-auto border-2 border-black h-[90%] scroll-bar scroll-smooth bg-chatroom-background`}
+          className={`overflow-auto ${
+            replyToMessage.isReply && !isSelectMessages
+              ? "h-[76.5vh]"
+              : "h-[83.4vh]"
+          }  scroll-bar scroll-smooth bg-chatroom-background transition-all ease-in-out`}
           onScroll={messagesContainerScrollHandler}
         >
           {/* className={`flex border-2 border-black justify-center absolute ${
@@ -467,12 +357,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           } transition-all ease-in-out duration-200 h-fit z-[2]`} */}
           <div
             className={`h-fit w-[98.0%] ${
-              isScrolling ? "top-[3.39rem]" : "top-[-3rem]"
+              isScrolling ? "top-[0]" : "top-[-3rem]"
             } transition-all ease-in-out flex duration-200 items-center justify-center absolute z-[500]`}
           >
             <p
               id="scrolling-date"
-              className={`mb-4 text-center text-xs px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
+              className={`mb-4 text-center text-[0.7rem] px-2 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
             ></p>
           </div>
           {(messages.length === 0 ||
@@ -539,9 +429,9 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
               ) {
                 date = new Date(message.createdAt);
                 dateJSX = (
-                  <div className="flex justify-center w-full h-fit">
+                  <div className="flex justify-center w-full h-fit text-[0.7rem]">
                     <p
-                      className={`date-p text-xs mb-4 text-center px-3 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
+                      className={`date-p mb-4 text-center px-2 py-1 mt-2 rounded-md bg-blue-gray-50 shadow-md`}
                     >
                       {date.toLocaleDateString()}
                     </p>
@@ -557,47 +447,18 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             })}
         </div>
         {/* send-messages-container */}
-        <div className="relative ">
+        <div className="relative z-[900] h-fit">
           {!isSelectMessages && (
-            <>
-              {/* <SendMultiMedia
-                setReplyToMessage={setReplyToMessage}
-                replyToMessage={replyToMessage}
-                chatRoomId={props.chatRoomId}
-                senderId={props.userId}
-                setSendMessage={setSendMessage}
-                sendMultiMedia={sendMultiMedia}
-                setSendMultiMedia={setSendMultiMedia}
-              /> */}
-              {/* className={`fixed border-2 border-black transition-all ease-in-out duration-200 ${
-                  replyToMessage.isReply ? "h-[7.80rem]" : "h-[3.63rem]"
-                }  bottom-0 left-[24rem] w-[71.9rem] py-3 flex flex-col gap-2 bg-blue-gray-50 items-center justify-end z-[72]`} */}
-              <div className="fixed h-fit w-full bottom-[0.1rem]">
-                {/* {replyToMessage.isReply && replyToMessage.data && (
-                  <ReplyMessage
-                    setReplyToMessage={setReplyToMessage}
-                    replyToMessage={replyToMessage}
-                  />
-                )} */}
-                <form
-                  className={`flex items-center ml-11 `}
-                  onSubmit={sendMessageBtnHandler}
-                >
-                  <input
-                    id="message-input"
-                    type="text"
-                    className="w-full rounded-sm px-2 py-1  mx-2 focus:outline-none"
-                    placeholder="Type a message"
-                    ref={inputRef}
-                    autoFocus={true}
-                  />
-
-                  <button type="submit" className={`w-fit flex justify-center`}>
-                    <img className="w-6" src={sendMessageBtnIcon} />
-                  </button>
-                </form>
-              </div>
-            </>
+            <SendMessagesForm
+              replyToMessage={replyToMessage}
+              setReplyToMessage={setReplyToMessage}
+              userId={props.userId}
+              chatRoomId={props.chatRoomId}
+              sendMultiMedia={sendMultiMedia}
+              setSendMultiMedia={setSendMultiMedia}
+              setIsChatRoomMessagesCleared={setIsChatRoomMessagesCleared}
+              setSendMessage={setSendMessage}
+            />
           )}
           {forwardMessages && (
             <ForwardMessagesModel
@@ -609,207 +470,35 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             />
           )}
           {isSelectMessages && (
-            <div className="h-[6.3vh] flex items-center px-5 justify-between">
-              <div className="flex items-center gap-3">
-                <button
-                  className="p-1 flex items-center gap-3  hover:bg-black/10 active:bg-transparent transition-all ease-in-out"
-                  onClick={() => {
-                    setSelectedMessagesData([]);
-                    setIsSelectMessages(false);
-                  }}
-                >
-                  <img className="w-6" src={closeBtnIcon} />
-                </button>
-                <span className="text-base">
-                  {selectedMessagesData.length} selected
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  className={`p-1  transition-all ease-in-out ${
-                    selectedMessagesData.length > 0
-                      ? "hover:bg-black/10 active:bg-transparent"
-                      : "opacity-15"
-                  } `}
-                  disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {}}
-                >
-                  <img src={starIcon} className="w-6 cursor" />
-                </button>
-                <button
-                  className={`p-1  transition-all ease-in-out ${
-                    selectedMessagesData.length > 0
-                      ? "hover:bg-black/10 active:bg-transparent"
-                      : "opacity-15"
-                  } `}
-                  disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {
-                    setShowDeletePopupMenu(true);
-                  }}
-                >
-                  <img src={dustbinIcon} className="w-6 cursor-pointer" />
-                </button>
-                <button
-                  className={`p-1  transition-all ease-in-out ${
-                    selectedMessagesData.length > 0
-                      ? "hover:bg-black/10 active:bg-transparent"
-                      : "opacity-15"
-                  } `}
-                  disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {
-                    console.log(selectedMessagesData);
-
-                    setIsSelectMessages(false);
-                    setForwardMessages(true);
-                  }}
-                >
-                  <img src={forwardIcon} className="w-6 cursor-pointer" />
-                </button>
-                <button
-                  className={`p-1  transition-all ease-in-out ${
-                    selectedMessagesData.length > 0
-                      ? "hover:bg-black/10 active:bg-transparent"
-                      : "opacity-15"
-                  } `}
-                  disabled={!(selectedMessagesData.length > 0)}
-                  onClick={() => {}}
-                >
-                  <img src={downloadIcon} className="w-6 cursor-pointer" />
-                </button>
-              </div>
-            </div>
+            <SelectMessagesOptions
+              selectedMessagesData={selectedMessagesData}
+              setIsSelectMessages={setIsSelectMessages}
+              setForwardMessages={setForwardMessages}
+              setShowDeletePopupMenu={setShowDeletePopupMenu}
+              setSelectedMessagesData={setSelectedMessagesData}
+            />
           )}
         </div>
       </div>
 
-      {threeDotsPopupMenu && (
-        <div
-          className="fixed top-0 left-0 h-full bg-black w-full bg-transparent z-[400]"
-          onClick={() => setThreeDotsPopupMenu(false)}
-        ></div>
-      )}
-
-      <div
-        className={`fixed bg-white ${
-          threeDotsPopupMenu ? "top-[3.37rem]" : "top-[-20rem]"
-        } right-1  transition-all ease-in-out duration-[440ms] h-fit w-fit pr-2 py-1 z-[400]`}
-      >
-        <div
-          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
-          onClick={() => {
-            props.setChatRoomUserProfile(props.userId, props.chatRoomId, true);
-            setThreeDotsPopupMenu(false);
-          }}
-        >
-          <p>Contact Info</p>
-        </div>
-        <div
-          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
-          onClick={() => {
-            setThreeDotsPopupMenu(false);
-            setIsSelectMessages(true);
-          }}
-        >
-          <p>Select Messages</p>
-        </div>
-        <div
-          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
-          onClick={() =>
-            props.setShowMessagesContainer({ isShow: false, data: null })
-          }
-        >
-          <p>Close Chat</p>
-        </div>
-        <div
-          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
-          onClick={() => {
-            setIsChatRoomMessagesCleared(true);
-            setTimeout(() => {
-              setThreeDotsPopupMenu(false);
-            }, 100);
-          }}
-        >
-          <p>Clear Chat</p>
-        </div>
-        <div
-          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
-          onClick={() => setIsChatRoomDeleted(true)}
-        >
-          <p>Delete Chat</p>
-        </div>
-      </div>
+      <ThreeDotsPopupMenu
+        userId={props.userId}
+        chatRoomId={props.chatRoomId}
+        threeDotsPopupMenu={threeDotsPopupMenu}
+        setIsSelectMessages={setIsSelectMessages}
+        setIsChatRoomDeleted={setIsChatRoomDeleted}
+        setThreeDotsPopupMenu={setThreeDotsPopupMenu}
+        setIsChatRoomMessagesCleared={setIsChatRoomMessagesCleared}
+        setShowMessagesContainer={props.setShowMessagesContainer}
+        setChatRoomUserProfile={props.setChatRoomUserProfile}
+      />
       {showDeletePopupMenu && (
-        <>
-          <div
-            className="absolute w-[99.99vw] h-[94.3vh] bg-black/20 z-[1000]"
-            onClick={() => setShowDeletePopupMenu(false)}
-          ></div>
-          <div
-            className={`absolute w-[32%] ${
-              selectedMessagesData
-                .map(
-                  (selectedMessage) => selectedMessage.messageId.split("--")[1]
-                )
-                .includes("receive")
-                ? "h-[17%]"
-                : "h-[30%]"
-            }  top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-white z-[1001] px-6 py-4 shadow-2xl`}
-          >
-            <p className="text-base">Delete Chat ?</p>
-            <div className="flex flex-col gap-3 justify-center items-end mt-3">
-              {!selectedMessagesData
-                .map(
-                  (selectedMessage) => selectedMessage.messageId.split("--")[1]
-                )
-                .includes("receive") && (
-                <Button
-                  className="rounded-full bg-blue-600 text-white border-2 w-fit"
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  onClick={() => setDeleteForEveryOne(true)}
-                >
-                  Delete for everyone
-                </Button>
-              )}
-              <div
-                className={`flex ${
-                  selectedMessagesData
-                    .map(
-                      (selectedMessage) =>
-                        selectedMessage.messageId.split("--")[1]
-                    )
-                    .includes("receive")
-                    ? "gap-3"
-                    : "flex-col gap-3 items-end"
-                }`}
-              >
-                <Button
-                  className="rounded-full bg-blue-600 text-white border-2 w-fit"
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  onClick={() => setDeleteForMe(true)}
-                >
-                  Delete for me
-                </Button>
-                <Button
-                  className="rounded-full bg-white text-blue-500 border-2 w-fit"
-                  onClick={() => {
-                    setDeleteForEveryOne(false);
-                    setDeleteForMe(false);
-                    setShowDeletePopupMenu(false);
-                  }}
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        </>
+        <DeleteMessagePopup
+          selectedMessagesData={selectedMessagesData}
+          setShowDeletePopupMenu={setShowDeletePopupMenu}
+          setDeleteForEveryOne={setDeleteForEveryOne}
+          setDeleteForMe={setDeleteForMe}
+        />
       )}
     </>
   );

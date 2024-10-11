@@ -136,7 +136,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
         const rect = messagePopupElement.getBoundingClientRect();
 
         if (rect.bottom - window.innerHeight > 0) {
-          messagePopupElement.style.top = "-19rem";
+          messagePopupElement.style.top = "-12.5rem";
         }
       }
     }, 0);
@@ -151,19 +151,18 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
 
   return (
     <>
-      {/* {messagePopup && (
+      {messagePopup && (
         <div
-          className="fixed w-full h-full bg-black left-0 top-0 bg-transparent z-[60]"
+          className="fixed w-full h-full left-0 top-0 bg-transparent z-[50]"
           onClick={() => setMessagePopup(false)}
         ></div>
-      )} */}
+      )}
       <div className="relative h-fit">
-        {
-          <div
-            className="absolute w-full h-fit bg-black z-[100] opacity-15"
-            id={`${props.messageId}--blink`}
-          ></div>
-        }
+        <div
+          className="absolute w-full h-fit bg-black z-[100] opacity-15"
+          id={`${props.messageId}--blink`}
+        ></div>
+
         {props.isSelectMessages && (
           <>
             <div
@@ -195,18 +194,18 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
         )}
         {zoomImage.isZoom && (
           <>
-            <div
-              className="fixed top-0 right-0 w-screen h-screen bg-transparent black z-[100]"
+            {/* <div
+              className="fixed top-0 left-0 w-full bg-transparent black z-[100]"
               onClick={() => setZoomImage({ isZoom: false, src: "" })}
-            ></div>
-            <div className="fixed top-[5.55vh] right-[0] w-[75%] h-[94.35%] bg-blue-gray-50 black z-[101]">
-              <div className="h-full w-full flex items-center justify-center">
+            ></div> */}
+            <div className="fixed top-[8.4vh] left-[0] w-full h-[91.6vh] bg-blue-gray-50 black z-[501]">
+              <div className="h-full w-full flex items-center justify-center mt-4">
                 <img
                   className="absolute w-10 top-3 right-3"
                   src={closeBtnIcon}
                   onClick={() => setZoomImage({ isZoom: false, src: "" })}
                 />
-                <img className="shadow-2xl h-[60%]" src={zoomImage.src} />
+                <img className="shadow-2xl w-[90%]" src={zoomImage.src} />
               </div>
             </div>
           </>
@@ -221,16 +220,16 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
             className="message-div-container group relative w-fit h-fit"
             id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
           >
-            {/* {messagePopup && (
+            {messagePopup && (
               <div
                 id="message-popup-container"
-                className="absolute bg-white shadow-2xl z-[60] right-5 top-5 py-2"
+                className="absolute bg-white h-fit shadow-2xl z-[60] right-5 top-5 py-1 text-[0.85rem]"
               >
-                <div className="hover:bg-black/5 px-3 py-2 w-40 cursor-pointer">
+                <div className="hover:bg-black/5 px-2 py-1 w-36 h-fit cursor-pointer">
                   Message info
                 </div>
                 <div
-                  className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer"
+                  className="hover:bg-black/5 px-2 py-1 w-36 h-fit transition-all ease-in-out cursor-pointer"
                   onClick={() => {
                     setMessagePopup(false);
                     props.setReplyToMessage({
@@ -260,11 +259,11 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 >
                   Reply
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
+                <div className="hover:bg-black/5 px-2 py-1 w-36 h-fit transition-all ease-in-out cursor-pointer">
                   React
                 </div>
                 <div
-                  className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer"
+                  className="hover:bg-black/5 px-2 py-1 w-36 h-fit transition-all ease-in-out cursor-pointer"
                   onClick={() => {
                     props.setIsSelectMessages(true);
                     setForwardMessage(true);
@@ -273,14 +272,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 >
                   Forward
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
+                <div className="hover:bg-black/5 px-2 py-1 w-36 h-fit transition-all ease-in-out cursor-pointer">
                   Pin
                 </div>
-                <div className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer">
+                <div className="hover:bg-black/5 px-2 py-1 w-36 h-fit transition-all ease-in-out cursor-pointer">
                   Star
                 </div>
                 <div
-                  className="hover:bg-black/5 px-3 py-2 w-40 transition-all ease-in-out cursor-pointer active:bg-white"
+                  className="hover:bg-black/5 px-2 py-1 w-36 h-fit transition-all ease-in-out cursor-pointer active:bg-white"
                   onClick={() => {
                     props.setSelectedMessagesData(
                       `${props.messageId}--send`,
@@ -293,7 +292,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                   Delete
                 </div>
               </div>
-            )} */}
+            )}
 
             {/* `absolute  z-10 bg-gradient-to-tr ${
                 messagePopup ? "visible" : "invisible"
@@ -303,12 +302,17 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                   : "from-transparent from-40% via-blue-200 via-95% to-blue-200 w-[20%] h-[20%] top-2 right-5"
               }  group-hover:visible rounded-sm cursor-pointer` */}
             <span
-              className={"absolute top-0 right-1 z-10"}
-              onClick={() => setMessagePopup(messagePopup ? false : true)}
+              className={`absolute ${
+                props.messageType === MessageType.TEXT ||
+                props.messageType === MessageType.DOC
+                  ? "top-[0]"
+                  : "top-1"
+              } right-2 z-10`}
+              onClick={() => {
+                setMessagePopup(messagePopup ? false : true);
+              }}
             >
-              <div className="flex justify-end">
-                <MdKeyboardArrowDown size={25} color="grey" />
-              </div>
+              <MdKeyboardArrowDown size={25} color="grey" />
             </span>
             <div
               className={` relative pb-2 ${
@@ -317,22 +321,24 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                   : "pt-1"
               }  px-[4px] shadow-lg mr-2 bg-blue-200 my-1 rounded-md rounded-tr-none `}
             >
-              {/* {props.deleteForEveryOne === 0 && props.replyTo && (
+              {props.deleteForEveryOne === 0 && props.replyTo && (
                 <div
                   onClick={() => {
                     if (props.replyTo) setGoToMessage(props.replyTo);
                   }}
-                  className={`flex  justify-between items-center gap-12 rounded-md rounded-tr-none p-1 mb-1 bg-[#abd3f7] ${
+                  className={`flex justify-between items-center gap-2 rounded-md rounded-tr-none p-1 mb-1 bg-[#abd3f7] ${
                     replyToMessageData?.data?.messageType ===
                       MessageType.TEXT ||
                     replyToMessageData?.data?.messageType === MessageType.DOC
-                      ? "h-[3.1rem]"
+                      ? "h-[3.0rem]"
                       : "h-[4rem]"
-                  }`}
+                  } text-[0.85rem] max-w-[16rem] mt-[0.75rem]`}
                 >
-                  <div>
-                    <p className="">{replyToMessageData?.data?.repliedTo}</p>
-                    <p className="text-gray-800 flex gap-1 items-center">
+                  <div className="h-fit">
+                    <p className="max-w-[8rem] truncate">
+                      {replyToMessageData?.data?.repliedTo}
+                    </p>
+                    <p className="text-gray-800 flex gap-1 items-center max-w-[8rem] truncate">
                       {replyToMessageData?.data?.doc && <FaFileAlt />}{" "}
                       {replyToMessageData?.data?.text}
                     </p>
@@ -350,17 +356,17 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                     />
                   )}
                 </div>
-              )} */}
+              )}
               <div
                 id={"--" + props.messageId}
-                className={`scroll-mt-[14rem] px-2 flex items-center select-none ${
-                  props.messageType === MessageType.TEXT ? "pr-[4.25rem]" : ""
-                } `}
+                className={`scroll-mt-[14rem] flex items-center select-none ${
+                  props.messageType === MessageType.TEXT ? "pr-[3.3rem]" : ""
+                } text-[0.85rem]`}
               >
                 {props.deleteForEveryOne === 0 ? (
                   <>
                     {props.messageType === MessageType.TEXT && (
-                      <div className="">
+                      <div className="max-w-[13rem] text-[0.85rem]">
                         {props.text.split(" ").map((word) => {
                           return domains
                             .map(
@@ -388,10 +394,10 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                       </div>
                     )}
                     {props.messageType === MessageType.IMAGE && props.image && (
-                      <div className="flex flex-col gap-1 ">
+                      <div className="flex flex-col gap-1 max-w-[13rem]">
                         <img
                           id={`image-message-${props.messageId}`}
-                          className="h-60"
+                          className="max-w-[13rem]"
                           src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
                           onClick={() => {
                             if (props.image)
@@ -403,31 +409,39 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                         />
                         <p
                           className={`${
-                            props.image.caption.length <= 0 && "h-3"
-                          }`}
+                            props.image.caption.length <= 0 && "h-[0.5rem]"
+                          } text-[0.85rem]`}
                         >
                           {props.image.caption}
                         </p>
                       </div>
                     )}
                     {props.messageType === MessageType.VIDEO && props.video && (
-                      <div className={`flex flex-col gap-2 `}>
+                      <div
+                        className={`flex flex-col gap-1 max-w-[13rem] h-fit`}
+                      >
                         <video
-                          className="h-60"
+                          className="max-w-[13rem]"
                           src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}
                           controls={true}
                         />
-                        <p className={`${!props.video.caption && "h-3"}`}>
+                        <p
+                          className={`${
+                            !props.video.caption && "h-[0.5rem]"
+                          } text-[0.85rem]`}
+                        >
                           {props.video.caption}
                         </p>
                       </div>
                     )}
                     {props.messageType === MessageType.DOC && props.doc && (
-                      <div className={`flex flex-col gap-2`}>
-                        <div className="flex gap-5 items-center bg-black/15 py-4 px-2 rounded-md">
-                          <div className="flex items-center justify-center gap-1">
-                            <FaFileAlt size={25} className="p-1" />
-                            {fileData.filename}
+                      <div className={`flex flex-col gap-1 max-w-[16rem] pt-3`}>
+                        <div className="flex gap-2 items-center bg-black/15 p-2 rounded-md text-[0.85rem]">
+                          <div className="flex items-center justify-center max-w-[11rem]">
+                            <FaFileAlt size={20} className="pr-1" />
+                            <span className="max-w-[12rem] truncate ">
+                              {fileData.filename}
+                            </span>
                           </div>
                           <div className="cursor-pointer">
                             <a
@@ -437,14 +451,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                               {browserSupportedExtentions.includes(
                                 fileData.extention
                               ) ? (
-                                <div className="px-3 py-1 text-sm border border-black bg-transparent rounded-md cursor-pointer">
+                                <div className="py-[0.1rem] px-[0.2rem] text-sm border border-black bg-transparent rounded-md cursor-pointer ">
                                   View
                                 </div>
                               ) : (
                                 <TfiDownload
                                   color="black"
                                   size={28}
-                                  className="border-[1.5px] border-black p-1 rounded-full"
+                                  className="border-[1.5px] border-black py-[0.1rem] px-[0.2rem] p-[0.3rem] rounded-full"
                                 />
                               )}
                             </a>
@@ -457,14 +471,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                     )}
                   </>
                 ) : (
-                  <span className="text-gray-700 flex items-center gap-1">
+                  <span className="text-gray-700 max-w-[13rem] text-[0.85rem] flex items-center gap-[5px]">
                     <img className="size-4" src={deleteForEveryOneIcon} />
                     {props.text}
                   </span>
                 )}
 
                 <span
-                  className={`absolute bottom-[0.4rem] right-[0.59rem] text-blue-gray-800 text-xs ml-1`}
+                  className={`absolute bottom-[0.2rem] right-[0.50rem] text-blue-gray-800 text-[0.6rem] ml-1`}
                 >
                   {`${new Date(props.time).toLocaleTimeString([], {
                     hour: "2-digit",

@@ -135,7 +135,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
       )}
 
       <div
-        className={`fixed bg-blue-gray-50 transition-all ease-in-out duration-500 ${
+        className={`fixed left-0 w-full h-full border-2 border-black bg-blue-gray-50 transition-all ease-in-out duration-500 ${
           props.messageMultiMedia.isMessageMultiMedia
             ? "bottom-0"
             : "bottom-[-999px]"

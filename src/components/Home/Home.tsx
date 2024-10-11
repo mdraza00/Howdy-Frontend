@@ -140,6 +140,7 @@ function Home() {
           setChatRoomUserProfile={displayChatRoomUserProfile}
           userId={userData.id}
           setNewChatModel={setNewChatModel}
+          isShowMessagesContainer={showMessagesContainer.isShow}
           updateChatRoomsData={updateChatRoomsData}
           setUpdateChatRoomsData={setUpdateChatRoomsData}
           activeChatRoomId={activeChatRoomId}
