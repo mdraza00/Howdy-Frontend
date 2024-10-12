@@ -327,9 +327,6 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
   return (
     <>
-      {/* ${props.chatRoomUserProfile ? "w-[45%]" : "w-[75%]"} ${
-          replyToMessage.isReply ? "h-[36.6rem]" : "h-[41rem]"
-        } transition-all ease-in-out */}
       <ChatroomHeader
         userId={props.userId}
         chatRoomId={props.chatRoomId}
@@ -340,25 +337,22 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         setShowMessagesContainer={props.setShowMessagesContainer}
         setChatRoomUserProfile={props.setChatRoomUserProfile}
       />
-      <div className={` h-fit w-full fixed top-[8.2vh] z-[400]`}>
+      <div
+        className={`h-fit w-full fixed top-[8.2vh] sm:top-[14.7vh] right-0 sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]`}
+      >
         <div
           id="messages-container-div"
           className={`overflow-auto ${
             replyToMessage.isReply && !isSelectMessages
               ? "h-[76.5vh]"
-              : "h-[83.4vh]"
+              : "h-[83.4vh] sm:h-[77.01vh]"
           }  scroll-bar scroll-smooth bg-chatroom-background transition-all ease-in-out`}
           onScroll={messagesContainerScrollHandler}
         >
-          {/* className={`flex border-2 border-black justify-center absolute ${
-            props.chatRoomUserProfile ? "w-[44.8%]" : "w-[74.4%]"
-          }  ${
-            isScrolling ? "top-[6.7rem]" : "top-[-10rem]"
-          } transition-all ease-in-out duration-200 h-fit z-[2]`} */}
           <div
-            className={`h-fit w-[98.0%] ${
+            className={`h-fit w-[98.0%]  ${
               isScrolling ? "top-[0]" : "top-[-3rem]"
-            } transition-all ease-in-out flex duration-200 items-center justify-center absolute z-[500]`}
+            } transition-all ease-in-out flex duration-200 items-center justify-center absolute z-[1]`}
           >
             <p
               id="scrolling-date"
@@ -447,7 +441,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             })}
         </div>
         {/* send-messages-container */}
-        <div className="relative z-[900] h-fit">
+        <div className="relative h-fit">
           {!isSelectMessages && (
             <SendMessagesForm
               replyToMessage={replyToMessage}

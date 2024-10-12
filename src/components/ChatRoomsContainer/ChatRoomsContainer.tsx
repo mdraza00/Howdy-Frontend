@@ -2,7 +2,6 @@ import { PropsWithChildren, useEffect, useState, useContext } from "react";
 import { socket } from "../socket/socket";
 import axios from "axios";
 import BaseURLContext from "../../contexts/BaseURLContext";
-import newChatBtn from "/new-chat.png";
 import ChatRoom from "../ChatRoom/ChatRoom";
 import User from "../User/User";
 import { RiChatNewFill } from "react-icons/ri";
@@ -138,29 +137,27 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
   ]);
   return (
     <div
-      className={`h-auto w-full gap-2 flex flex-col items-center fixed top-[6.5vh] left-[0] z-[10]`}
+      className={`h-[93.5vh] w-full sm:w-[42vw] md:w-[37vw] lg:w-[34vw] xl:w-[30vw] 2xl:w-[28vw] sm:border-2 sm:border-gray-100 gap-2 flex flex-col items-center fixed sm:flex top-[6.5vh] left-[0] sm:text-[0.85rem] md:text-[0.9rem] lg:text-[1rem]`}
     >
       {/* button  */}
-      <div className="w-full h-fit hidden border-2 border-black items-center justify-between">
-        <h2 className="text-2xl">Chat</h2>
-        <button
-          className=""
-          onClick={() => {
-            props.setNewChatModel(true);
-          }}
+      <div className="hidden w-full h-fit sm:flex items-center justify-between p-1 ">
+        <h2 className="text-lg md:text-xl lg:text-2xl">Chat</h2>
+        <div
+          className={`h-fit bg-blue-600 p-1 rounded-sm`}
+          onClick={() => props.setNewChatModel(true)}
         >
-          <img src={newChatBtn} className="size-8" />
-        </button>
+          <RiChatNewFill color="white" className="size-5 md:size-6 lg:size-7" />
+        </div>
       </div>
       <input
         type="text"
-        className="w-full text-[1rem] rounded-full px-[0.9rem] py-[0.4rem] mt-2 bg-gray-200 focus:outline-none"
+        className="w-[97%] text-[1rem] rounded-full px-[0.9rem] sm:px[0.7px] md:px[0.8rem] lg:px[0.9rem] py-[0.4rem] sm:py-[0.2rem] md:py-[0.3rem] lg:py-[0.4rem] mt-2 sm:mt-0 bg-gray-200 focus:outline-none"
         placeholder="username"
         onChange={(e) => setUserNameInput(e.target.value)}
         value={userNameInput}
       />
       {/* chatrooms */}
-      <div className=" h-full w-full flex flex-col mt-3 overflow-auto scroll-bar">
+      <div className="h-full w-full flex flex-col mt-3 sm:mt-1 overflow-auto scroll-bar">
         {!userNameInput &&
           chatRoomsData.map((chatRoom) => {
             // join chatroom using socket
@@ -202,9 +199,9 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
           usersData.map(userData=>)} */}
       </div>
       <div
-        className={`fixed ${
+        className={`absolute ${
           props.isShowMessagesContainer && "hidden"
-        } w-fit h-fit p-[0.5rem] bottom-4 right-4 bg-blue-600 rounded-md z-[10]`}
+        } sm:hidden w-fit h-fit p-[0.5rem] bottom-4 right-4 bg-blue-600 rounded-md z-[10]`}
         onClick={() => props.setNewChatModel(true)}
       >
         <RiChatNewFill color="white" size={25} />

@@ -72,7 +72,7 @@ function Login() {
     >
       <h2 className={"text-center py-1 mt-2 mb-4 text-[1.4rem]"}>Login</h2>
       <div className="w-full flex justify-center items-center flex-col gap-3">
-        <div className={"w-full xl:w-5/12"}>
+        <div className={"w-full"}>
           <Input
             className={"text-[1rem]"}
             type="email"
@@ -87,7 +87,7 @@ function Login() {
             crossOrigin={undefined}
           />
         </div>
-        <div className={"relative w-full xl:w-5/12"}>
+        <div className={"relative w-full"}>
           <Input
             className={"text-[1rem]"}
             type={showPassword ? "text" : "password"}
@@ -113,7 +113,7 @@ function Login() {
             />
           )}
         </div>
-        <div className={"flex justify-center mt-5 w-full xl:w-5/12"}>
+        <div className={"flex justify-center mt-5 w-full"}>
           <Button
             id="login-form-submit-button"
             color="blue"

@@ -157,7 +157,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
           onClick={() => setMessagePopup(false)}
         ></div>
       )}
-      <div className="relative h-fit">
+      <div className="relative h-fit w-full flex items-center justify-end">
         <div
           className="absolute w-full h-fit bg-black z-[100] opacity-15"
           id={`${props.messageId}--blink`}
@@ -211,13 +211,13 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
           </>
         )}
         <div
-          className={` transition-all ease-in-out flex justify-end ${
+          className={`transition-all w-fit max-w-[90%] ease-in-out flex justify-end ${
             props.isSelectMessages ? "hover:bg-black/10" : ""
           } `}
           id={`#${props.messageId}`}
         >
           <div
-            className="message-div-container group relative w-fit h-fit"
+            className="message-div-container group relative w-full h-fit flex items-center justify-end"
             id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
           >
             {messagePopup && (
@@ -294,13 +294,6 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               </div>
             )}
 
-            {/* `absolute  z-10 bg-gradient-to-tr ${
-                messagePopup ? "visible" : "invisible"
-              } ${
-                props.messageType == MessageType.TEXT
-                  ? "from-transparent via-blue-200 to-blue-200 w-[40%] h-[80%] right-3 top-1"
-                  : "from-transparent from-40% via-blue-200 via-95% to-blue-200 w-[20%] h-[20%] top-2 right-5"
-              }  group-hover:visible rounded-sm cursor-pointer` */}
             <span
               className={`absolute ${
                 props.messageType === MessageType.TEXT ||
@@ -315,7 +308,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               <MdKeyboardArrowDown size={25} color="grey" />
             </span>
             <div
-              className={` relative pb-2 ${
+              className={` w-fit relative pb-2 ${
                 props.replyTo && props.deleteForEveryOne === 0
                   ? "pt-[4px]"
                   : "pt-1"
@@ -326,13 +319,13 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                   onClick={() => {
                     if (props.replyTo) setGoToMessage(props.replyTo);
                   }}
-                  className={`flex justify-between items-center gap-2 rounded-md rounded-tr-none p-1 mb-1 bg-[#abd3f7] ${
+                  className={`flex justify-between items-center gap-2 rounded-md rounded-tr-none p-1 mb-1 sm:mb-2 bg-[#abd3f7] ${
                     replyToMessageData?.data?.messageType ===
                       MessageType.TEXT ||
                     replyToMessageData?.data?.messageType === MessageType.DOC
                       ? "h-[3.0rem]"
                       : "h-[4rem]"
-                  } text-[0.85rem] max-w-[16rem] mt-[0.75rem]`}
+                  } text-[0.85rem] w-full mt-[0.75rem]`}
                 >
                   <div className="h-fit">
                     <p className="max-w-[8rem] truncate">
@@ -359,14 +352,14 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               )}
               <div
                 id={"--" + props.messageId}
-                className={`scroll-mt-[14rem] flex items-center select-none ${
+                className={`scroll-mt-[14rem] w-full flex items-center select-none ${
                   props.messageType === MessageType.TEXT ? "pr-[3.3rem]" : ""
                 } text-[0.85rem]`}
               >
                 {props.deleteForEveryOne === 0 ? (
                   <>
                     {props.messageType === MessageType.TEXT && (
-                      <div className="max-w-[13rem] text-[0.85rem]">
+                      <div className="w-full  text-justify text-[0.85rem] ">
                         {props.text.split(" ").map((word) => {
                           return domains
                             .map(
@@ -388,16 +381,16 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                               {" " + word + " "}
                             </a>
                           ) : (
-                            <span>{" " + word + " "}</span>
+                            <span className="">{" " + word + " "}</span>
                           );
                         })}
                       </div>
                     )}
                     {props.messageType === MessageType.IMAGE && props.image && (
-                      <div className="flex flex-col gap-1 max-w-[13rem]">
+                      <div className="flex flex-col gap-1 w-full">
                         <img
                           id={`image-message-${props.messageId}`}
-                          className="max-w-[13rem]"
+                          className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
                           src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
                           onClick={() => {
                             if (props.image)
@@ -417,11 +410,9 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                       </div>
                     )}
                     {props.messageType === MessageType.VIDEO && props.video && (
-                      <div
-                        className={`flex flex-col gap-1 max-w-[13rem] h-fit`}
-                      >
+                      <div className={`flex flex-col gap-1 w-full h-fit`}>
                         <video
-                          className="max-w-[13rem]"
+                          className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
                           src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}
                           controls={true}
                         />

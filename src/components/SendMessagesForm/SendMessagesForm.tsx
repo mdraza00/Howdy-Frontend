@@ -3,7 +3,7 @@ import ReplyMessage from "../ReplyMessage/ReplyMessage";
 import SendMultiMedia from "../SendMultiMedia/SendMultiMedia";
 import SendMultiMediaBtn from "../SendMultiMedia/SendMultiMediaBtn";
 
-import sendMessageBtnIcon from "../../assets/send-message-btn-icon.png";
+import { BsSendFill } from "react-icons/bs";
 import { PropsWithChildren, useContext, useEffect, useRef } from "react";
 import { ImessageRes, IReplyMessage } from "../../Interface/Interface";
 import { MessageType } from "../../enums/message";
@@ -117,29 +117,29 @@ export default function SendMessagesForm(props: PropsWithChildren<propsType>) {
         setSendMultiMedia={props.setSendMultiMedia}
       />
       <div
-        className={`fixed w-full bottom-0 bg-gray-200 flex flex-col items-center gap-[0.5rem] py-[0.4rem]
-                px-1 transition-all ease-in-out duration-500 h-[8.4vh] z-[150]`}
+        className={`fixed w-full sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw] bottom-0 right-0 bg-gray-200 flex flex-col items-center gap-[0.5rem] py-[0.4rem]
+                px-1 transition-all ease-in-out duration-500 h-[8.4vh]`}
       >
-        <div className="flex items-center">
+        <div className="flex items-center absolute left-0 top-0 w-full">
           <SendMultiMediaBtn
             sendMultiMedia={props.sendMultiMedia}
             setSendMultiMedia={props.setSendMultiMedia}
           />
           <form
-            className={`flex items-center w-fit`}
+            className={`flex items-center gap-2 w-full pr-1`}
             onSubmit={sendMessageBtnHandler}
           >
             <input
               id="message-input"
               type="text"
-              className="w-[16rem] rounded-sm px-2 py-1 mr-1 focus:outline-none"
+              className="w-[95%] rounded-sm px-2 py-1 mr-1 focus:outline-none"
               placeholder="Type a message"
               ref={inputRef}
               autoFocus={true}
             />
 
-            <button type="submit" className={`w-fit flex justify-center`}>
-              <img className="w-6" src={sendMessageBtnIcon} />
+            <button type="submit" className={`bg-blue-600 p-[0.4rem]`}>
+              <BsSendFill color="white" />
             </button>
           </form>
         </div>

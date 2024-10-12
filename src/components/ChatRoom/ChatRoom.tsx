@@ -1,6 +1,5 @@
 import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import baseURLContext from "../../contexts/BaseURLContext";
-import styles from "./ChatRoom.module.css";
 import axios from "axios";
 import { IShowMessagesContainer } from "../../Interface/Interface";
 
@@ -93,11 +92,7 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
 
   return (
     <div
-      className={`w-full h-fit flex items-center justify-center p-2 gap-2 ${
-        styles["chatroom-contanier"]
-      } border-b-2 ${
-        props.id === props.activeChatRoomId && `${styles["active-chat"]}`
-      } cursor-pointer hover:bg-black/15 active:bg-white`}
+      className={`w-full h-fit flex items-center justify-center p-2 gap-2 border-b-2 cursor-pointer hover:bg-black/15 active:bg-white`}
       onClick={() => {
         props.setActiveChatRoomId(props.id);
         props.setShowMessagesContainer({
@@ -116,16 +111,19 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
       }}
     >
       <img
-        className="object-cover h-12 rounded-full"
+        className="object-contain min-w-[2.7rem] w-[13%] max-w-[3.3rem] rounded-full"
         src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
       />
 
-      <div className="flex flex-col w-full h-fit">
-        <p className="w-full flex justify-between">
-          {userData?.name}
-          <span className="text-sm"> {dateToDisplay}</span>
+      <div className="flex flex-col w-[80%] sm:w-[75%] md:w-[80%] lg:w-[85%] h-fit">
+        <p className="w-[100%] flex justify-between">
+          <span className="w-fit truncate ">{userData?.name}</span>
+          <span className="text-sm w-fit sm:text-[0.75rem]">
+            {" "}
+            {dateToDisplay}
+          </span>
         </p>
-        <p className="w-60 truncate">
+        <p className="w-fit max-w-[100%] truncate">
           {props.lastMessageVisibleTo.includes(props.userId)
             ? userData?.lastMessage
             : ""}

@@ -77,7 +77,7 @@ function Signup() {
     >
       <h2 className={"text-center py-1 mt-2 mb-4 text-[1.4rem]"}>Signup</h2>
       <div className="flex flex-col items-center justify-center gap-3 w-full">
-        <div className={"w-full xl:w-5/12"}>
+        <div className={"w-full"}>
           <Input
             type="text"
             name="username"
@@ -91,7 +91,7 @@ function Signup() {
             crossOrigin={undefined}
           />
         </div>
-        <div className={"w-full xl:w-5/12"}>
+        <div className={"w-full"}>
           <Input
             type="email"
             name="email"
@@ -106,7 +106,7 @@ function Signup() {
           />
         </div>
 
-        <div className={"relative w-full xl:w-5/12"}>
+        <div className={"relative w-full"}>
           <Input
             type={showPassword ? "text" : "password"}
             name="password"
@@ -132,7 +132,7 @@ function Signup() {
             />
           )}
         </div>
-        <div className={"flex items-center justify-center w-full xl:w-5/12"}>
+        <div className={"flex items-center justify-center w-full"}>
           <Button
             className={"flex items-center justify-center w-full py-[1px]"}
             color="blue"

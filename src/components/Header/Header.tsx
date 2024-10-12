@@ -30,7 +30,7 @@ function Header(props: propsType) {
       {showConfetti && <ConfettiExplosion />}
       <header
         className={
-          "h-[6.5vh] flex items-center justify-between px-[0.2rem] py-[0.4rem] bg-blue-600 relative z-[90]"
+          "h-[6.5vh] flex items-center justify-between px-[0.2rem] py-[0.4rem] bg-blue-600 relative z-[4]"
         }
       >
         <div
@@ -57,16 +57,16 @@ function Header(props: propsType) {
             {props.name.split(" ")[0]}
           </h2>
         </div>
+        {popUpMenu && (
+          <div
+            className="fixed top-0 left-0 w-full h-full"
+            onClick={() => {
+              setPopUpMenu(false);
+            }}
+          ></div>
+        )}
       </header>
 
-      {popUpMenu && (
-        <div
-          className="fixed top-0 left-0 w-full h-full bg-transparent z-10"
-          onClick={() => {
-            setPopUpMenu(false);
-          }}
-        ></div>
-      )}
       <div
         className={`absolute h-fit z-[80] right-0 bg-white rounded-md px-2 py-4 flex gap-3 flex-col transition-all ease-in-out duration-300 ${
           popUpMenu ? "top-11" : "-top-56"

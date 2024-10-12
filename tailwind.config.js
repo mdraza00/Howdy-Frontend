@@ -12,9 +12,7 @@ export default withMT({
       homePageBg: "#abbfc7",
       lightblue: "#71BEE3",
     },
-    screens: {
-      Tablet: "425px",
-    },
+    screens: {},
     extend: {
       backgroundImage: {
         "chatroom-background": "url('chat-background.png')",

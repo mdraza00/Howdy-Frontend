@@ -172,15 +172,17 @@ function Home() {
             setChatRoomUserProfile={displayChatRoomUserProfile}
           />
         )}
-        {!showMessagesContainer && (
-          <div className="w-3/4 hidden bg-homePageBg  flex-col justify-center items-center">
+        {!showMessagesContainer.isShow && (
+          <div className="hidden sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw] sm:flex sm:float-right h-[93.4vh] bg-homePageBg flex-col justify-center items-center">
             <div className="mb-28 flex flex-col justify-center items-center">
               <img
-                className="w-[340px] h-[300px] object-cover"
+                className=" w-[70%] max-w-[20rem] object-cover"
                 src={howdyImage}
               />
-              <h1 className="text-4xl mb-2">Welcome to Howdy!</h1>
-              <p>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl mb-2 w-full text-center">
+                Welcome to Howdy!
+              </h1>
+              <p className="w-full text-[0.9rem] text-justify p-3">
                 "Connect, chat, and discover with Howdy - where conversations
                 start with a simple hello!"
               </p>
