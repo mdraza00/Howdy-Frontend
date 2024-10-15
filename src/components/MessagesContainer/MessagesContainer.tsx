@@ -189,6 +189,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     });
 
     if (sendMessage.status && sendMessage.message) {
+      console.log("got message", sendMessage.message);
       socket.emit("send-message", {
         _id: sendMessage.message._id,
         chatRoomId: sendMessage.message.chatRoomId,
@@ -332,27 +333,32 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         chatRoomId={props.chatRoomId}
         chatRoomProfilePhoto={props.chatRoomProfilePhoto}
         chatRoomName={props.chatRoomName}
+        chatRoomUserProfile={props.chatRoomUserProfile}
         threeDotsPopupMenu={threeDotsPopupMenu}
         setThreeDotsPopupMenu={setThreeDotsPopupMenu}
         setShowMessagesContainer={props.setShowMessagesContainer}
         setChatRoomUserProfile={props.setChatRoomUserProfile}
       />
       <div
-        className={`h-fit w-full fixed top-[8.2vh] sm:top-[14.7vh] right-0 sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]`}
+        className={`h-full w-full fixed top-[8.2vh] sm:top-[14.7vh] right-0 sm:w-[58vw] md:w-[63vw] ${
+          props.chatRoomUserProfile
+            ? "lg:w-[33vw] lg:right-[33vw] xl:w-[37vw] 2xl:w-[39vw]"
+            : "lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]"
+        }  `}
       >
         <div
           id="messages-container-div"
-          className={`overflow-auto ${
+          className={`overflow-auto overflow-x-hidden ${
             replyToMessage.isReply && !isSelectMessages
               ? "h-[76.5vh]"
-              : "h-[83.4vh] sm:h-[77.01vh]"
+              : "h-[83.6%] sm:h-[77.01vh]"
           }  scroll-bar scroll-smooth bg-chatroom-background transition-all ease-in-out`}
           onScroll={messagesContainerScrollHandler}
         >
           <div
             className={`h-fit w-[98.0%]  ${
               isScrolling ? "top-[0]" : "top-[-3rem]"
-            } transition-all ease-in-out flex duration-200 items-center justify-center absolute z-[1]`}
+            } transition-all ease-in-out flex duration-200 items-center justify-center absolute z-[5]`}
           >
             <p
               id="scrolling-date"
@@ -441,11 +447,12 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
             })}
         </div>
         {/* send-messages-container */}
-        <div className="relative h-fit">
+        <div className="relative h-fit z-10">
           {!isSelectMessages && (
             <SendMessagesForm
               replyToMessage={replyToMessage}
               setReplyToMessage={setReplyToMessage}
+              chatRoomUserProfile={props.chatRoomUserProfile}
               userId={props.userId}
               chatRoomId={props.chatRoomId}
               sendMultiMedia={sendMultiMedia}
@@ -465,6 +472,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           )}
           {isSelectMessages && (
             <SelectMessagesOptions
+              chatRoomUserProfile={props.chatRoomUserProfile}
               selectedMessagesData={selectedMessagesData}
               setIsSelectMessages={setIsSelectMessages}
               setForwardMessages={setForwardMessages}

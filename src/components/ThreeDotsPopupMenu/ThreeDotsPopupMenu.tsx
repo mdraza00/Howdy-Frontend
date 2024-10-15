@@ -23,15 +23,17 @@ export default function ThreeDotsPopupMenu(
     <>
       {props.threeDotsPopupMenu && (
         <div
-          className="fixed top-0 left-0 h-full bg-black w-full bg-transparent z-[400]"
+          className="fixed top-0 left-0 h-full w-full z-[4]"
           onClick={() => props.setThreeDotsPopupMenu(false)}
         ></div>
       )}
 
       <div
         className={`fixed bg-white ${
-          props.threeDotsPopupMenu ? "top-[8.2vh]" : "top-[-20rem]"
-        } right-1  transition-all ease-in-out duration-[440ms] h-fit w-fit pr-2 py-1 z-[401]`}
+          props.threeDotsPopupMenu
+            ? "top-[8.2vh] sm:top-[15vh]"
+            : "top-[-20rem]"
+        } right-2  transition-all ease-in-out duration-[440ms] h-fit w-fit pr-2 py-1 z-[4]`}
       >
         <div
           className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"

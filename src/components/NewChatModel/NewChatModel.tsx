@@ -50,13 +50,11 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
         )
         .then((res) => {
           setUsersData(res.data.message);
-          console.log(res.data.message);
         })
         .catch((err) => {
           console.log("error is fetching users => ", err);
         });
     } else {
-      console.log(props.userId);
       const url = `${baseURL.baseUrl}/user/getUsers/${props.userId}`;
       axios
         .get<getUsersRes>(url, {
@@ -133,7 +131,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
               }}
             >
               <img
-                src={`${baseURL.baseUrl}/${userData.profilePhotoAddress}`}
+                src={`${baseURL.imageUrl}/${userData.profilePhotoAddress}`}
                 className="w-12 h-12 object-cover rounded-full"
               />
               <p>{userData.username}</p>
@@ -174,7 +172,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
                   props.setUpdateChatRoomsData(
                     props.updateChatRoomsData ? false : true
                   );
-                  console.log(res.data);
+
                   props.setActiveChatRoomId(res.data.message);
                   props.setShowMessagesContainer({
                     isShow: true,

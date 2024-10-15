@@ -18,7 +18,7 @@ type props = {
   sendMultiMedia: boolean;
   setReplyToMessage: (data: IReplyMessage) => void;
   replyToMessage: IReplyMessage;
-
+  chatRoomUserProfile: boolean;
   chatRoomId: string;
   senderId: string;
   setSendMultiMedia: (a: boolean) => void;
@@ -49,6 +49,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
     }
     if (cameraInput) {
       (async () => {
+        console.log(navigator);
         await navigator.mediaDevices
           .getUserMedia({
             video: {
@@ -58,6 +59,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
             },
           })
           .then((stream) => {
+            console.log("hello");
             if (cameraVideo.current) {
               videoStream.current = stream;
               cameraVideo.current.srcObject = videoStream.current;
@@ -77,7 +79,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
     <>
       {props.sendMultiMedia && (
         <div
-          className="fixed w-full h-full top-0 left-0 bg-transparent bottom-0 z-[10]"
+          className="fixed w-full h-full top-0 left-0 bg-transparent bottom-0"
           onClick={() => {
             props.setSendMultiMedia(false);
           }}
@@ -86,7 +88,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
 
       {cameraInput && (
         <div
-          className="fixed top-0 left-0 w-screen h-screen bg-transparent z-[100]"
+          className="fixed hidden top-0 left-0 w-screen h-screen bg-transparent z-[100]"
           onClick={() => {
             setCameraInput(false);
             if (cameraVideo.current) cameraVideo.current.nodeValue = "";
@@ -96,9 +98,15 @@ export default function SendFile(props: PropsWithChildren<props>) {
         ></div>
       )}
       <div
-        className={`fixed flex items-center justify-center gap-24 transition-all ease-in-out duration-500 ${
-          cameraInput ? "bottom-0" : "bottom-[-999px]"
-        }  right-0 w-[75%] h-[45.783rem] bg-blue-gray-50 z-[101]`}
+        className={`fixed right-0 border-2 border-black flex flex-col items-center justify-center gap-24 transition-all ease-in-out duration-500 ${
+          cameraInput
+            ? `top-[8.2vh] sm:top-[14.7vh] sm:w-[58vw] md:w-[63vw] ${
+                props.chatRoomUserProfile
+                  ? "lg:w-[33vw] lg:right-[33vw] xl:w-[37vw] 2xl:w-[39vw]"
+                  : "lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]"
+              }`
+            : "top-[150vh]"
+        } w-full h-[90%] sm:h-[85.35%] bg-blue-gray-50 z-[1]`}
       >
         <button
           className="absolute top-4 right-4"
@@ -113,7 +121,7 @@ export default function SendFile(props: PropsWithChildren<props>) {
         </button>
         <video
           id="user-camera-video-stream"
-          className=" w-[55%]"
+          className=" w-[80%] border-2 border-black"
           autoPlay
           ref={cameraVideo}
         ></video>
@@ -196,13 +204,13 @@ export default function SendFile(props: PropsWithChildren<props>) {
       />
 
       <div
-        className={` ml-1 transition-all ease-in-out duration-[390ms] fixed left-[0] z-[71] ${
+        className={` ml-1 transition-all ease-in-out duration-[390ms] fixed left-[0] ${
           props.sendMultiMedia
             ? props.replyToMessage.isReply
               ? "bottom-[18vh]"
               : `bottom-[8.40vh]`
             : "bottom-[-33vh]"
-        } bg-white shadow-xl py-2 px-3 rounded-xl h-fit`}
+        } bg-white shadow-xl py-2 px-3 rounded-xl h-fit sm:left-[42vw] md:left-[37vw] lg:left-[34vw] xl:left-[30vw] 2xl:left-[28vw]`}
       >
         <div
           className="flex items-center gap-2 w-36 hover:bg-black/5 active:bg-white transition-all ease-in-out py-[7px] px-[10px] rounded-md cursor-pointer h-fit"

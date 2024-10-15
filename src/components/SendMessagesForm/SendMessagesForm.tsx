@@ -13,6 +13,7 @@ type propsType = {
   userId: string;
   chatRoomId: string;
   sendMultiMedia: boolean;
+  chatRoomUserProfile: boolean;
   replyToMessage: IReplyMessage;
   setSendMultiMedia: (bool: boolean) => void;
   setIsChatRoomMessagesCleared: (bool: boolean) => void;
@@ -82,7 +83,7 @@ export default function SendMessagesForm(props: PropsWithChildren<propsType>) {
     if (messageInput && messageInput.length > 0) {
       const senderId = props.userId;
 
-      if (senderId)
+      if (senderId) {
         storeMessagesInDB(
           messageInput,
           props.chatRoomId,
@@ -90,9 +91,10 @@ export default function SendMessagesForm(props: PropsWithChildren<propsType>) {
           MessageType.TEXT
         );
 
-      if (inputRef.current) inputRef.current.value = "";
-      props.setReplyToMessage({ isReply: false, data: null });
-      props.setIsChatRoomMessagesCleared(false);
+        if (inputRef.current) inputRef.current.value = "";
+        props.setReplyToMessage({ isReply: false, data: null });
+        props.setIsChatRoomMessagesCleared(false);
+      }
     }
   };
 
@@ -104,6 +106,7 @@ export default function SendMessagesForm(props: PropsWithChildren<propsType>) {
   return (
     <>
       <ReplyMessage
+        chatRoomUserProfile={props.chatRoomUserProfile}
         setReplyToMessage={props.setReplyToMessage}
         replyToMessage={props.replyToMessage}
       />
@@ -112,12 +115,17 @@ export default function SendMessagesForm(props: PropsWithChildren<propsType>) {
         replyToMessage={props.replyToMessage}
         chatRoomId={props.chatRoomId}
         senderId={props.userId}
+        chatRoomUserProfile={props.chatRoomUserProfile}
         setSendMessage={props.setSendMessage}
         sendMultiMedia={props.sendMultiMedia}
         setSendMultiMedia={props.setSendMultiMedia}
       />
       <div
-        className={`fixed w-full sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw] bottom-0 right-0 bg-gray-200 flex flex-col items-center gap-[0.5rem] py-[0.4rem]
+        className={`fixed w-full sm:w-[58vw] md:w-[63vw] ${
+          props.chatRoomUserProfile
+            ? "lg:right-[33vw] lg:w-[33vw] xl:w-[37vw] 2xl:w-[39vw]"
+            : "lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]"
+        }   bottom-0 right-0 bg-gray-200 flex flex-col items-center gap-[0.5rem] py-[0.4rem]
                 px-1 transition-all ease-in-out duration-500 h-[8.4vh]`}
       >
         <div className="flex items-center absolute left-0 top-0 w-full">

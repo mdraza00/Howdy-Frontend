@@ -4,7 +4,12 @@ import BaseURLContext from "./contexts/BaseURLContext";
 import Home from "./components/Home/Home";
 function App() {
   return (
-    <BaseURLContext.Provider value={{ baseUrl: "http://192.168.116.164:3000" }}>
+    <BaseURLContext.Provider
+      value={{
+        baseUrl: "http://192.168.182.164:3000/api",
+        imageUrl: "http://192.168.182.164:3000",
+      }}
+    >
       {/* <BrowserRouter> */}
       <Routes>
         <Route path="/" element={<Home />} />

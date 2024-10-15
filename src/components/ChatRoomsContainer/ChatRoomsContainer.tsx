@@ -6,12 +6,14 @@ import ChatRoom from "../ChatRoom/ChatRoom";
 import User from "../User/User";
 import { RiChatNewFill } from "react-icons/ri";
 import { IShowMessagesContainer } from "../../Interface/Interface";
+import { FaUserPlus } from "react-icons/fa";
 type propsType = {
   userId: string;
   updateChatRoomsData: boolean;
   activeChatRoomId: string;
   isShowMessagesContainer: boolean;
   setNewChatModel: (a: boolean) => void;
+  setFriendRequestModel: (a: boolean) => void;
   setUpdateChatRoomsData: (a: boolean) => void;
   setLoadMessages: (a: boolean) => void;
   setShowMessagesContainer: (data: IShowMessagesContainer) => void;
@@ -137,16 +139,29 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
   ]);
   return (
     <div
-      className={`h-[93.5vh] w-full sm:w-[42vw] md:w-[37vw] lg:w-[34vw] xl:w-[30vw] 2xl:w-[28vw] sm:border-2 sm:border-gray-100 gap-2 flex flex-col items-center fixed sm:flex top-[6.5vh] left-[0] sm:text-[0.85rem] md:text-[0.9rem] lg:text-[1rem]`}
+      className={`h-[93%] w-full sm:w-[42vw] md:w-[37vw] lg:w-[34vw] xl:w-[30vw] 2xl:w-[28vw] sm:border-2 sm:border-gray-100 gap-2 flex flex-col items-center fixed sm:flex top-[6.5vh] left-[0] sm:text-[0.85rem] md:text-[0.9rem] lg:text-[1rem]`}
     >
       {/* button  */}
       <div className="hidden w-full h-fit sm:flex items-center justify-between p-1 ">
         <h2 className="text-lg md:text-xl lg:text-2xl">Chat</h2>
-        <div
-          className={`h-fit bg-blue-600 p-1 rounded-sm`}
-          onClick={() => props.setNewChatModel(true)}
-        >
-          <RiChatNewFill color="white" className="size-5 md:size-6 lg:size-7" />
+        <div className="flex gap-[1rem]">
+          <div
+            className={`h-fit bg-blue-600 p-1 rounded-sm`}
+            onClick={() => props.setNewChatModel(true)}
+          >
+            <RiChatNewFill
+              color="white"
+              className="size-5 md:size-6 lg:size-7"
+            />
+          </div>
+          <div
+            className="h-fit bg-blue-600 p-1 rounded-sm "
+            onClick={() => {
+              props.setFriendRequestModel(true);
+            }}
+          >
+            <FaUserPlus color="white" className="size-5 md:size-6 lg:size-7" />
+          </div>
         </div>
       </div>
       <input
@@ -157,7 +172,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
         value={userNameInput}
       />
       {/* chatrooms */}
-      <div className="h-full w-full flex flex-col mt-3 sm:mt-1 overflow-auto scroll-bar">
+      <div className="w-full flex flex-col mt-3 sm:mt-1 overflow-auto scroll-bar">
         {!userNameInput &&
           chatRoomsData.map((chatRoom) => {
             // join chatroom using socket
@@ -199,12 +214,22 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
           usersData.map(userData=>)} */}
       </div>
       <div
-        className={`absolute ${
-          props.isShowMessagesContainer && "hidden"
-        } sm:hidden w-fit h-fit p-[0.5rem] bottom-4 right-4 bg-blue-600 rounded-md z-[10]`}
-        onClick={() => props.setNewChatModel(true)}
+        className={`absolute sm:hidden w-fit h-fit ${
+          props.isShowMessagesContainer ? "bottom-[-30rem]" : "bottom-4"
+        } flex flex-col gap-[1rem] right-4 z-[90]`}
       >
-        <RiChatNewFill color="white" size={25} />
+        <div
+          className={`bg-blue-600 rounded-md p-[0.5rem]`}
+          onClick={() => props.setNewChatModel(true)}
+        >
+          <RiChatNewFill color="white" size={25} />
+        </div>
+        <div
+          className={`bg-blue-600 rounded-md p-[0.5rem]`}
+          onClick={() => alert("not working yet")}
+        >
+          <FaUserPlus color="white" size={25} />
+        </div>
       </div>
     </div>
   );

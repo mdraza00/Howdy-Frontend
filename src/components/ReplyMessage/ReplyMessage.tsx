@@ -5,8 +5,9 @@ import { MessageType } from "../../enums/message";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
 import { IoIosDocument } from "react-icons/io";
 type propsType = {
-  setReplyToMessage: (data: IReplyMessage) => void;
   replyToMessage: IReplyMessage;
+  chatRoomUserProfile: boolean;
+  setReplyToMessage: (data: IReplyMessage) => void;
 };
 export default function ReplyMessage(props: PropsWithChildren<propsType>) {
   const baseURL = useContext(Context);
@@ -14,7 +15,11 @@ export default function ReplyMessage(props: PropsWithChildren<propsType>) {
     <div
       className={`fixed ${
         props.replyToMessage.data ? "bottom-[8.4vh]" : "bottom-[-10vh]"
-      } bg-blue-gray-50 h-fit flex items-center w-full justify-between px-2 pt-[0.35rem] pb-0 gap-1 transition-all duration-400 z-[130]`}
+      } bg-blue-gray-50 h-fit flex items-center w-full sm:w-[58vw] md:w-[63vw] ${
+        props.chatRoomUserProfile
+          ? "lg:w-[33vw] lg:right-[33vw] xl:w-[37vw] 2xl:w-[39vw]"
+          : "lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]"
+      }   justify-between px-2 pt-[0.35rem] pb-0 gap-1 transition-all duration-400`}
     >
       <div
         className={`w-full h-fit pl-2 py-[0.1rem] rounded-sm bg-blue-gray-100 flex items-center justify-between`}

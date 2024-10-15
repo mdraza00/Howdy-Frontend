@@ -9,6 +9,7 @@ import downloadIcon from "/icons/download.png";
 
 type propsType = {
   selectedMessagesData: ISelectedMessageData[];
+  chatRoomUserProfile: boolean;
   setIsSelectMessages: (bool: boolean) => void;
   setForwardMessages: (bool: boolean) => void;
   setShowDeletePopupMenu: (bool: boolean) => void;
@@ -19,7 +20,13 @@ export default function SelectMessagesOptions(
   props: PropsWithChildren<propsType>
 ) {
   return (
-    <div className=" fixed h-[8.4vh] w-full bottom-0 flex items-center justify-between">
+    <div
+      className={`fixed h-[8.4vh] w-full sm:w-[58vw] md:w-[63vw] ${
+        props.chatRoomUserProfile
+          ? "lg:w-[33vw] lg:right-[33vw] xl:w-[37vw] 2xl:w-[39vw]"
+          : "lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]"
+      }  bottom-0 flex items-center justify-between`}
+    >
       <div className="flex h-fit items-center gap-3">
         <button
           className="p-1 flex items-center gap-3  hover:bg-black/10 active:bg-transparent transition-all ease-in-out"

@@ -166,7 +166,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
             className="fixed top-0 right-0 w-screen h-screen bg-transparent black z-[100]"
             onClick={() => setZoomImage({ isZoom: false, src: "" })}
           ></div> */}
-          <div className="fixed top-[8.4vh] left-[0] w-full h-[91.6vh] bg-blue-gray-50 black z-[601]">
+          <div className="fixed top-[8.4vh] left-[0] w-full h-[91.6vh] bg-blue-gray-50 black">
             <div className="h-full w-full flex items-center justify-center">
               <img
                 className="absolute w-10 top-3 right-3"
@@ -195,13 +195,13 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
         )}
 
         <div
-          className="message-div-container relative w-fit"
+          className="message-div-container relative w-full"
           id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
         >
           {messagePopup && (
             <div
               id="message-popup-container"
-              className="absolute top-[50%] left-[80%] py-1 bg-white h-fit w-36 z-[60] shadow-2xl"
+              className="absolute top-[50%] left-[80%] py-1 bg-white h-fit w-36 shadow-2xl"
             >
               <div className="hover:bg-black/5 px-2 py-1  h-fit cursor-pointer">
                 Message info
@@ -276,7 +276,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
           <div
             className={`group p-1 bg-white ${
               props.isSelectMessages ? "ml-11" : "ml-3"
-            } rounded-md rounded-tl-none shadow-lg my-2 relative max-w-[16rem] z-[3]`}
+            } rounded-md rounded-tl-none shadow-lg my-2 relative z-[3] w-fit max-w-[65%]`}
           >
             {props.isSelectMessages && (
               <div className="absolute top-[50%] translate-y-[-42%] left-[-2.18rem]">
@@ -321,23 +321,23 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 props.isSelectMessages
                   ? "flex flex-col items-stretch gap-2"
                   : ""
-              }`}
+              } w-fit`}
             >
               {props.deleteForEveryOne === 0 && props.replyTo && (
                 <div
                   onClick={() => {
                     if (props.replyTo) setGoToMessage(props.replyTo);
                   }}
-                  className={`cursor-pointer flex justify-between rounded-md items-center gap-12 pl-2 mb-1 bg-black/5 ${
+                  className={`cursor-pointer flex justify-between rounded-md items-center pl-2 mb-1 bg-black/5 ${
                     replyToMessageData?.data?.messageType ===
                       MessageType.TEXT ||
                     replyToMessageData?.data?.messageType === MessageType.DOC
                       ? "h-[3.0rem]"
                       : "h-[4rem]"
-                  } mt-[0.65rem]`}
+                  } mt-[0.65rem] w-full`}
                 >
-                  <div className="h-fit">
-                    <p className="max-w-[8rem] truncate">
+                  <div className="h-fit w-[60%]">
+                    <p className="max-w-[100%] truncate">
                       {replyToMessageData?.data?.repliedTo}
                     </p>
                     <p className="text-gray-800 flex gap-1 items-center max-w-[8rem] truncate">
@@ -370,7 +370,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 {props.deleteForEveryOne === 0 ? (
                   <>
                     {props.messageType === MessageType.TEXT && (
-                      <div>
+                      <div className="">
                         {props.text.split(" ").map((word) => {
                           return domains
                             .map(
@@ -400,7 +400,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                     {props.messageType === MessageType.IMAGE && props.image && (
                       <div className="flex flex-col gap-2">
                         <img
-                          className="max-w-[13rem]"
+                          className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
                           src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
                           onClick={() => {
                             if (props.image)
@@ -422,7 +422,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                     {props.messageType === MessageType.VIDEO && props.video && (
                       <div className="flex flex-col gap-2">
                         <video
-                          className="max-w-[13rem]"
+                          className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
                           src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}
                           controls={true}
                         />

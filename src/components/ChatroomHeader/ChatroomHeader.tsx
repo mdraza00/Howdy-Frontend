@@ -9,6 +9,7 @@ import searchIcon from "/search-icon.png";
 type propsType = {
   userId: string;
   chatRoomId: string;
+  chatRoomUserProfile: boolean;
   chatRoomProfilePhoto: string;
   chatRoomName: string;
   threeDotsPopupMenu: boolean;
@@ -23,7 +24,13 @@ type propsType = {
 export default function ChatroomHeader(props: PropsWithChildren<propsType>) {
   const baseURL = useContext(Context);
   return (
-    <div className="fixed top-0 sm:top-[6.5vh] right-0 h-[8.2vh] w-full sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw] float-right bg-light-blue-800 flex justify-between items-center z-[3]">
+    <div
+      className={`fixed top-0 sm:top-[6.5vh] right-0 h-[8.2vh] w-full sm:w-[58vw] md:w-[63vw] ${
+        props.chatRoomUserProfile
+          ? "lg:w-[33vw] lg:right-[33vw] xl:w-[37vw] 2xl:w-[39vw]"
+          : "lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw]"
+      }   float-right bg-light-blue-800 flex justify-between items-center z-[5] transition-all duration-300`}
+    >
       <div className="flex items-center gap-1 pl-2">
         <FaArrowLeft
           size={25}

@@ -2,10 +2,10 @@ import { PropsWithChildren, useEffect, useState, useContext } from "react";
 import { FcDocument } from "react-icons/fc";
 import BaseURLContext from "../../contexts/BaseURLContext";
 import closeBtnIcon from "../../assets/close-btn-icon.png";
-import sendMessageBtn from "../../assets/send-message-btn-icon.png";
 import axios from "axios";
 import { MessageType } from "../../enums/message";
 import { ImessageRes, IReplyMessage } from "../../Interface/Interface";
+import { BsSendFill } from "react-icons/bs";
 
 type propsType = {
   setReplyToMessage: (data: IReplyMessage) => void;
@@ -127,7 +127,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
     <>
       {props.messageMultiMedia.isMessageMultiMedia && (
         <div
-          className={`fixed top-0 left-0 w-screen h-screen bg-transparent z-[85]`}
+          className={`fixed hidden top-0 left-0 w-screen h-screen bg-transparent`}
           onClick={() => {
             props.setCloseModel(true);
           }}
@@ -135,10 +135,10 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
       )}
 
       <div
-        className={`fixed left-0 w-full h-full border-2 border-black bg-blue-gray-50 transition-all ease-in-out duration-500 ${
+        className={`fixed left-0 w-full h-[91.8%] flex items-center justify-center bg-blue-gray-50 transition-all ease-in-out duration-500 ${
           props.messageMultiMedia.isMessageMultiMedia
-            ? "bottom-0"
-            : "bottom-[-999px]"
+            ? "top-[8.2vh]"
+            : "top-[150vh]"
         }    w-[75%] h-[86.2vh] z-[85]`}
       >
         <button
@@ -147,10 +147,10 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
             props.setCloseModel(true);
           }}
         >
-          <img className="w-10" src={closeBtnIcon} />
+          <img className="w-7" src={closeBtnIcon} />
         </button>
         <form
-          className="flex flex-col gap-12 items-center justify-center mt-24 w-full"
+          className=" flex flex-col items-center justify-center gap-[4rem] w-full"
           onSubmit={(e) => {
             e.preventDefault();
             setMultimediaFromSubmitted(true);
@@ -164,7 +164,7 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
                     ? props.messageMultiMedia.data.url
                     : ""
                 }
-                className="h-[25rem] shadow-2xl"
+                className="w-[80%] shadow-2xl"
               />
             )}
           {props.messageMultiMedia.data &&
@@ -175,31 +175,31 @@ export default function SendImage(props: PropsWithChildren<propsType>) {
                     ? props.messageMultiMedia.data.url
                     : ""
                 }
-                className="h-[25rem] shadow-2xl"
+                className="w-[80%] shadow-2xl"
                 controls={true}
               />
             )}
           {props.messageMultiMedia.data &&
             props.messageMultiMedia.data.type == MessageType.DOC && (
-              <div className="h-[17rem] w-[32rem] shadow-2xl bg-blue-gray-200 rounded-md flex flex-col gap-4 items-center justify-center">
-                <FcDocument size={80} />
-                <p className="text-2xl text-center text-gray-700">
+              <div className=" w-[70%] h-fit shadow-2xl bg-blue-gray-200 rounded-md flex flex-col gap-2 py-4 items-center justify-center">
+                <FcDocument className="size-[3rem]" />
+                <p className="text-lg max-w-[90%] truncate text-center text-gray-700">
                   {props.messageMultiMedia.data.filename}
                 </p>
               </div>
             )}
-          <div className="flex items-center justify-center gap-7 w-full">
+          <div className="absolute bottom-3 flex items-center justify-evenly w-full h-fit bg-blue-gray-50">
             <input
               type="text"
-              className="text-lg px-2 py-[0.25rem] rounded-lg w-7/12 outline-none"
+              className=" text-[0.9rem] px-2 py-[0.4rem] rounded-lg w-[80%] outline-none"
               placeholder="Add a caption"
               value={caption}
               onChange={(e) => {
                 setCaption(e.target.value);
               }}
             />
-            <button className="p-0" type="submit">
-              <img className="w-[2.1rem]" src={sendMessageBtn} />
+            <button className="p-2 bg-blue-600" type="submit">
+              <BsSendFill className="size-[1rem]" color="white" />
             </button>
           </div>
         </form>

@@ -9,11 +9,7 @@ import { Button } from "@material-tailwind/react";
 function LoginContainer() {
   const [active, setActive] = useState("login");
   return (
-    <div
-      className={
-        "flex items-center px-5 sm:px-0 justify-center border-2 border-black"
-      }
-    >
+    <div className={"flex items-center px-5 sm:px-0 justify-center"}>
       <div className="hidden sm:flex w-1/2 min-h-full bg-homePageBg relative">
         <div className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-69.5%] w-full flex flex-col items-center h-fit">
           <img

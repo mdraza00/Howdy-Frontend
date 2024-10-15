@@ -7,13 +7,18 @@ import reportIcon from "/icons/dislike icon.png";
 import deleteChatIcon from "/icons/dustbin.png";
 import axios from "axios";
 type propsType = {
+  userId: string;
+  chatRoomId: string;
+  chatRoomUserProfile: {
+    isChatRoomUserProfile: boolean;
+    chatRoomId: string;
+    userId: string;
+  };
   setChatRoomUserProfile: (
     userId: string,
     chatRoomId: string,
     isChatRoomUserProfile: boolean
   ) => void;
-  userId: string;
-  chatRoomId: string;
 };
 interface getChatRoomMembersRes {
   status: boolean;
@@ -35,38 +40,53 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
   const baseUrl = useContext(Context);
   const token = localStorage.getItem("token");
   useEffect(() => {
-    axios
-      .get<getChatRoomMembersRes>(
-        `${baseUrl.baseUrl}/chatroom/get/chatRoomMembers/${props.chatRoomId}`,
-        { headers: { authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        const recipientId =
-          res.data.message[0] === props.userId
-            ? res.data.message[1]
-            : res.data.message[0];
+    if (props.chatRoomUserProfile.isChatRoomUserProfile) {
+      axios
+        .get<getChatRoomMembersRes>(
+          `${baseUrl.baseUrl}/chatroom/get/chatRoomMembers/${props.chatRoomId}`,
+          { headers: { authorization: `Bearer ${token}` } }
+        )
+        .then((res) => {
+          const recipientId =
+            res.data.message[0] === props.userId
+              ? res.data.message[1]
+              : res.data.message[0];
 
-        axios
-          .post<getUserRes>(
-            `${baseUrl.baseUrl}/user/getUser`,
-            {
-              userId: recipientId,
-            },
-            { headers: { authorization: `Bearer ${token}` } }
-          )
-          .then((res) => {
-            setChatRoomUserData({
-              username: res.data.data.name,
-              email: res.data.data.email,
-              profilePhoto: res.data.data.profilePhoto,
-              about: res.data.data.about,
-            });
-          });
-      })
-      .catch((err) => console.log(err));
-  }, [props.userId, props.chatRoomId, baseUrl.baseUrl, token]);
+          axios
+            .post<getUserRes>(
+              `${baseUrl.baseUrl}/user/getUser`,
+              {
+                userId: recipientId,
+              },
+              { headers: { authorization: `Bearer ${token}` } }
+            )
+            .then((res) => {
+              setChatRoomUserData({
+                username: res.data.data.name,
+                email: res.data.data.email,
+                profilePhoto: res.data.data.profilePhoto,
+                about: res.data.data.about,
+              });
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [
+    props.userId,
+    props.chatRoomId,
+    baseUrl.baseUrl,
+    token,
+    props.chatRoomUserProfile.isChatRoomUserProfile,
+  ]);
   return (
-    <div className="w-full fixed top-0 left-0 bg-blue-gray-50 flex flex-col gap-3 z-[500]">
+    <div
+      className={`w-full fixed top-0 ${
+        props.chatRoomUserProfile.isChatRoomUserProfile
+          ? "right-0"
+          : "right-[-50rem]"
+      } transition-all ease-in-out duration-500  sm:top-[6.5vh] sm:w-[58vw] md:w-[63vw] lg:w-[33vw] bg-blue-gray-50 flex flex-col gap-3 z-[500]`}
+    >
       <div className="shadow-md h-fit">
         <div className="flex items-center gap-7 bg-white h-fit">
           <button

@@ -11,6 +11,7 @@ import howdyImage from "/images/Howdy_Image.png";
 import ChatRoomUserInfo from "../ChatRoomUserInfo/ChatRoomUserInfo";
 import lockIcon from "/icons/lock.png";
 import { IShowMessagesContainer } from "../../Interface/Interface";
+import FriendRequestModel from "../FriendRequestModel/FriendRequestModel";
 interface getUserRes {
   status: boolean;
   data: {
@@ -36,6 +37,7 @@ function Home() {
   });
   const [isUserDataUpdated, setIsUserDataUpdated] = useState(false);
   const [showNewChatModel, setShowNewChatModel] = useState(false);
+  const [friendRequestModel, setFriendRequestModel] = useState(false);
   const [loadMessages, setLoadMessages] = useState(false);
   const [showUserProfileModel, setShowUserProfileModel] = useState(false);
   const [chatRoomUserProfile, setChatRoomUserProfile] = useState({
@@ -122,24 +124,33 @@ function Home() {
           setLoadMessages={setLoadMessages}
         />
       )}
-      {showUserProfileModel && (
-        <UserProfile
-          userId={userData.id}
-          setShowUserProfileModel={setShowUserProfileModel}
-          isUserDataUpdated={isUserDataUpdated}
-          setIsUserDataUpdated={setIsUserDataUpdated}
-        />
-      )}
+
+      <UserProfile
+        userId={userData.id}
+        showUserProfileModel={showUserProfileModel}
+        setShowUserProfileModel={setShowUserProfileModel}
+        isUserDataUpdated={isUserDataUpdated}
+        setIsUserDataUpdated={setIsUserDataUpdated}
+      />
+
+      <FriendRequestModel
+        userId={userData.id}
+        friendRequestModel={friendRequestModel}
+        setFriendRequestModel={setFriendRequestModel}
+      />
+
       <div className="h-full">
         <Header
           profilePhoto={userData.profilePhoto}
           name={userData.name}
+          isShowMessagesContainer={showMessagesContainer.isShow}
           setShowUserProfileModel={setShowUserProfileModel}
         />
         <ChatRoomsContainer
           setChatRoomUserProfile={displayChatRoomUserProfile}
           userId={userData.id}
           setNewChatModel={setNewChatModel}
+          setFriendRequestModel={setFriendRequestModel}
           isShowMessagesContainer={showMessagesContainer.isShow}
           updateChatRoomsData={updateChatRoomsData}
           setUpdateChatRoomsData={setUpdateChatRoomsData}
@@ -165,13 +176,14 @@ function Home() {
             setLoadMessages={setLoadMessages}
           />
         )}
-        {chatRoomUserProfile.isChatRoomUserProfile && (
-          <ChatRoomUserInfo
-            userId={userData.id}
-            chatRoomId={chatRoomUserProfile.chatRoomId}
-            setChatRoomUserProfile={displayChatRoomUserProfile}
-          />
-        )}
+
+        <ChatRoomUserInfo
+          userId={userData.id}
+          chatRoomId={chatRoomUserProfile.chatRoomId}
+          chatRoomUserProfile={chatRoomUserProfile}
+          setChatRoomUserProfile={displayChatRoomUserProfile}
+        />
+
         {!showMessagesContainer.isShow && (
           <div className="hidden sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw] sm:flex sm:float-right h-[93.4vh] bg-homePageBg flex-col justify-center items-center">
             <div className="mb-28 flex flex-col justify-center items-center">

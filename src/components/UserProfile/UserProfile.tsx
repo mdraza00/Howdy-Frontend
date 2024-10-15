@@ -8,6 +8,7 @@ import { Crop } from "react-image-crop";
 import rollingIcon from "/icons/RollingIcon.svg";
 type propsType = {
   userId: string;
+  showUserProfileModel: boolean;
   setShowUserProfileModel: (a: boolean) => void;
   isUserDataUpdated: boolean;
   setIsUserDataUpdated: (a: boolean) => void;
@@ -36,23 +37,31 @@ function UserProfile(props: PropsWithChildren<propsType>) {
   const [isImagePreview, setIsImagePreview] = useState(false);
   const token = localStorage.getItem("token");
   useEffect(() => {
-    const url = `${baseURL.baseUrl}/user/getUser`;
-    axios
-      .post<userDateRes>(
-        url,
-        { userId: props.userId },
-        { headers: { authorization: `Bearer ${token}` } }
-      )
-      .then((res) => {
-        setUserNameInput(res.data.data.name);
-        setEmailInput(res.data.data.email);
-        setProfilePhotoInput(res.data.data.profilePhoto);
-        setAboutInput(res.data.data.about);
-      })
-      .catch((err) => {
-        console.log(`error from userProfile => `, err);
-      });
-  }, [baseURL.baseUrl, props.isUserDataUpdated, props.userId, token]);
+    if (props.showUserProfileModel) {
+      const url = `${baseURL.baseUrl}/user/getUser`;
+      axios
+        .post<userDateRes>(
+          url,
+          { userId: props.userId },
+          { headers: { authorization: `Bearer ${token}` } }
+        )
+        .then((res) => {
+          setUserNameInput(res.data.data.name);
+          setEmailInput(res.data.data.email);
+          setProfilePhotoInput(res.data.data.profilePhoto);
+          setAboutInput(res.data.data.about);
+        })
+        .catch((err) => {
+          console.log(`error from userProfile => `, err);
+        });
+    }
+  }, [
+    baseURL.baseUrl,
+    props.isUserDataUpdated,
+    props.showUserProfileModel,
+    props.userId,
+    token,
+  ]);
 
   const handleChangeAllBtn = () => {
     const formData = new FormData();
@@ -71,9 +80,8 @@ function UserProfile(props: PropsWithChildren<propsType>) {
           authorization: "Bearer " + token,
         },
       })
-      .then((res) => {
+      .then(() => {
         props.setIsUserDataUpdated(props.isUserDataUpdated ? false : true);
-        console.log("response agya. res =>", res.data);
         props.setShowUserProfileModel(false);
         setIsLoading(false);
       })
@@ -101,111 +109,108 @@ function UserProfile(props: PropsWithChildren<propsType>) {
   return (
     <>
       <div
-        className="absolute w-full h-full z-[1001] bg-black/30"
+        className={`hidden fixed sm:block ${
+          props.showUserProfileModel ? "right-[0] top-[0]" : "right-[-110vw]"
+        } w-full h-full bg-black/15 z-[100]`}
         onClick={() => {
           props.setShowUserProfileModel(false);
         }}
       ></div>
-      <div className="absolute w-full h-fit left-[50%] translate-x-[-50%] top-[50%] translate-y-[-50%] flex items-center justify-center z-[1003]">
-        <div className="w-[90%] h-fit pb-10 bg-blue-400 flex flex-col items-center gap-4 relative z-[1003] rounded-xl shadow-2xl pt-10">
-          <button
-            className="absolute right-4 top-3 bg-white p-1"
-            onClick={() => {
-              props.setShowUserProfileModel(false);
-            }}
-          >
-            <img src={closeBtnIcon} className="w-6" />
-          </button>
+      {/* className=" 
+      flex items-center justify-center z-[100]" */}
+      <div
+        className={`fixed top-[0] sm:top-[50%] sm:translate-y-[-50%] ${
+          props.showUserProfileModel
+            ? "left-[0] sm:left-[50%] sm:translate-x-[-50%]"
+            : "left-[110vw]"
+        } w-full sm:w-[70%] md:w-[50%] lg:w-[40%] xl:w-[30%] h-full sm:h-[90%] py-10 sm:py-5 bg-blue-400 flex flex-col items-center gap-4 z-[100] sm:rounded-xl shadow-2xl transition-all ease-in-out duration-500`}
+      >
+        <button
+          className="absolute right-4 top-3 bg-white p-1"
+          onClick={() => {
+            props.setShowUserProfileModel(false);
+          }}
+        >
+          <img src={closeBtnIcon} className="w-6" />
+        </button>
 
-          <div className="w-fit flex justify-between items-center flex-col gap-5">
-            <div className="flex flex-col items-center gap-3">
-              <img
-                src={`${
-                  typeof profilePhotoInput == "string" &&
-                  profilePhotoInput.includes("uploads")
-                    ? `${baseURL.baseUrl}/${profilePhotoInput}`
-                    : `${
-                        typeof profilePhotoInput === "object" &&
-                        URL.createObjectURL(profilePhotoInput)
-                      }`
-                }`}
-                // src={`${baseURL.baseUrl}/${profilePhotoInput}`}
-                className="w-[80%] object-cover aspect-square rounded-full"
+        <div className="w-[90%] flex items-center justify-evenly flex-col">
+          <div className="flex flex-col items-center gap-3 w-[80%] h-fit max-w-[20rem]">
+            <img
+              src={`${
+                typeof profilePhotoInput == "string" &&
+                profilePhotoInput.includes("uploads")
+                  ? `${baseURL.imageUrl}/${profilePhotoInput}`
+                  : `${
+                      typeof profilePhotoInput === "object" &&
+                      URL.createObjectURL(profilePhotoInput)
+                    }`
+              }`}
+              // src={`${baseURL.baseUrl}/${profilePhotoInput}`}
+              className="w-[80%] max-w-[13rem] object-cover aspect-square rounded-full"
+            />
+
+            {/* setIsImagePreview(true) */}
+            <Button
+              onClick={() => document.getElementById("hidden-input")?.click()}
+              className="p-0 h-9 w-[80%]"
+              placeholder={undefined}
+              color="blue-gray"
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            >
+              Change User Profile
+              <input
+                onChange={onSelectFile}
+                type="file"
+                accept="image/*"
+                id="hidden-input"
+                className="hidden"
               />
-
-              {/* setIsImagePreview(true) */}
-              <Button
-                onClick={() => document.getElementById("hidden-input")?.click()}
-                className="w-[80%] p-0 h-9"
-                placeholder={undefined}
-                color="blue-gray"
+            </Button>
+          </div>
+          <div className="flex flex-col h-fit gap-4 mt-4 w-[80%] max-w-[18rem]">
+            <div className="w-full">
+              <Input
+                variant="outlined"
+                type="text"
+                label="name"
+                color="white"
+                value={userNameInput}
+                onChange={(e) => setUserNameInput(e.target.value)}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
-              >
-                Change User Profile
-                <input
-                  onChange={onSelectFile}
-                  type="file"
-                  accept="image/*"
-                  id="hidden-input"
-                  className="hidden"
-                />
-              </Button>
+                crossOrigin={undefined}
+              />
             </div>
-            <div className="flex flex-col gap-3 mt-4 w-[80%]">
-              <div className="">
-                <Input
-                  variant="outlined"
-                  type="text"
-                  label="name"
-                  color="white"
-                  value={userNameInput}
-                  onChange={(e) => setUserNameInput(e.target.value)}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  crossOrigin={undefined}
-                />
-              </div>
-              <div className="w-full">
-                <Input
-                  variant="outlined"
-                  type="text"
-                  label="about"
-                  color="white"
-                  value={aboutInput}
-                  onChange={(e) => setAboutInput(e.target.value)}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  crossOrigin={undefined}
-                />
-              </div>
-              <div className="w-full">
-                <Input
-                  readOnly
-                  variant="outlined"
-                  type="email"
-                  label="email"
-                  color="white"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  crossOrigin={undefined}
-                />
-              </div>
-              <div className="w-full">
-                <Input
-                  variant="outlined"
-                  type="password"
-                  label="password"
-                  color="white"
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  crossOrigin={undefined}
-                />
-              </div>
+            <div className="w-full">
+              <Input
+                variant="outlined"
+                type="text"
+                label="about"
+                color="white"
+                value={aboutInput}
+                onChange={(e) => setAboutInput(e.target.value)}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+                crossOrigin={undefined}
+              />
+            </div>
+            <div className="w-full">
+              <Input
+                readOnly
+                variant="outlined"
+                type="email"
+                label="email"
+                color="white"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                onPointerEnterCapture={undefined}
+                onPointerLeaveCapture={undefined}
+                crossOrigin={undefined}
+              />
+            </div>
+            <div className="h-fit">
               <Button
                 onClick={handleChangeAllBtn}
                 className="w-full p-0 flex items-center justify-center"

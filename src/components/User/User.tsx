@@ -74,7 +74,7 @@ export default function User(props: PropsWithChildren<propsType>) {
         onClick={() => {
           console.log(`${BaseURL.baseUrl}/${props.profilePhotoAddress}`);
         }}
-        src={`${BaseURL.baseUrl}/${props.profilePhotoAddress}`}
+        src={`${BaseURL.imageUrl}/${props.profilePhotoAddress}`}
         className="object-cover w-12 rounded-full"
       />
       <p>{props.username}</p>

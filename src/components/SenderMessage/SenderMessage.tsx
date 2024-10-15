@@ -153,7 +153,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
     <>
       {messagePopup && (
         <div
-          className="fixed w-full h-full left-0 top-0 bg-transparent z-[50]"
+          className="fixed w-full h-full left-0 top-0 bg-transparent z-[2]"
           onClick={() => setMessagePopup(false)}
         ></div>
       )}
@@ -174,7 +174,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 }
               }}
             ></div>
-            <div className="ml-2 absolute top-[50%] translate-y-[-42%]">
+            <div className="ml-2 absolute top-[50%] left-0 translate-y-[-42%]">
               {props.deleteForEveryOne != 1 && (
                 <input
                   className="w-5 h-5 cursor-pointer relative"
@@ -198,20 +198,23 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               className="fixed top-0 left-0 w-full bg-transparent black z-[100]"
               onClick={() => setZoomImage({ isZoom: false, src: "" })}
             ></div> */}
-            <div className="fixed top-[8.4vh] left-[0] w-full h-[91.6vh] bg-blue-gray-50 black z-[501]">
-              <div className="h-full w-full flex items-center justify-center mt-4">
+            <div className="fixed top-[8.4vh] sm:top-[14.7vh] right-0  h-[91.6vh] w-full sm:w-[58vw] md:w-[63vw] lg:w-[66vw] xl:w-[70vw] 2xl:w-[72vw] bg-blue-gray-50 black z-[20]">
+              <div className="h-full w-full flex items-center justify-center">
                 <img
                   className="absolute w-10 top-3 right-3"
                   src={closeBtnIcon}
                   onClick={() => setZoomImage({ isZoom: false, src: "" })}
                 />
-                <img className="shadow-2xl w-[90%]" src={zoomImage.src} />
+                <img
+                  className="shadow-2xl w-[70%] sm:w-[65%] md:w-[50%] lg:w-[40%]"
+                  src={zoomImage.src}
+                />
               </div>
             </div>
           </>
         )}
         <div
-          className={`transition-all w-fit max-w-[90%] ease-in-out flex justify-end ${
+          className={`transition-all w-fit max-w-[60%] ease-in-out flex justify-end ${
             props.isSelectMessages ? "hover:bg-black/10" : ""
           } `}
           id={`#${props.messageId}`}
@@ -223,7 +226,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
             {messagePopup && (
               <div
                 id="message-popup-container"
-                className="absolute bg-white h-fit shadow-2xl z-[60] right-5 top-5 py-1 text-[0.85rem]"
+                className="absolute bg-white h-fit shadow-2xl right-5 top-5 py-1 z-[2] text-[0.85rem]"
               >
                 <div className="hover:bg-black/5 px-2 py-1 w-36 h-fit cursor-pointer">
                   Message info
@@ -300,7 +303,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                 props.messageType === MessageType.DOC
                   ? "top-[0]"
                   : "top-1"
-              } right-2 z-10`}
+              } right-2 z-[1]`}
               onClick={() => {
                 setMessagePopup(messagePopup ? false : true);
               }}
@@ -308,7 +311,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
               <MdKeyboardArrowDown size={25} color="grey" />
             </span>
             <div
-              className={` w-fit relative pb-2 ${
+              className={`w-fit relative pb-2 ${
                 props.replyTo && props.deleteForEveryOne === 0
                   ? "pt-[4px]"
                   : "pt-1"

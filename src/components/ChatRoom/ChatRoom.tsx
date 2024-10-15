@@ -112,7 +112,7 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
     >
       <img
         className="object-contain min-w-[2.7rem] w-[13%] max-w-[3.3rem] rounded-full"
-        src={`${baseURL.baseUrl}/${userData?.profilePhoto}`}
+        src={`${baseURL.imageUrl}/${userData?.profilePhoto}`}
       />
 
       <div className="flex flex-col w-[80%] sm:w-[75%] md:w-[80%] lg:w-[85%] h-fit">

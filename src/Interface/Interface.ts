@@ -75,19 +75,20 @@ export interface User {
   email: string;
   username: string;
   profilePhotoAddress: string;
+  about: string;
 }
 export interface getUserRes {
   status: boolean;
   message: User | null;
 }
 
-export interface getUsersRes {
+export interface IGetUsersRes {
   status: boolean;
   message: {
     _id: string;
-    email: string;
     username: string;
     profilePhotoAddress: string;
+    isFriendRequest: boolean;
   }[];
 }
 
@@ -110,4 +111,54 @@ export interface IShowMessagesContainer {
     senderId: string;
     recipientId: string;
   } | null;
+}
+
+export interface ISendFriendRequest {
+  isSend: boolean;
+  data: {
+    requestedUserId: string;
+    senderId: string;
+  } | null;
+}
+
+/* {
+    "status": true,
+    "message": [
+        {
+            "_id": "670d11162fa375e76dcc5546",
+            "request_to": "670ca01af19de5dd457f78b8",
+            "request_by": {
+                "_id": "670a2638bee27794331bff7f",
+                "username": "Raza",
+                "profilePhoto": {
+                    "fileAddress": "uploads\\userProfile\\1728718881226--cropped-image.png"
+                }
+            },
+            "request_status": "pending",
+            "__v": 0
+        }
+    ]
+} */
+
+export interface IGetFriendRequestsRes {
+  status: boolean;
+  message: {
+    _id: string;
+    request_to: string;
+    request_by: {
+      _id: string;
+      username: string;
+      profilePhoto: {
+        fileAddress: string;
+      };
+    };
+    request_status: string;
+    __v: 0;
+  }[];
+}
+export interface IFriendRequestsData {
+  friendRequestId: string;
+  senderId: string;
+  username: string;
+  profilePhotoAddress: string;
 }
