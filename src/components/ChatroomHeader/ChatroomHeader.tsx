@@ -45,7 +45,7 @@ export default function ChatroomHeader(props: PropsWithChildren<propsType>) {
           }}
         >
           <img
-            src={`${baseURL.baseUrl}/${props.chatRoomProfilePhoto}`}
+            src={`${baseURL.imageUrl}/${props.chatRoomProfilePhoto}`}
             className="w-11 h-11 rounded-full object-cover"
           />
           <p className="text-white text-[0.95rem]">{props.chatRoomName}</p>

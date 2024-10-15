@@ -6,6 +6,7 @@ import blockIcon from "/icons/block icon.png";
 import reportIcon from "/icons/dislike icon.png";
 import deleteChatIcon from "/icons/dustbin.png";
 import axios from "axios";
+import { IGetUserRes, IUser } from "../../Interface/Interface";
 type propsType = {
   userId: string;
   chatRoomId: string;
@@ -24,18 +25,9 @@ interface getChatRoomMembersRes {
   status: boolean;
   message: string[];
 }
-interface getUserRes {
-  status: boolean;
-  data: { name: string; email: string; profilePhoto: string; about: string };
-}
 
 function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
-  const [chatRoomUserData, setChatRoomUserData] = useState({
-    username: "",
-    email: "",
-    profilePhoto: "",
-    about: "",
-  });
+  const [chatRoomUserData, setChatRoomUserData] = useState<IUser | null>(null);
   const [mute, isMute] = useState(false);
   const baseUrl = useContext(Context);
   const token = localStorage.getItem("token");
@@ -53,7 +45,7 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
               : res.data.message[0];
 
           axios
-            .post<getUserRes>(
+            .post<IGetUserRes>(
               `${baseUrl.baseUrl}/user/getUser`,
               {
                 userId: recipientId,
@@ -61,12 +53,16 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
               { headers: { authorization: `Bearer ${token}` } }
             )
             .then((res) => {
-              setChatRoomUserData({
-                username: res.data.data.name,
-                email: res.data.data.email,
-                profilePhoto: res.data.data.profilePhoto,
-                about: res.data.data.about,
-              });
+              if (res.data.data) {
+                setChatRoomUserData({
+                  _id: res.data.data._id,
+                  friends: res.data.data.friends,
+                  username: res.data.data.username,
+                  email: res.data.data.email,
+                  profilePhotoAddress: res.data.data.profilePhotoAddress,
+                  about: res.data.data.about,
+                });
+              }
             })
             .catch((err) => console.log(err));
         })
@@ -106,15 +102,15 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
         <div className="flex flex-col items-center bg-white py-4 h-fit">
           <img
             className="h-48 object-cover rounded-full"
-            src={`${baseUrl.baseUrl}/${chatRoomUserData.profilePhoto}`}
+            src={`${baseUrl.imageUrl}/${chatRoomUserData?.profilePhotoAddress}`}
           />
-          <p className="mt-1 text-xl">{chatRoomUserData.username}</p>
-          <p className="text-gray-700 text-[1rem]">{chatRoomUserData.email}</p>
+          <p className="mt-1 text-xl">{chatRoomUserData?.username}</p>
+          <p className="text-gray-700 text-[1rem]">{chatRoomUserData?.email}</p>
         </div>
       </div>
       <div className="bg-white shadow-md py-3 px-4 h-fit">
         <p className="text-gray-700 mb-1">About</p>
-        <p>{chatRoomUserData.about}</p>
+        <p>{chatRoomUserData?.about}</p>
       </div>
       <div className="bg-white shadow-md h-fit">
         <div className=" h-fit py-3 px-3 hover:bg-black/[.06] transition-all ease-in-out flex items-center justify-between cursor-pointer">
@@ -141,13 +137,13 @@ function ChatRoomUserInfo(props: PropsWithChildren<propsType>) {
         <div className="py-3 px-3  h-fit hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
           <p className="flex items-center gap-2">
             <img src={blockIcon} className="w-4" /> Block{" "}
-            {chatRoomUserData.username}
+            {chatRoomUserData?.username}
           </p>
         </div>
         <div className="py-3 px-3 h-fit hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">
           <p className="flex items-center gap-2">
             <img src={reportIcon} className="w-4" />
-            Report {chatRoomUserData.username}
+            Report {chatRoomUserData?.username}
           </p>
         </div>
         <div className="py-3 px-3 h-fit hover:bg-black/[.06] transition-all ease-in-out cursor-pointer">

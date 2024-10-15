@@ -7,6 +7,7 @@ type propsType = {
   threeDotsPopupMenu: boolean;
   setIsSelectMessages: (bool: boolean) => void;
   setIsChatRoomDeleted: (bool: boolean) => void;
+  setRemoveFriend: (bool: boolean) => void;
   setThreeDotsPopupMenu: (bool: boolean) => void;
   setIsChatRoomMessagesCleared: (bool: boolean) => void;
   setShowMessagesContainer: (data: IShowMessagesContainer) => void;
@@ -77,6 +78,12 @@ export default function ThreeDotsPopupMenu(
           onClick={() => props.setIsChatRoomDeleted(true)}
         >
           <p>Delete Chat</p>
+        </div>
+        <div
+          className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"
+          onClick={() => props.setRemoveFriend(true)}
+        >
+          <p>Remove Friend</p>
         </div>
       </div>
     </>

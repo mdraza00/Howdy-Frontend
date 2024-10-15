@@ -6,6 +6,7 @@ import closeBtnIcon from "../../assets/close-btn-icon.png";
 import ImagePreview from "../ImagePreview/ImagePreview";
 import { Crop } from "react-image-crop";
 import rollingIcon from "/icons/RollingIcon.svg";
+import { IGetUserRes } from "../../Interface/Interface";
 type propsType = {
   userId: string;
   showUserProfileModel: boolean;
@@ -13,19 +14,9 @@ type propsType = {
   isUserDataUpdated: boolean;
   setIsUserDataUpdated: (a: boolean) => void;
 };
-interface userDateRes {
-  status: boolean;
-  data: {
-    email: string;
-    name: string;
-    profilePhoto: string;
-    about: string;
-  };
-}
 function UserProfile(props: PropsWithChildren<propsType>) {
   const [userNameInput, setUserNameInput] = useState("");
   const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
   const [aboutInput, setAboutInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [profilePhotoInput, setProfilePhotoInput] = useState<File | string>("");
@@ -40,16 +31,18 @@ function UserProfile(props: PropsWithChildren<propsType>) {
     if (props.showUserProfileModel) {
       const url = `${baseURL.baseUrl}/user/getUser`;
       axios
-        .post<userDateRes>(
+        .post<IGetUserRes>(
           url,
           { userId: props.userId },
           { headers: { authorization: `Bearer ${token}` } }
         )
         .then((res) => {
-          setUserNameInput(res.data.data.name);
-          setEmailInput(res.data.data.email);
-          setProfilePhotoInput(res.data.data.profilePhoto);
-          setAboutInput(res.data.data.about);
+          if (res.data.data) {
+            setUserNameInput(res.data.data.username);
+            setEmailInput(res.data.data.email);
+            setProfilePhotoInput(res.data.data.profilePhotoAddress);
+            setAboutInput(res.data.data.about);
+          }
         })
         .catch((err) => {
           console.log(`error from userProfile => `, err);
@@ -70,7 +63,6 @@ function UserProfile(props: PropsWithChildren<propsType>) {
     formData.append("userId", userId ? userId : "");
     formData.append("userProfile", profilePhotoInput);
     formData.append("username", userNameInput);
-    formData.append("password", passwordInput);
     formData.append("email", emailInput);
     formData.append("about", aboutInput);
     axios

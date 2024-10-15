@@ -21,6 +21,23 @@ export interface ImessageRes {
   message: Imessage | null;
 }
 
+export interface IUser {
+  _id: string;
+  username: string;
+  email: string;
+  friends: string[];
+  profilePhotoAddress: string;
+  about: string;
+}
+export interface IGetUserRes {
+  status: boolean;
+  data: IUser | null;
+}
+export interface IGetUsersRes {
+  status: boolean;
+  data: IUser[] | null;
+}
+
 export interface IGetMessagesRes {
   status: boolean;
   data: Imessage[];
@@ -70,16 +87,17 @@ export interface IForwardMessageData {
   data: ISelectedMessageData[] | null;
 }
 
-export interface User {
+export interface IFriend {
   _id: string;
-  email: string;
   username: string;
+  email: string;
+  friends: string[];
   profilePhotoAddress: string;
   about: string;
 }
-export interface getUserRes {
+export interface IGetFriendRes {
   status: boolean;
-  message: User | null;
+  message: IFriend[] | null;
 }
 
 export interface IGetUsersRes {
@@ -120,25 +138,6 @@ export interface ISendFriendRequest {
     senderId: string;
   } | null;
 }
-
-/* {
-    "status": true,
-    "message": [
-        {
-            "_id": "670d11162fa375e76dcc5546",
-            "request_to": "670ca01af19de5dd457f78b8",
-            "request_by": {
-                "_id": "670a2638bee27794331bff7f",
-                "username": "Raza",
-                "profilePhoto": {
-                    "fileAddress": "uploads\\userProfile\\1728718881226--cropped-image.png"
-                }
-            },
-            "request_status": "pending",
-            "__v": 0
-        }
-    ]
-} */
 
 export interface IGetFriendRequestsRes {
   status: boolean;

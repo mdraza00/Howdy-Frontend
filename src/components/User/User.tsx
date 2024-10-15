@@ -1,3 +1,4 @@
+import axios from "axios";
 import { PropsWithChildren, useContext } from "react";
 import Context from "../../contexts/BaseURLContext";
 import {
@@ -24,12 +25,12 @@ export default function User(props: PropsWithChildren<propsType>) {
     <div
       id={props._id}
       key={props._id}
-      className={`flex items-center h-fit gap-2 p-2 rounded-md`}
+      className={`flex items-center h-fit gap-2 p-2 rounded-md cursor-pointer hover:bg-black/15`}
       onClick={(e) => {
         const recipientId = e.currentTarget.id;
         const senderId = props.userId;
         const url = `${BaseURL.baseUrl}/chatroom/createRoom`;
-
+        console.log(recipientId, senderId, url);
         axios
           .post<ICreateChatRoomRes>(
             url,

@@ -6,9 +6,9 @@ import { Button } from "@material-tailwind/react";
 import { FaArrowLeft } from "react-icons/fa6";
 import {
   createOrGetChatRoomRes,
-  getUsersRes,
   IShowMessagesContainer,
-  User,
+  IGetFriendRes,
+  IFriend,
 } from "../../Interface/Interface";
 
 type propsType = {
@@ -32,36 +32,37 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
     username: "",
     profilePhotoAddress: "",
   });
-  const [usersData, setUsersData] = useState<User[]>([]);
+  const [usersData, setUsersData] = useState<IFriend[]>([]);
   const baseURL = useContext(BaseURLContext);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (usernameInput.length > 0) {
-      const url = `${baseURL.baseUrl}/user/getUsers`;
+    if (usernameInput) {
+      const url = `${baseURL.baseUrl}/user/getFriendsByName`;
       axios
-        .post<getUsersRes>(
+        .post<IGetFriendRes>(
           url,
           {
-            userNametoFind: usernameInput,
+            friendNametoFind: usernameInput,
             senderId: props.userId,
           },
           { headers: { authorization: `Bearer ${token}` } }
         )
         .then((res) => {
-          setUsersData(res.data.message);
+          console.log(res);
+          if (res.data.message) setUsersData(res.data.message);
         })
         .catch((err) => {
           console.log("error is fetching users => ", err);
         });
     } else {
-      const url = `${baseURL.baseUrl}/user/getUsers/${props.userId}`;
+      const url = `${baseURL.baseUrl}/user/get-friends/${props.userId}`;
       axios
-        .get<getUsersRes>(url, {
+        .get<IGetFriendRes>(url, {
           headers: { authorization: `Bearer ${token}` },
         })
         .then((res) => {
-          setUsersData(res.data.message);
+          if (res.data.message) setUsersData(res.data.message);
         })
         .catch((err) => {
           console.log("error in fetching users. error = ", err);

@@ -5,8 +5,13 @@ import BaseURLContext from "../../contexts/BaseURLContext";
 import ChatRoom from "../ChatRoom/ChatRoom";
 import User from "../User/User";
 import { RiChatNewFill } from "react-icons/ri";
-import { IShowMessagesContainer } from "../../Interface/Interface";
+import {
+  IGetUsersRes,
+  IShowMessagesContainer,
+  IUser,
+} from "../../Interface/Interface";
 import { FaUserPlus } from "react-icons/fa";
+
 type propsType = {
   userId: string;
   updateChatRoomsData: boolean;
@@ -24,6 +29,7 @@ type propsType = {
     isChatRoomUserProfile: boolean
   ) => void;
 };
+
 interface getChatRoomsRes {
   status: boolean;
   data: {
@@ -34,15 +40,6 @@ interface getChatRoomsRes {
     lastMessageVisibleTo: string[];
     createdAt: string;
     updatedAt: string;
-  }[];
-}
-interface getUsersRes {
-  status: boolean;
-  message: {
-    _id: string;
-    email: string;
-    username: string;
-    profilePhotoAddress: string;
   }[];
 }
 type chatRoomData = {
@@ -64,7 +61,7 @@ interface User {
 
 function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
   const [chatRoomsData, setChatRoomsData] = useState<chatRoomData[]>([]);
-  const [usersData, setUsersData] = useState<User[]>([]);
+  const [usersData, setUsersData] = useState<IUser[]>([]);
   const [userNameInput, setUserNameInput] = useState("");
   const BaseURL = useContext(BaseURLContext);
   const token = localStorage.getItem("token");
@@ -73,13 +70,13 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
     if (userNameInput) {
       const url = `${BaseURL.baseUrl}/chatroom/get-my-chatroom-members-by-name/${props.userId}/${userNameInput}`;
       axios
-        .get<getUsersRes>(url, {
+        .get<IGetUsersRes>(url, {
           headers: {
             authorization: `Bearer ${token}`,
           },
         })
         .then((res) => {
-          setUsersData(res.data.message);
+          if (res.data.data) setUsersData(res.data.data);
         });
     } else {
       socket.on(
@@ -122,7 +119,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
         })
         .catch((err) => {
           console.log(
-            "an error has occured in finding chatrooms. error = ",
+            "an error has occurred in finding chatroom's. error = ",
             err
           );
         });

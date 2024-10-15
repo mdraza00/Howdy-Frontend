@@ -54,6 +54,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [isChatRoomDeleted, setIsChatRoomDeleted] = useState(false);
   const [isSelectMessages, setIsSelectMessages] = useState(false);
+  const [removeFriend, setRemoveFriend] = useState(false);
   const [isChatRoomMessagesCleared, setIsChatRoomMessagesCleared] =
     useState(false);
   const [threeDotsPopupMenu, setThreeDotsPopupMenu] = useState(false);
@@ -160,6 +161,30 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
       }
       setScrollToView(false);
     }
+
+    if (removeFriend) {
+      axios
+        .patch(
+          `${baseURL.baseUrl}/user/remove-friend`,
+          {
+            userId: props.userId,
+            friendId: props.recipientId,
+            chatroomId: props.chatRoomId,
+          },
+          {
+            headers: { authorization: `Bearer ${token}` },
+          }
+        )
+        .then((res) => {
+          props.setUpdateChatRoomsData(
+            props.updateChatRoomsData ? false : true
+          );
+          props.setShowMessagesContainer({ isShow: false, data: null });
+          setRemoveFriend(false);
+        })
+        .catch((err) => console.log(err));
+    }
+
     if (props.loadMessages) {
       const url = `${baseURL.baseUrl}/message/get/${props.chatRoomId}`;
       axios
@@ -317,6 +342,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
     isChatRoomMessagesCleared,
     messages,
     props,
+    removeFriend,
     scrollToView,
     selectedMessagesData,
     sendMessage.message,
@@ -485,6 +511,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
 
       <ThreeDotsPopupMenu
         userId={props.userId}
+        setRemoveFriend={setRemoveFriend}
         chatRoomId={props.chatRoomId}
         threeDotsPopupMenu={threeDotsPopupMenu}
         setIsSelectMessages={setIsSelectMessages}

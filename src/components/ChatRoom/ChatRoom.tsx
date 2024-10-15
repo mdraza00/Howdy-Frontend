@@ -1,7 +1,11 @@
 import { PropsWithChildren, useContext, useEffect, useState } from "react";
 import baseURLContext from "../../contexts/BaseURLContext";
 import axios from "axios";
-import { IShowMessagesContainer } from "../../Interface/Interface";
+import {
+  IGetUserRes,
+  IShowMessagesContainer,
+  IUser,
+} from "../../Interface/Interface";
 
 type propsType = {
   userId: string;
@@ -20,23 +24,11 @@ type propsType = {
     isChatRoomUserProfile: boolean
   ) => void;
 };
-type userDataType = {
-  name: string;
-  profilePhoto: string;
+interface IUserData extends IUser {
   lastMessage: string;
-  _id: string;
-};
-interface getUserRes {
-  status: boolean;
-  data: {
-    name: string;
-    profilePhoto: string;
-    email: string;
-  };
 }
-
 function ChatRoom(props: PropsWithChildren<propsType>) {
-  const [userData, setUserData] = useState<userDataType>();
+  const [userData, setUserData] = useState<IUserData>();
   const baseURL = useContext(baseURLContext);
   const lastMessageDate = new Date(props.lastMessageDate);
 
@@ -65,18 +57,23 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
 
     const url = `${baseURL.baseUrl}/user/getUser`;
     axios
-      .post<getUserRes>(
+      .post<IGetUserRes>(
         url,
         { userId: recipientId },
         { headers: { authorization: `Bearer ${token}` } }
       )
       .then((res) => {
-        setUserData({
-          _id: recipientId,
-          name: res.data.data.name,
-          profilePhoto: res.data.data.profilePhoto,
-          lastMessage: props.lastMessage,
-        });
+        if (res.data.data) {
+          setUserData({
+            _id: recipientId,
+            username: res.data.data.username,
+            profilePhotoAddress: res.data.data.profilePhotoAddress,
+            lastMessage: props.lastMessage,
+            email: res.data.data.email,
+            friends: res.data.data.friends,
+            about: res.data.data.about,
+          });
+        }
         // console.log(res.data.data);
       })
       .catch((err) => {
@@ -98,9 +95,9 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
         props.setShowMessagesContainer({
           isShow: true,
           data: {
-            profilePhoto: userData?.profilePhoto || "",
+            profilePhoto: userData?.profilePhotoAddress || "",
             chatRoomId: props.id,
-            userName: userData?.name || "",
+            userName: userData?.username || "",
             senderId: userId,
             recipientId: recipientId,
           },
@@ -112,12 +109,12 @@ function ChatRoom(props: PropsWithChildren<propsType>) {
     >
       <img
         className="object-contain min-w-[2.7rem] w-[13%] max-w-[3.3rem] rounded-full"
-        src={`${baseURL.imageUrl}/${userData?.profilePhoto}`}
+        src={`${baseURL.imageUrl}/${userData?.profilePhotoAddress}`}
       />
 
       <div className="flex flex-col w-[80%] sm:w-[75%] md:w-[80%] lg:w-[85%] h-fit">
         <p className="w-[100%] flex justify-between">
-          <span className="w-fit truncate ">{userData?.name}</span>
+          <span className="w-fit truncate ">{userData?.username}</span>
           <span className="text-sm w-fit sm:text-[0.75rem]">
             {" "}
             {dateToDisplay}
