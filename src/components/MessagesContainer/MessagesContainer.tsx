@@ -23,16 +23,18 @@ import DeleteMessagePopup from "../DeleteMessagePopup/DeleteMessagePopup";
 import ThreeDotsPopupMenu from "../ThreeDotsPopupMenu/ThreeDotsPopupMenu";
 import SelectMessagesOptions from "../SelectMessagesOptions/SelectMessagesOptions";
 import SendMessagesForm from "../SendMessagesForm/SendMessagesForm";
+import { CHATROOM_TYPE } from "../../enums/chatroomType";
 
 type propsType = {
   userId: string;
-  recipientId: string;
+  members: string[];
   chatRoomId: string;
   updateChatRoomsData: boolean;
   loadMessages: boolean;
   chatRoomUserProfile: boolean;
   chatRoomName: string;
   chatRoomProfilePhoto: string;
+  chatroomType: CHATROOM_TYPE;
   showMessagesContainer: IShowMessagesContainer;
   setUpdateChatRoomsData: (a: boolean) => void;
   setLoadMessages: (a: boolean) => void;
@@ -168,14 +170,14 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
           `${baseURL.baseUrl}/user/remove-friend`,
           {
             userId: props.userId,
-            friendId: props.recipientId,
+            friendId: "",
             chatroomId: props.chatRoomId,
           },
           {
             headers: { authorization: `Bearer ${token}` },
           }
         )
-        .then((res) => {
+        .then(() => {
           props.setUpdateChatRoomsData(
             props.updateChatRoomsData ? false : true
           );
@@ -513,6 +515,7 @@ function MessagesContainer(props: PropsWithChildren<propsType>) {
         userId={props.userId}
         setRemoveFriend={setRemoveFriend}
         chatRoomId={props.chatRoomId}
+        chatroomType={props.chatroomType}
         threeDotsPopupMenu={threeDotsPopupMenu}
         setIsSelectMessages={setIsSelectMessages}
         setIsChatRoomDeleted={setIsChatRoomDeleted}

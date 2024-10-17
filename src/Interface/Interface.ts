@@ -1,3 +1,4 @@
+import { CHATROOM_TYPE } from "../enums/chatroomType";
 import { MessageType } from "../enums/message";
 
 export interface Imessage {
@@ -125,9 +126,9 @@ export interface IShowMessagesContainer {
   data: {
     profilePhoto: string;
     chatRoomId: string;
-    userName: string;
-    senderId: string;
-    recipientId: string;
+    chatroomName: string;
+    chatroomType: CHATROOM_TYPE;
+    members: string[];
   } | null;
 }
 
@@ -160,4 +161,27 @@ export interface IFriendRequestsData {
   senderId: string;
   username: string;
   profilePhotoAddress: string;
+}
+export interface ICreateGroup {
+  isCreate: boolean;
+  roomMembersId: string[] | null;
+}
+
+export interface IChatRoom {
+  _id: string;
+  chatroomType: CHATROOM_TYPE;
+  members: string[];
+  chatroomProfilePhoto: string;
+  groupDescription: string;
+  chatroomName: string;
+  lastMessage: string;
+  lastMessageDate: string;
+  lastMessageVisibleTo: string[];
+  about: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface IGetChatRoomRes {
+  status: boolean;
+  data: IChatRoom[];
 }

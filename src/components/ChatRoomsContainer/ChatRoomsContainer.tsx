@@ -6,6 +6,8 @@ import ChatRoom from "../ChatRoom/ChatRoom";
 import User from "../User/User";
 import { RiChatNewFill } from "react-icons/ri";
 import {
+  IChatRoom,
+  IGetChatRoomRes,
   IGetUsersRes,
   IShowMessagesContainer,
   IUser,
@@ -30,28 +32,6 @@ type propsType = {
   ) => void;
 };
 
-interface getChatRoomsRes {
-  status: boolean;
-  data: {
-    _id: string;
-    members: string[];
-    lastMessage: string;
-    lastMessageDate: string;
-    lastMessageVisibleTo: string[];
-    createdAt: string;
-    updatedAt: string;
-  }[];
-}
-type chatRoomData = {
-  _id: string;
-  members: string[];
-  lastMessage: string;
-  lastMessageDate: string;
-  lastMessageVisibleTo: string[];
-  createdAt: string;
-  updatedAt: string;
-};
-
 interface User {
   _id: string;
   email: string;
@@ -60,7 +40,7 @@ interface User {
 }
 
 function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
-  const [chatRoomsData, setChatRoomsData] = useState<chatRoomData[]>([]);
+  const [chatRoomsData, setChatRoomsData] = useState<IChatRoom[]>([]);
   const [usersData, setUsersData] = useState<IUser[]>([]);
   const [userNameInput, setUserNameInput] = useState("");
   const BaseURL = useContext(BaseURLContext);
@@ -109,7 +89,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
       const url = `${BaseURL.baseUrl}/chatroom/get/ChatRooms`;
       const currentUserId = props.userId;
       axios
-        .post<getChatRoomsRes>(
+        .post<IGetChatRoomRes>(
           url,
           { currentUserId },
           { headers: { authorization: `Bearer ${token}` } }
@@ -179,6 +159,10 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
                 userId={props.userId}
                 key={chatRoom._id}
                 id={chatRoom._id}
+                chatroomType={chatRoom.chatroomType}
+                chatroomProfilePhoto={chatRoom.chatroomProfilePhoto}
+                groupDescription={chatRoom.groupDescription}
+                chatroomName={chatRoom.chatroomName}
                 lastMessage={chatRoom.lastMessage}
                 lastMessageDate={chatRoom.lastMessageDate}
                 lastMessageVisibleTo={chatRoom.lastMessageVisibleTo}
@@ -223,7 +207,7 @@ function ChatRoomsContainer(props: PropsWithChildren<propsType>) {
         </div>
         <div
           className={`bg-blue-600 rounded-md p-[0.5rem]`}
-          onClick={() => alert("not working yet")}
+          onClick={() => props.setFriendRequestModel(true)}
         >
           <FaUserPlus color="white" size={25} />
         </div>

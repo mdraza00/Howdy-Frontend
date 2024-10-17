@@ -138,7 +138,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
         const rect = messagePopupElement.getBoundingClientRect();
 
         if (rect.bottom - window.innerHeight > 0) {
-          messagePopupElement.style.top = "-19rem";
+          messagePopupElement.style.top = "-15rem";
         }
       }
     }, 0);
@@ -162,10 +162,6 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
       )} */}
       {zoomImage.isZoom && (
         <>
-          {/* <div
-            className="fixed top-0 right-0 w-screen h-screen bg-transparent black z-[100]"
-            onClick={() => setZoomImage({ isZoom: false, src: "" })}
-          ></div> */}
           <div className="fixed top-[8.4vh] left-[0] w-full h-[91.6vh] bg-blue-gray-50 black">
             <div className="h-full w-full flex items-center justify-center">
               <img
@@ -198,86 +194,94 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
           className="message-div-container relative w-full"
           id={`date--${new Date(props.createdAt).toLocaleDateString()}`}
         >
-          {messagePopup && (
-            <div
-              id="message-popup-container"
-              className="absolute top-[50%] left-[80%] py-1 bg-white h-fit w-36 shadow-2xl"
-            >
-              <div className="hover:bg-black/5 px-2 py-1  h-fit cursor-pointer">
-                Message info
-              </div>
-              <div
-                className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer"
-                onClick={() => {
-                  setMessagePopup(false);
-                  props.setReplyToMessage({
-                    isReply: true,
-                    data: {
-                      senderName: props.chatRoomName,
-                      text: props.text,
-                      image: props.image
-                        ? {
-                            name: props.image.name,
-                            address: props.image.address,
-                          }
-                        : null,
-                      video: props.video
-                        ? {
-                            name: props.video.name,
-                            address: props.video.address,
-                          }
-                        : null,
-                      doc: props.messageType === MessageType.DOC ? true : false,
-                      messageId: props.messageId,
-                      messageType: props.messageType,
-                    },
-                  });
-                }}
-              >
-                Reply
-              </div>
-              <div className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer">
-                React
-              </div>
-              <div
-                className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer"
-                onClick={() => {
-                  props.setIsSelectMessages(true);
-                  setForwardMessage(true);
-                  setMessagePopup(false);
-                }}
-              >
-                Forward
-              </div>
-              <div className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer">
-                Pin
-              </div>
-              <div className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer">
-                Star
-              </div>
-              <div className="hover:bg-black/5 px-2 py-1 h-fit transition-all ease-in-out cursor-pointer">
-                Report
-              </div>
-              <div
-                className="hover:bg-black/5 px-2 py-1 transition-all ease-in-out cursor-pointer"
-                onClick={() => {
-                  props.setSelectedMessagesData(
-                    `${props.messageId}--receive`,
-                    true,
-                    props.createdAt
-                  );
-                  props.setShowDeletePopupMenu(true);
-                }}
-              >
-                Delete
-              </div>
-            </div>
-          )}
           <div
             className={`group p-1 bg-white ${
               props.isSelectMessages ? "ml-11" : "ml-3"
-            } rounded-md rounded-tl-none shadow-lg my-2 relative z-[3] w-fit max-w-[65%]`}
+            } rounded-md rounded-tl-none shadow-lg my-2 relative z-[3] w-fit max-w-[65%] border-2`}
           >
+            {messagePopup && (
+              <div
+                className="bg-transparent fixed top-0 left-0 h-full w-full"
+                onClick={() => setMessagePopup(false)}
+              ></div>
+            )}
+            {messagePopup && (
+              <div
+                id="message-popup-container"
+                className="absolute top-3 right-0 py-1 bg-white h-fit w-36 shadow-2xl"
+              >
+                <div className="hover:bg-black/5 px-2 py-1  h-fit cursor-pointer">
+                  Message info
+                </div>
+                <div
+                  className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer"
+                  onClick={() => {
+                    setMessagePopup(false);
+                    props.setReplyToMessage({
+                      isReply: true,
+                      data: {
+                        senderName: props.chatRoomName,
+                        text: props.text,
+                        image: props.image
+                          ? {
+                              name: props.image.name,
+                              address: props.image.address,
+                            }
+                          : null,
+                        video: props.video
+                          ? {
+                              name: props.video.name,
+                              address: props.video.address,
+                            }
+                          : null,
+                        doc:
+                          props.messageType === MessageType.DOC ? true : false,
+                        messageId: props.messageId,
+                        messageType: props.messageType,
+                      },
+                    });
+                  }}
+                >
+                  Reply
+                </div>
+                <div className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer">
+                  React
+                </div>
+                <div
+                  className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer"
+                  onClick={() => {
+                    props.setIsSelectMessages(true);
+                    setForwardMessage(true);
+                    setMessagePopup(false);
+                  }}
+                >
+                  Forward
+                </div>
+                <div className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer">
+                  Pin
+                </div>
+                <div className="hover:bg-black/5 px-2 py-1  h-fit transition-all ease-in-out cursor-pointer">
+                  Star
+                </div>
+                <div className="hover:bg-black/5 px-2 py-1 h-fit transition-all ease-in-out cursor-pointer">
+                  Report
+                </div>
+                <div
+                  className="hover:bg-black/5 px-2 py-1 transition-all ease-in-out cursor-pointer"
+                  onClick={() => {
+                    props.setSelectedMessagesData(
+                      `${props.messageId}--receive`,
+                      true,
+                      props.createdAt
+                    );
+                    props.setShowDeletePopupMenu(true);
+                  }}
+                >
+                  Delete
+                </div>
+              </div>
+            )}
+
             {props.isSelectMessages && (
               <div className="absolute top-[50%] translate-y-[-42%] left-[-2.18rem]">
                 {props.deleteForEveryOne === 0 && (
@@ -296,13 +300,6 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                 )}
               </div>
             )}
-            {/* className={`absolute bg-gradient-to-tr  z-10  ${
-                messagePopup ? "visible" : "invisible"
-              } ${
-                props.messageType == MessageType.TEXT
-                  ? "from-transparent  via-white to-white h-full w-[40%] top-[1px] left-[60%]"
-                  : "from-transparent from-45%  via-white to-white h-[20%] w-[20%] top-0 right-0"
-              } group-hover:visible  rounded-md transition-all ease-in-out cursor-pointer`} */}
             <span
               className={`absolute ${
                 props.messageType === MessageType.TEXT ||
@@ -401,7 +398,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                       <div className="flex flex-col gap-2">
                         <img
                           className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
-                          src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
+                          src={`${BaseUrlContext.imageUrl}/${props.image.address}/${props.image.name}`}
                           onClick={() => {
                             if (props.image)
                               setZoomImage({
@@ -423,7 +420,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                       <div className="flex flex-col gap-2">
                         <video
                           className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
-                          src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}
+                          src={`${BaseUrlContext.imageUrl}/${props.video.address}/${props.video.name}`}
                           controls={true}
                         />
                         <p
@@ -446,7 +443,7 @@ function ReceiverMessage(props: PropsWithChildren<propsType>) {
                           </div>
                           <div className="cursor-pointer">
                             <a
-                              href={`${BaseUrlContext.baseUrl}/${props.doc.address}/${props.doc.name}`}
+                              href={`${BaseUrlContext.imageUrl}/${props.doc.address}/${props.doc.name}`}
                               download={true}
                             >
                               {browserSupportedExtentions.includes(

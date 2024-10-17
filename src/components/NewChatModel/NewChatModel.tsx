@@ -4,6 +4,7 @@ import BaseURLContext from "../../contexts/BaseURLContext";
 import rollingIcon from "/icons/RollingIcon.svg";
 import { Button } from "@material-tailwind/react";
 import { FaArrowLeft } from "react-icons/fa6";
+import { HiUserGroup } from "react-icons/hi";
 import {
   createOrGetChatRoomRes,
   IShowMessagesContainer,
@@ -15,6 +16,7 @@ type propsType = {
   userId: string | null;
   profilePhoto: string;
   newChatModel: boolean;
+  setNewGroup: (a: boolean) => void;
   setNewChatModel: (a: boolean) => void;
   setUpdateChatRoomsData: (a: boolean) => void;
   updateChatRoomsData: boolean;
@@ -26,12 +28,12 @@ type propsType = {
 function NewChatModel(props: PropsWithChildren<propsType>) {
   const [usernameInput, setUsernameInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [activeUser, setIsActiveUser] = useState({
-    id: "",
-    active: false,
-    username: "",
-    profilePhotoAddress: "",
-  });
+  const [activeUser, setIsActiveUser] = useState<{
+    id: string;
+    active: boolean;
+    username: string;
+    profilePhotoAddress: string;
+  } | null>(null);
   const [usersData, setUsersData] = useState<IFriend[]>([]);
   const baseURL = useContext(BaseURLContext);
   const token = localStorage.getItem("token");
@@ -113,11 +115,26 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
           id="users-container"
           className={`w-[97%] h-[85vh] overflow-auto scroll-bar flex flex-col`}
         >
+          <div
+            className="h-fit w-full pl-2 py-2 mb-2 hover:bg-black/15 active:bg-white transition-all ease-in-out flex items-center gap-2"
+            onClick={() => {
+              props.setNewGroup(true);
+              props.setNewChatModel(false);
+              setIsActiveUser(null);
+            }}
+          >
+            <HiUserGroup
+              className="size-10 bg-blue-600 rounded-full p-[0.35rem]"
+              color="white"
+            />{" "}
+            <span>New Group</span>
+          </div>
           {usersData.map((userData) => (
             <div
               id={userData._id}
               key={userData._id}
               className={`flex h-fit w-full items-center gap-2 border-b-2 p-2 ${
+                activeUser &&
                 activeUser.active &&
                 activeUser.id == userData._id &&
                 "bg-black/[.12]"
@@ -143,6 +160,7 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
           <Button
             onClick={() => {
               props.setNewChatModel(false);
+              setIsActiveUser(null);
               setIsLoading(false);
             }}
             variant="outlined"
@@ -156,50 +174,53 @@ function NewChatModel(props: PropsWithChildren<propsType>) {
           <Button
             onClick={() => {
               setIsLoading(true);
-              const recipientId = activeUser.id;
-              const senderId = props.userId;
-              const url = `${baseURL.baseUrl}/chatroom/createRoom`;
-              axios
-                .post<createOrGetChatRoomRes>(
-                  url,
-                  {
-                    senderId,
-                    recipientId,
-                  },
-                  { headers: { authorization: `Bearer ${token}` } }
-                )
-                .then((res) => {
-                  // update chatrooms
-                  props.setUpdateChatRoomsData(
-                    props.updateChatRoomsData ? false : true
-                  );
-
-                  props.setActiveChatRoomId(res.data.message);
-                  props.setShowMessagesContainer({
-                    isShow: true,
-                    data: {
-                      profilePhoto: activeUser.profilePhotoAddress,
-                      chatRoomId: res.data.message,
-                      userName: activeUser.username,
-                      senderId: senderId ? senderId : "",
-                      recipientId: recipientId,
+              if (activeUser) {
+                const recipientId = activeUser.id;
+                const senderId = props.userId;
+                const url = `${baseURL.baseUrl}/chatroom/createRoom`;
+                axios
+                  .post<createOrGetChatRoomRes>(
+                    url,
+                    {
+                      senderId,
+                      recipientId,
                     },
-                  });
+                    { headers: { authorization: `Bearer ${token}` } }
+                  )
+                  .then((res) => {
+                    // update chatrooms
+                    props.setUpdateChatRoomsData(
+                      props.updateChatRoomsData ? false : true
+                    );
 
-                  props.setLoadMessages(true);
-                  props.setNewChatModel(false);
-                  setIsLoading(false);
-                })
-                .catch((err) => {
-                  setIsLoading(false);
-                  console.log(
-                    "an error has occured in creating chatroom. error = ",
-                    err
-                  );
-                });
+                    props.setActiveChatRoomId(res.data.message);
+                    props.setShowMessagesContainer({
+                      isShow: true,
+                      data: {
+                        profilePhoto: activeUser.profilePhotoAddress,
+                        chatRoomId: res.data.message,
+                        userName: activeUser.username,
+                        senderId: senderId ? senderId : "",
+                        recipientId: recipientId,
+                      },
+                    });
+
+                    setIsActiveUser(null);
+                    props.setLoadMessages(true);
+                    props.setNewChatModel(false);
+                    setIsLoading(false);
+                  })
+                  .catch((err) => {
+                    setIsLoading(false);
+                    console.log(
+                      "an error has occured in creating chatroom. error = ",
+                      err
+                    );
+                  });
+              }
             }}
             className="w-[48%] flex items-center justify-center h-10 bg-blue-600 disabled:bg-gray-600"
-            disabled={!activeUser.active}
+            disabled={!activeUser}
             placeholder={undefined}
             onPointerEnterCapture={undefined}
             onPointerLeaveCapture={undefined}

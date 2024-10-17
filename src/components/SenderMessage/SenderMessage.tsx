@@ -394,7 +394,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                         <img
                           id={`image-message-${props.messageId}`}
                           className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
-                          src={`${BaseUrlContext.baseUrl}/${props.image.address}/${props.image.name}`}
+                          src={`${BaseUrlContext.imageUrl}/${props.image.address}/${props.image.name}`}
                           onClick={() => {
                             if (props.image)
                               setZoomImage({
@@ -416,7 +416,7 @@ function SenderMessage(props: PropsWithChildren<propsType>) {
                       <div className={`flex flex-col gap-1 w-full h-fit`}>
                         <video
                           className="w-full sm:max-w-[18rem] md:max-w-[20rem] lg:max-w-[22rem] xl:max-w-[25rem]"
-                          src={`${BaseUrlContext.baseUrl}/${props.video.address}/${props.video.name}`}
+                          src={`${BaseUrlContext.imageUrl}/${props.video.address}/${props.video.name}`}
                           controls={true}
                         />
                         <p

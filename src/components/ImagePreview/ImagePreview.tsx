@@ -98,7 +98,7 @@ function ImagePreview(props: PropsWithChildren<propsType>) {
   // props.setIsImagePreview(false);
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black/30 flex items-center justify-center z-[1004]">
-      <div className="relative h-fit w-full flex flex-col gap-14 items-center justify-center bg-black/15 py-2">
+      <div className="relative h-fit w-full sm:w-[60%] md:w-[55%] lg:w-[50%] xl:w-[45%] 2xl::w-[40%] flex flex-col gap-14 items-center justify-center bg-black/15 py-2">
         {!!props.imgSrc && (
           <div className="">
             <ReactCrop

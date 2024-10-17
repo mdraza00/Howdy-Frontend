@@ -13,6 +13,7 @@ type propsType = {
   chatRoomProfilePhoto: string;
   chatRoomName: string;
   threeDotsPopupMenu: boolean;
+
   setThreeDotsPopupMenu: (bool: boolean) => void;
   setShowMessagesContainer: (data: IShowMessagesContainer) => void;
   setChatRoomUserProfile: (

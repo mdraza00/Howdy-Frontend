@@ -1,10 +1,12 @@
 import { PropsWithChildren } from "react";
 import { IShowMessagesContainer } from "../../Interface/Interface";
+import { CHATROOM_TYPE } from "../../enums/chatroomType";
 
 type propsType = {
   userId: string;
   chatRoomId: string;
   threeDotsPopupMenu: boolean;
+  chatroomType: CHATROOM_TYPE;
   setIsSelectMessages: (bool: boolean) => void;
   setIsChatRoomDeleted: (bool: boolean) => void;
   setRemoveFriend: (bool: boolean) => void;
@@ -60,7 +62,10 @@ export default function ThreeDotsPopupMenu(
             props.setShowMessagesContainer({ isShow: false, data: null })
           }
         >
-          <p>Close Chat</p>
+          <p>
+            Close{" "}
+            {props.chatroomType === CHATROOM_TYPE.GROUP ? "Group" : "Chat"}
+          </p>
         </div>
         <div
           className="px-2 py-[0.3rem] hover:bg-black/[.06] transition-all ease-in-out cursor-pointer active:bg-white"

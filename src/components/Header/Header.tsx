@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import logo from "/logo/Howdy_Logo.png";
 import BaseURLContext from "../../contexts/BaseURLContext";
 import { Button } from "@material-tailwind/react";
-// import Confetti from "react-confetti";
-import ConfettiExplosion from "react-confetti-explosion";
 
 type propsType = {
   name: string;
@@ -28,7 +26,6 @@ function Header(props: propsType) {
 
   return (
     <>
-      {showConfetti && <ConfettiExplosion />}
       <header
         className={`h-[6.5vh] flex ${
           props.isShowMessagesContainer && "hidden sm:flex"

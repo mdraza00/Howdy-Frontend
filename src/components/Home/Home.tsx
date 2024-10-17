@@ -11,11 +11,14 @@ import howdyImage from "/images/Howdy_Image.png";
 import ChatRoomUserInfo from "../ChatRoomUserInfo/ChatRoomUserInfo";
 import lockIcon from "/icons/lock.png";
 import {
+  ICreateGroup,
   IGetUserRes,
   IShowMessagesContainer,
   IUser,
 } from "../../Interface/Interface";
 import FriendRequestModel from "../FriendRequestModel/FriendRequestModel";
+import AddGroupMembersModel from "../AddGroupMembersModel/AddGroupMembersModel";
+import CreateGroup from "../CreateGroup/CreateGroup";
 
 interface authUser {
   status: boolean;
@@ -28,6 +31,11 @@ function Home() {
   const [userData, setUserData] = useState<IUser | null>(null);
   const [isUserDataUpdated, setIsUserDataUpdated] = useState(false);
   const [showNewChatModel, setShowNewChatModel] = useState(false);
+  const [createGroup, setCreateGroup] = useState<ICreateGroup>({
+    isCreate: false,
+    roomMembersId: null,
+  });
+  const [newGroup, setNewGroup] = useState(false);
   const [friendRequestModel, setFriendRequestModel] = useState(false);
   const [loadMessages, setLoadMessages] = useState(false);
   const [showUserProfileModel, setShowUserProfileModel] = useState(false);
@@ -103,6 +111,7 @@ function Home() {
             profilePhoto={userData.profilePhotoAddress}
             newChatModel={showNewChatModel}
             setNewChatModel={setNewChatModel}
+            setNewGroup={setNewGroup}
             userId={userData._id}
             updateChatRoomsData={updateChatRoomsData}
             setActiveChatRoomId={setActiveChatRoomId}
@@ -110,7 +119,19 @@ function Home() {
             setShowMessagesContainer={displayMessagesContainer}
             setLoadMessages={setLoadMessages}
           />
-
+          <AddGroupMembersModel
+            setCreateGroup={setCreateGroup}
+            newGroup={newGroup}
+            setNewGroup={setNewGroup}
+            userId={userData._id}
+          />
+          <CreateGroup
+            userId={userData._id}
+            updateChatRoomsData={updateChatRoomsData}
+            setUpdateChatRoomsData={setUpdateChatRoomsData}
+            setCreateGroup={setCreateGroup}
+            createGroup={createGroup}
+          />
           <UserProfile
             userId={userData._id}
             showUserProfileModel={showUserProfileModel}
@@ -151,10 +172,11 @@ function Home() {
                 chatRoomUserProfile={chatRoomUserProfile.isChatRoomUserProfile}
                 userId={userData._id}
                 showMessagesContainer={showMessagesContainer}
-                recipientId={showMessagesContainer.data?.recipientId}
-                chatRoomId={showMessagesContainer.data?.chatRoomId}
-                chatRoomName={showMessagesContainer.data?.userName}
-                chatRoomProfilePhoto={showMessagesContainer.data?.profilePhoto}
+                chatRoomId={showMessagesContainer.data.chatRoomId}
+                chatRoomName={showMessagesContainer.data.chatroomName}
+                members={showMessagesContainer.data.members}
+                chatRoomProfilePhoto={showMessagesContainer.data.profilePhoto}
+                chatroomType={showMessagesContainer.data.chatroomType}
                 updateChatRoomsData={updateChatRoomsData}
                 setUpdateChatRoomsData={setUpdateChatRoomsData}
                 setShowMessagesContainer={displayMessagesContainer}

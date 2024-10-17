@@ -193,14 +193,14 @@ export default function FriendRequestModel(props: PropsWithChildren<propType>) {
         } transition-all ease-in-out duration-500 h-full w-full sm:w-[60%] md:w-[50%] lg:w-[40%] xl:w-[30%] 2xl:[20%] sm:h-[75%] sm:top-[50%] sm:translate-y-[-50%] sm:px-5 sm:py-6 flex flex-col items-center justify-center gap-1 py-2 shadow-2xl bg-white z-[300] text-[0.9rem]`}
       >
         <ImCross
-          className="fixed top-2 right-2 size-8 p-2 bg-blue-600 rounded-md"
+          className="absolute top-2 right-2 size-8 p-2 bg-blue-600 rounded-md"
           color="white"
           onClick={() => {
             props.setFriendRequestModel(false);
             setActiveTab(ACTIVE_TAB.FRIEND_REQUEST);
           }}
         />
-        <div className="w-full h-fit flex items-center justify-evenly mt-7">
+        <div className="w-full h-fit flex items-center justify-evenly mt-12 sm:mt-7">
           <div
             className={`w-full h-full cursor-pointer p-2 text-center ${
               activeTab === ACTIVE_TAB.FRIEND_REQUEST ? "bg-blue-gray-100" : ""
